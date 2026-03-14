@@ -88,12 +88,13 @@ Playwright automatically starts the app server before running tests (via `npm ru
 - ✅ Upgrade `markdown@0.5.0` (from 2012) to `marked@14.x`
 - ✅ Add security hardening: `helmet`, `express-rate-limit` on auth endpoints, `httpOnly` + `sameSite` cookie attributes
 
-### Phase 2 — Testing + TypeScript foundation (2–4 weeks)
+### Phase 2 — Code quality ✅
 
+- ✅ Add Prettier + `husky` + `lint-staged` for consistent formatting and pre-commit enforcement
+- ✅ Enable stricter ESLint rules: `no-shadow`, `no-param-reassign`, `consistent-return`
+- ✅ Add GitHub Actions CI (lint + E2E tests on every push/PR)
 - Add Vitest + `@vue/test-utils` for unit and component tests
 - Add `tsconfig.json` with strict mode; enable `@ts-check` in existing JS files
-- Enable disabled ESLint rules: `no-shadow`, `no-param-reassign`, `consistent-return`
-- ✅ Add Prettier + `husky` + `lint-staged` for consistent formatting and pre-commit enforcement
 - Enable `vue/require-prop-types` and `vue/require-explicit-emits` in ESLint
 
 ### Phase 3 — Composition API + remove legacy patterns (4–8 weeks)
