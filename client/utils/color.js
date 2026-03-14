@@ -1,5 +1,10 @@
 // @ts-check
 module.exports = (function () {
+    /**
+     * @param {number} index
+     * @param {{ r: number, g: number, b: number }} [baseColor]
+     * @returns {{ r: number, g: number, b: number }}
+     */
     function getColor(index, baseColor) {
         if (baseColor) {
             const hsv = rgbToHsv(baseColor);
@@ -24,10 +29,14 @@ module.exports = (function () {
         return colors[index % colors.length];
     }
 
+    /**
+     * @param {{ h: number, s: number, v: number }} hsv
+     * @returns {{ r: number, g: number, b: number }}
+     */
     function hsvToRgb(hsv) {
-        let r;
-        let g;
-        let b;
+        let r = 0;
+        let g = 0;
+        let b = 0;
         let i;
         let f;
         let p;
@@ -69,6 +78,10 @@ module.exports = (function () {
         };
     }
 
+    /**
+     * @param {{ r: number, g: number, b: number }} rgb
+     * @returns {{ h: number, s: number, v: number }}
+     */
     function rgbToHsv(rgb) {
         let rr;
         let gg;
@@ -76,10 +89,14 @@ module.exports = (function () {
         const r = rgb.r / 255;
         const g = rgb.g / 255;
         const b = rgb.b / 255;
-        let h;
-        let s;
+        let h = 0;
+        let s = 0;
         const v = Math.max(r, g, b);
         const diff = v - Math.min(r, g, b);
+        /**
+         * @param {number} c
+         * @returns {number}
+         */
         const diffc = function (c) {
             return (v - c) / 6 / diff + 1 / 2;
         };
@@ -112,10 +129,18 @@ module.exports = (function () {
         };
     }
 
+    /**
+     * @param {{ r: number, g: number, b: number }} rgb
+     * @returns {string}
+     */
     function rgbToString(rgb) {
         return `rgb(${rgb.r},${rgb.g},${rgb.b})`;
     }
 
+    /**
+     * @param {string} rgbString
+     * @returns {{ r: number, g: number, b: number }}
+     */
     function stringToRgb(rgbString) {
         const trimmed = rgbString.substring(4, rgbString.length - 1);
         const split = trimmed.split(',');
@@ -126,6 +151,10 @@ module.exports = (function () {
         };
     }
 
+    /**
+     * @param {string} hex
+     * @returns {{ r: number, g: number, b: number } | null}
+     */
     function hexToRgb(hex) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result
@@ -137,14 +166,23 @@ module.exports = (function () {
             : null;
     }
 
+    /**
+     * @param {{ r: number, g: number, b: number }} rgb
+     * @returns {string}
+     */
     function rgbToHex(rgb) {
         return `#${componentToHex(rgb.r)}${componentToHex(rgb.g)}${componentToHex(rgb.b)}`;
     }
 
+    /**
+     * @param {number} c
+     * @returns {string}
+     */
     function componentToHex(c) {
         const hex = c.toString(16);
         return hex.length == 1 ? `0${hex}` : hex;
     }
+
     return {
         getColor,
         hsvToRgb,

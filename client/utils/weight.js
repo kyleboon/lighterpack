@@ -1,5 +1,10 @@
 // @ts-check
 module.exports = (function () {
+    /**
+     * @param {number} value
+     * @param {string} unit
+     * @returns {number}
+     */
     function WeightToMg(value, unit) {
         if (unit == 'g') {
             return value * 1000;
@@ -13,32 +18,44 @@ module.exports = (function () {
         if (unit == 'lb') {
             return value * 453592;
         }
+        return 0;
     }
 
+    /**
+     * @param {number} value
+     * @param {string} unit
+     * @param {boolean} [display]
+     * @returns {number|string}
+     */
     function MgToWeight(value, unit, display = false) {
         if (unit == 'g') {
             return Math.round((100 * value) / 1000.0) / 100;
         }
         if (unit == 'kg') {
-            return Math.round((100 * value) / 1000000.0, 2) / 100;
+            return Math.round((100 * value) / 1000000.0) / 100;
         }
         if (unit == 'oz') {
-            return Math.round((100 * value) / 28349.5, 2) / 100;
+            return Math.round((100 * value) / 28349.5) / 100;
         }
         if (unit == 'lb') {
             if (display) {
-                let out = '';
                 const poundsFloat = value / 453592.0;
                 const pounds = Math.floor(poundsFloat);
                 const oz = Math.round((poundsFloat % 1) * 16 * 100) / 100;
+                let out = '';
                 if (pounds) {
-                    out += 'lb';
+                    out += `${pounds}lb`;
                     if (pounds > 1) out += 's';
                 }
-            } else {
-                return Math.round((100 * value) / 453592.0, 2) / 100;
+                if (oz || !pounds) {
+                    if (out) out += ' ';
+                    out += `${oz}oz`;
+                }
+                return out;
             }
+            return Math.round((100 * value) / 453592.0) / 100;
         }
+        return 0;
     }
 
     return {

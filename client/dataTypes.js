@@ -4,6 +4,10 @@ const assignIn = require('lodash/assignIn');
 const colorUtils = require('./utils/color.js');
 const weightUtils = require('./utils/weight.js');
 
+/**
+ * @typedef {{ qty: number, worn: number, consumable: boolean, star: number, itemId: any, _isNew?: boolean, price?: number }} CategoryItem
+ */
+
 const defaultOptionalFields = {
     images: false,
     price: false,
@@ -12,6 +16,10 @@ const defaultOptionalFields = {
     listDescription: false,
 };
 
+/**
+ * @param {{ id: any, unit?: string }} options
+ * @constructor
+ */
 const Item = function ({ id, unit }) {
     this.id = id;
     this.name = '';
@@ -33,17 +41,25 @@ Item.prototype.save = function () {
     return this;
 };
 
+/**
+ * @param {object} input
+ */
 Item.prototype.load = function (input) {
     assignIn(this, input);
     if (typeof this.price === 'string') {
-        this.price = parseFloat(this.price, 10);
+        this.price = parseFloat(this.price);
     }
 };
 
+/**
+ * @param {{ library: any, id: any, _isNew?: any }} options
+ * @constructor
+ */
 const Category = function ({ library, id, _isNew }) {
     this.library = library;
     this.id = id;
     this.name = '';
+    /** @type {CategoryItem[]} */
     this.categoryItems = [];
 
     this.subtotalWeight = 0;
@@ -57,7 +73,11 @@ const Category = function ({ library, id, _isNew }) {
     return this;
 };
 
+/**
+ * @param {Partial<CategoryItem>} partialCategoryItem
+ */
 Category.prototype.addItem = function (partialCategoryItem) {
+    /** @type {CategoryItem} */
     const tempCategoryItem = {
         qty: 1,
         worn: 0,
@@ -70,14 +90,20 @@ Category.prototype.addItem = function (partialCategoryItem) {
     this.categoryItems.push(tempCategoryItem);
 };
 
+/**
+ * @param {Partial<CategoryItem>} categoryItem
+ */
 Category.prototype.updateCategoryItem = function (categoryItem) {
     const oldCategoryItem = this.getCategoryItemById(categoryItem.itemId);
-    assignIn(oldCategoryItem, categoryItem);
+    if (oldCategoryItem) assignIn(oldCategoryItem, categoryItem);
 };
 
+/**
+ * @param {any} itemId
+ */
 Category.prototype.removeItem = function (itemId) {
     const categoryItem = this.getCategoryItemById(itemId);
-    const index = this.categoryItems.indexOf(categoryItem);
+    const index = this.categoryItems.indexOf(/** @type {CategoryItem} */ (categoryItem));
     this.categoryItems.splice(index, 1);
 };
 
@@ -109,6 +135,10 @@ Category.prototype.calculateSubtotal = function () {
     }
 };
 
+/**
+ * @param {any} id
+ * @returns {CategoryItem | null}
+ */
 Category.prototype.getCategoryItemById = function (id) {
     for (const i in this.categoryItems) {
         const categoryItem = this.categoryItems[i];
@@ -117,6 +147,9 @@ Category.prototype.getCategoryItemById = function (id) {
     return null;
 };
 
+/**
+ * @param {any} index
+ */
 Category.prototype.getExtendedItemByIndex = function (index) {
     const categoryItem = this.categoryItems[index];
     const item = this.library.getItemById(categoryItem.itemId);
@@ -129,14 +162,17 @@ Category.prototype.save = function () {
     const out = assignIn({}, this);
 
     delete out.library;
-    delete out.template;
+    delete /** @type {any} */ (out).template;
     delete out._isNew;
 
     return out;
 };
 
+/**
+ * @param {object} input
+ */
 Category.prototype.load = function (input) {
-    delete input._isNew;
+    delete (/** @type {any} */ (input)._isNew);
 
     assignIn(this, input);
 
@@ -154,11 +190,17 @@ Category.prototype.load = function (input) {
     });
 };
 
+/**
+ * @param {{ id: any, library: any }} options
+ * @constructor
+ */
 const List = function ({ id, library }) {
     this.library = library;
     this.id = id;
     this.name = '';
+    /** @type {any[]} */
     this.categoryIds = [];
+    /** @type {any} */
     this.chart = null;
     this.description = '';
     this.externalId = '';
@@ -175,10 +217,17 @@ const List = function ({ id, library }) {
     return this;
 };
 
+/**
+ * @param {any} categoryId
+ */
 List.prototype.addCategory = function (categoryId) {
     this.categoryIds.push(categoryId);
 };
 
+/**
+ * @param {any} categoryId
+ * @returns {boolean}
+ */
 List.prototype.removeCategory = function (categoryId) {
     const catId = parseInt(categoryId);
     let index = this.categoryIds.indexOf(catId);
@@ -194,8 +243,13 @@ List.prototype.removeCategory = function (categoryId) {
     return true;
 };
 
+/**
+ * @param {string} type
+ * @param {boolean} [linkParent]
+ */
 List.prototype.renderChart = function (type, linkParent = true) {
-    const chartData = { points: {} };
+    /** @type {{ points: Record<string, any>, total: number }} */
+    const chartData = { points: {}, total: 0 };
     let total = 0;
 
     for (var i in this.categoryIds) {
@@ -218,6 +272,12 @@ List.prototype.renderChart = function (type, linkParent = true) {
 
     if (!total) return false;
 
+    /**
+     * @param {string} name
+     * @param {number} valueMg
+     * @param {string} unit
+     * @returns {string}
+     */
     const getTooltipText = function (name, valueMg, unit) {
         return `${name}: ${weightUtils.MgToWeight(valueMg, unit)} ${unit}`;
     };
@@ -225,6 +285,7 @@ List.prototype.renderChart = function (type, linkParent = true) {
     for (var i in this.categoryIds) {
         var category = this.library.getCategoryById(this.categoryIds[i]);
         if (category) {
+            /** @type {Record<string, any>} */
             const points = {};
 
             var categoryTotal;
@@ -240,8 +301,9 @@ List.prototype.renderChart = function (type, linkParent = true) {
                 categoryTotal = category.subtotalWeight;
             }
 
-            const tempColor = category.color || colorUtils.getColor(i);
+            const tempColor = category.color || colorUtils.getColor(+i);
             category.displayColor = colorUtils.rgbToString(tempColor);
+            /** @type {Record<string, any>} */
             const tempCategory = {};
 
             for (const j in category.categoryItems) {
@@ -249,9 +311,10 @@ List.prototype.renderChart = function (type, linkParent = true) {
                 let value = item.weight * item.qty;
                 if (!value) value = 0;
                 let name = getTooltipText(item.name, value, item.authorUnit);
-                const color = colorUtils.getColor(j, tempColor);
+                const color = colorUtils.getColor(+j, tempColor);
                 if (item.qty > 1) name += ` x ${item.qty}`;
                 var percent = value / categoryTotal;
+                /** @type {{ value: number, id: any, name: string, color: any, percent: number, parent?: any }} */
                 const tempItem = {
                     value,
                     id: item.id,
@@ -263,6 +326,7 @@ List.prototype.renderChart = function (type, linkParent = true) {
                 points[j] = tempItem;
             }
             var percent = categoryTotal / total;
+            /** @type {{ points: Record<string, any>, color: any, id: any, name: string, total: number, percent: number, visiblePoints: boolean, parent?: any }} */
             const tempCategoryData = {
                 points,
                 color: category.color,
@@ -291,7 +355,7 @@ List.prototype.calculateTotals = function () {
     let totalBaseWeight = 0;
     let totalPackWeight = 0;
     let totalQty = 0;
-    const out = { categories: [] };
+    const out = { categories: /** @type {any[]} */ ([]) };
 
     for (const i in this.categoryIds) {
         const category = this.library.getCategoryById(this.categoryIds[i]);
@@ -335,16 +399,26 @@ List.prototype.save = function () {
     return out;
 };
 
+/**
+ * @param {object} input
+ */
 List.prototype.load = function (input) {
     assignIn(this, input);
     this.calculateTotals();
 };
 
+/**
+ * @constructor
+ */
 const Library = function () {
     this.version = '0.3';
+    /** @type {Record<number, any>} */
     this.idMap = {};
+    /** @type {any[]} */
     this.items = [];
+    /** @type {any[]} */
     this.categories = [];
+    /** @type {any[]} */
     this.lists = [];
     this.sequence = 0;
     this.defaultListId = 1;
@@ -364,6 +438,9 @@ Library.prototype.firstRun = function () {
     const firstItem = this.newItem({ category: firstCategory });
 };
 
+/**
+ * @param {{ category?: any, _isNew?: any }} options
+ */
 Library.prototype.newItem = function ({ category, _isNew }) {
     const temp = new Item({ id: this.nextSequence(), unit: this.itemUnit });
     this.items.push(temp);
@@ -374,12 +451,18 @@ Library.prototype.newItem = function ({ category, _isNew }) {
     return temp;
 };
 
+/**
+ * @param {any} item
+ */
 Library.prototype.updateItem = function (item) {
     const oldItem = this.getItemById(item.id);
     assignIn(oldItem, item);
     return oldItem;
 };
 
+/**
+ * @param {any} id
+ */
 Library.prototype.removeItem = function (id) {
     const item = this.getItemById(id);
     for (const i in this.lists) {
@@ -395,6 +478,9 @@ Library.prototype.removeItem = function (id) {
     return true;
 };
 
+/**
+ * @param {{ list?: any, _isNew?: any }} options
+ */
 Library.prototype.newCategory = function ({ list, _isNew }) {
     const temp = new Category({ id: this.nextSequence(), _isNew, library: this });
 
@@ -407,6 +493,10 @@ Library.prototype.newCategory = function ({ list, _isNew }) {
     return temp;
 };
 
+/**
+ * @param {any} id
+ * @param {any} [force]
+ */
 Library.prototype.removeCategory = function (id, force) {
     const category = this.getCategoryById(id);
     const list = this.findListWithCategoryById(id);
@@ -434,11 +524,14 @@ Library.prototype.newList = function () {
     return temp;
 };
 
+/**
+ * @param {any} id
+ */
 Library.prototype.removeList = function (id) {
-    if (Object.size(this.lists) == 1) return;
+    if (this.lists.length == 1) return;
     const list = this.getListById(id);
 
-    for (var i = 0; i < list.categoryIds; i++) {
+    for (let i = 0; i < list.categoryIds.length; i++) {
         this.removeCategory(list.categoryIds[i], true);
     }
 
@@ -446,15 +539,13 @@ Library.prototype.removeList = function (id) {
     delete this.idMap[id];
 
     if (this.defaultListId == id) {
-        let newId = -1;
-        for (var i in lists) {
-            newId = i;
-            break;
-        }
-        this.defaultListId = newId;
+        this.defaultListId = this.lists.length > 0 ? this.lists[0].id : -1;
     }
 };
 
+/**
+ * @param {any} id
+ */
 Library.prototype.copyList = function (id) {
     const oldList = this.getListById(id);
     if (!oldList) return undefined;
@@ -476,18 +567,30 @@ Library.prototype.copyList = function (id) {
     return copiedList;
 };
 
+/**
+ * @param {string} type
+ */
 Library.prototype.renderChart = function (type) {
     return this.getListById(this.defaultListId).renderChart(type);
 };
 
+/**
+ * @param {any} id
+ */
 Library.prototype.getCategoryById = function (id) {
     return this.idMap[id];
 };
 
+/**
+ * @param {any} id
+ */
 Library.prototype.getItemById = function (id) {
     return this.idMap[id];
 };
 
+/**
+ * @param {any} id
+ */
 Library.prototype.getListById = function (id) {
     return this.idMap[id];
 };
@@ -507,10 +610,14 @@ Library.prototype.getItemsInCurrentList = function () {
     return out;
 };
 
+/**
+ * @param {any} itemId
+ * @param {any} [listId]
+ */
 Library.prototype.findCategoryWithItemById = function (itemId, listId) {
     if (listId) {
         const list = this.getListById(listId);
-        for (i in list.categoryIds) {
+        for (const i in list.categoryIds) {
             var category = this.getCategoryById(list.categoryIds[i]);
             if (category) {
                 for (var j in category.categoryItems) {
@@ -533,6 +640,9 @@ Library.prototype.findCategoryWithItemById = function (itemId, listId) {
     return undefined;
 };
 
+/**
+ * @param {any} id
+ */
 Library.prototype.findListWithCategoryById = function (id) {
     for (const i in this.lists) {
         const list = this.lists[i];
@@ -548,6 +658,7 @@ Library.prototype.nextSequence = function () {
 };
 
 Library.prototype.save = function () {
+    /** @type {Record<string, any>} */
     const out = {};
 
     out.version = this.version;
@@ -577,6 +688,9 @@ Library.prototype.save = function () {
     return out;
 };
 
+/**
+ * @param {any} serializedLibrary
+ */
 Library.prototype.load = function (serializedLibrary) {
     // upgrades should update "serializedLibrary" in-place instead of modifying "this"
     if (serializedLibrary.version === '0.1' || !serializedLibrary.version) {
@@ -590,24 +704,24 @@ Library.prototype.load = function (serializedLibrary) {
 
     assignIn(this.optionalFields, serializedLibrary.optionalFields);
 
-    for (var i in serializedLibrary.items) {
-        var temp = new Item({ id: serializedLibrary.items[i].id });
+    for (const i in serializedLibrary.items) {
+        const temp = new Item({ id: serializedLibrary.items[i].id });
         temp.load(serializedLibrary.items[i]);
         this.items.push(temp);
         this.idMap[temp.id] = temp;
     }
 
     this.categories = [];
-    for (var i in serializedLibrary.categories) {
-        var temp = new Category({ id: serializedLibrary.categories[i].id, library: this });
+    for (const i in serializedLibrary.categories) {
+        const temp = new Category({ id: serializedLibrary.categories[i].id, library: this });
         temp.load(serializedLibrary.categories[i]);
         this.categories.push(temp);
         this.idMap[temp.id] = temp;
     }
 
     this.lists = [];
-    for (var i in serializedLibrary.lists) {
-        var temp = new List({ id: serializedLibrary.lists[i].id, library: this });
+    for (const i in serializedLibrary.lists) {
+        const temp = new List({ id: serializedLibrary.lists[i].id, library: this });
         temp.load(serializedLibrary.lists[i]);
         this.lists.push(temp);
         this.idMap[temp.id] = temp;
@@ -623,6 +737,9 @@ Library.prototype.load = function (serializedLibrary) {
     this.defaultListId = serializedLibrary.defaultListId;
 };
 
+/**
+ * @param {any} serializedLibrary
+ */
 Library.prototype.upgrade01to02 = function (serializedLibrary) {
     if (!serializedLibrary.optionalFields) {
         serializedLibrary.optionalFields = assignIn({}, defaultOptionalFields);
@@ -636,6 +753,9 @@ Library.prototype.upgrade01to02 = function (serializedLibrary) {
     serializedLibrary.version = '0.2';
 };
 
+/**
+ * @param {any} serializedLibrary
+ */
 Library.prototype.upgrade02to03 = function (serializedLibrary) {
     this.sequenceShouldBeCorrect(serializedLibrary);
     this.idsShouldBeInts(serializedLibrary);
@@ -644,39 +764,48 @@ Library.prototype.upgrade02to03 = function (serializedLibrary) {
     serializedLibrary.version = '0.3';
 };
 
+/**
+ * @param {any} serializedLibrary
+ */
 Library.prototype.sequenceShouldBeCorrect = function (serializedLibrary) {
     let sequence = 0;
 
-    serializedLibrary.lists.forEach((list) => {
+    for (const list of serializedLibrary.lists) {
         if (list.id > sequence) {
             sequence = list.id;
         }
-    });
+    }
 
-    serializedLibrary.categories.forEach((category) => {
+    for (const category of serializedLibrary.categories) {
         if (category.id > sequence) {
             sequence = category.id;
         }
-    });
+    }
 
-    serializedLibrary.items.forEach((item) => {
+    for (const item of serializedLibrary.items) {
         if (item.id > sequence) {
             sequence = item.id;
         }
-    });
+    }
     serializedLibrary.sequence = sequence + 1;
 };
 
+/**
+ * @param {any} serializedLibrary
+ */
 Library.prototype.idsShouldBeInts = function (serializedLibrary) {
     // Some lists of Ids were strings previously. They should be numbers.
-    serializedLibrary.lists.forEach((list) => {
-        list.categoryIds = list.categoryIds.map((categoryId) => parseInt(categoryId, 10));
-    });
+    for (const list of serializedLibrary.lists) {
+        list.categoryIds = list.categoryIds.map((/** @type {any} */ categoryId) => parseInt(categoryId, 10));
+    }
 };
 
+/**
+ * @param {any} serializedLibrary
+ */
 Library.prototype.renameCategoryIds = function (serializedLibrary) {
     // categoryIds was previously itemIds. Renaming for clarity.
-    serializedLibrary.categories.forEach((category) => {
+    for (const category of serializedLibrary.categories) {
         if (typeof category.itemIds !== 'undefined') {
             if (!category.categoryItems || category.categoryItems.length === 0) {
                 category.categoryItems = category.itemIds;
@@ -688,34 +817,38 @@ Library.prototype.renameCategoryIds = function (serializedLibrary) {
         if (typeof category.categoryItems === 'undefined') {
             category.categoryItems = [];
         }
-    });
+    }
 };
 
+/**
+ * @param {any} serializedLibrary
+ */
 Library.prototype.fixDuplicateIds = function (serializedLibrary) {
+    /** @type {Record<string, any[]>} */
     const foundIds = {};
 
-    serializedLibrary.items.forEach((item) => {
+    for (const item of serializedLibrary.items) {
         if (!foundIds[item.id]) {
             foundIds[item.id] = [];
         }
         foundIds[item.id].push({ type: 'item', item });
-    });
+    }
 
-    serializedLibrary.categories.forEach((category) => {
+    for (const category of serializedLibrary.categories) {
         if (!foundIds[category.id]) {
             foundIds[category.id] = [];
         }
         foundIds[category.id].push({ type: 'category', category });
-    });
+    }
 
-    serializedLibrary.lists.forEach((list) => {
+    for (const list of serializedLibrary.lists) {
         if (!foundIds[list.id]) {
             foundIds[list.id] = [];
         }
         foundIds[list.id].push({ type: 'list', list });
-    });
+    }
 
-    for (id in foundIds) {
+    for (const id in foundIds) {
         if (foundIds[id].length > 1) {
             const duplicateSet = foundIds[id];
             duplicateSet.forEach((duplicate, index) => {
@@ -734,44 +867,51 @@ Library.prototype.fixDuplicateIds = function (serializedLibrary) {
     }
 };
 
+/**
+ * @param {any} serializedLibrary
+ * @param {any} list
+ * @param {any} newId
+ */
 Library.prototype.updateListId = function (serializedLibrary, list, newId) {
     list.id = newId;
 };
+
+/**
+ * @param {any} serializedLibrary
+ * @param {any} category
+ * @param {any} newId
+ */
 Library.prototype.updateCategoryId = function (serializedLibrary, category, newId) {
     const oldId = category.id;
 
     category.id = newId;
 
-    serializedLibrary.lists.forEach((list) => {
-        list.categoryIds.forEach((categoryId, index) => {
+    for (const list of serializedLibrary.lists) {
+        list.categoryIds.forEach((/** @type {any} */ categoryId, /** @type {number} */ index) => {
             if (categoryId === oldId) {
                 list.categoryIds[index] = newId;
             }
         });
-    });
+    }
 };
 
+/**
+ * @param {any} serializedLibrary
+ * @param {any} item
+ * @param {any} newId
+ */
 Library.prototype.updateItemId = function (serializedLibrary, item, newId) {
     const oldId = item.id;
 
     item.id = newId;
 
-    serializedLibrary.categories.forEach((category) => {
-        category.categoryItems.forEach((categoryItem) => {
+    for (const category of serializedLibrary.categories) {
+        for (const categoryItem of category.categoryItems) {
             if (categoryItem.itemId === oldId) {
                 categoryItem.itemId = newId;
             }
-        });
-    });
-};
-
-Object.size = function (obj) {
-    let size = 0;
-    let key;
-    for (key in obj) {
-        if (obj.hasOwnProperty(key)) size++;
+        }
     }
-    return size;
 };
 
 module.exports = {
