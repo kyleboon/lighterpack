@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const uuid = require('uuid');
 
 const { logger } = require('./server/log.js');
+const { connect } = require('./server/db.js');
 
 morgan.token('username', function getUsername (req) {
     return req.lighterpackusername
@@ -63,10 +64,16 @@ app.use('/', views);
 
 logger.info("Starting up Lighterpack...");
 
-// Default port is 3000; we can have multiple bindings
-config.get('bindings').map(
-    (bind) => {
-        app.listen(config.get('port'), bind);
-        logger.info(`Listening on [${bind}]:${config.get('port')}`);
-    },
-);
+(async () => {
+    try {
+        await connect();
+        logger.info('Connected to MongoDB.');
+        config.get('bindings').map((bind) => {
+            app.listen(config.get('port'), bind);
+            logger.info(`Listening on [${bind}]:${config.get('port')}`);
+        });
+    } catch (err) {
+        logger.error('Failed to connect to MongoDB', err);
+        process.exit(1);
+    }
+})();

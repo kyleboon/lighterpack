@@ -7,11 +7,8 @@ const Mustache = require('mustache');
 const extend = require('node.extend');
 const markdown = require('markdown').markdown;
 const config = require('config');
-const mongojs = require('mongojs');
 const { logWithRequest, logger } = require('./log.js');
-
-const collections = ['users', 'libraries'];
-const db = mongojs(config.get('databaseUrl'), collections);
+const { getDb } = require('./db.js');
 
 const weightUtils = require('../client/utils/weight.js');
 const dataTypes = require('../client/dataTypes.js');
@@ -74,67 +71,74 @@ for (let i = 0; i < vueRoutes.length; i++) {
     });
 }
 
-router.get('/r/:id', (req, res) => {
+router.get('/r/:id', async (req, res) => {
     const id = req.params.id;
 
     if (!id) {
         res.status(400).send('No list specified!');
         return;
     }
-    db.users.find({ 'library.lists.externalId': id }, (err, users) => {
-        if (err) {
-            res.status(500).send('An error occurred.');
-            return;
+
+    let users;
+    try {
+        users = await getDb().collection('users')
+            .find({ 'library.lists.externalId': id })
+            .toArray();
+    } catch (err) {
+        res.status(500).send('An error occurred.');
+        return;
+    }
+
+    if (!users.length) {
+        res.status(400).send('Invalid list specified.');
+        return;
+    }
+
+    const library = new Library();
+    let list;
+
+    if (!users[0] || typeof (users[0].library) === 'undefined') {
+        logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
+        res.status(500).send('Unknown error.');
+        return;
+    }
+
+    library.load(users[0].library);
+    for (const i in library.lists) {
+        if (library.lists[i].externalId && library.lists[i].externalId == id) {
+            library.defaultListId = library.lists[i].id;
+            list = library.lists[i];
+            break;
         }
-        if (!users.length) {
-            res.status(400).send('Invalid list specified.');
-            return;
-        }
-        const library = new Library();
-        let list;
+    }
 
-        if (!users[0] || typeof (users[0].library) === 'undefined') {
-            logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
-            res.status(500).send('Unknown error.');
-        }
-
-        library.load(users[0].library);
-        for (const i in library.lists) {
-            if (library.lists[i].externalId && library.lists[i].externalId == id) {
-                library.defaultListId = library.lists[i].id;
-                list = library.lists[i];
-                break;
-            }
-        }
-
-        const chartData = escape(JSON.stringify(list.renderChart('total', false)));
-        const renderedCategories = renderLibrary(library, {
-            itemTemplate: templates.t_itemShare,
-            categoryTemplate: templates.t_categoryShare,
-            optionalFields: library.optionalFields,
-            unitSelectTemplate: templates.t_unitSelect,
-            currencySymbol: library.currencySymbol,
-        });
-
-        const renderedTotals = renderLibraryTotals(library, templates.t_totals, templates.t_unitSelect);
-
-        let model = {
-            listName: list.name,
-            chartData,
-            renderedCategories,
-            renderedTotals,
-            optionalFields: library.optionalFields,
-            renderedDescription: markdown.toHTML(list.description),
-            scripts: shareScriptsHtml,
-            styles: shareStylesHtml,
-        };
-
-        model = extend(model, templates);
-        res.send(Mustache.render(shareTemplate, model));
+    const chartData = escape(JSON.stringify(list.renderChart('total', false)));
+    const renderedCategories = renderLibrary(library, {
+        itemTemplate: templates.t_itemShare,
+        categoryTemplate: templates.t_categoryShare,
+        optionalFields: library.optionalFields,
+        unitSelectTemplate: templates.t_unitSelect,
+        currencySymbol: library.currencySymbol,
     });
+
+    const renderedTotals = renderLibraryTotals(library, templates.t_totals, templates.t_unitSelect);
+
+    let model = {
+        listName: list.name,
+        chartData,
+        renderedCategories,
+        renderedTotals,
+        optionalFields: library.optionalFields,
+        renderedDescription: markdown.toHTML(list.description),
+        scripts: shareScriptsHtml,
+        styles: shareStylesHtml,
+    };
+
+    model = extend(model, templates);
+    res.send(Mustache.render(shareTemplate, model));
 });
 
-router.get('/e/:id', (req, res) => {
+router.get('/e/:id', async (req, res) => {
     const id = req.params.id;
 
     if (!id) {
@@ -142,66 +146,70 @@ router.get('/e/:id', (req, res) => {
         return;
     }
 
-    db.users.find({ 'library.lists.externalId': id }, (err, users) => {
-        if (err) {
-            res.status(500).send('An error occurred.');
-            return;
+    let users;
+    try {
+        users = await getDb().collection('users')
+            .find({ 'library.lists.externalId': id })
+            .toArray();
+    } catch (err) {
+        res.status(500).send('An error occurred.');
+        return;
+    }
+
+    if (!users.length) {
+        res.status(400).send('Invalid list specified.');
+        return;
+    }
+
+    const library = new Library();
+    let list;
+
+    if (!users[0] || typeof (users[0].library) === 'undefined') {
+        logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
+        res.status(500).send('Unknown error.');
+        return;
+    }
+
+    library.load(users[0].library);
+    for (const i in library.lists) {
+        if (library.lists[i].externalId && library.lists[i].externalId == id) {
+            library.defaultListId = library.lists[i].id;
+            list = library.lists[i];
+            break;
         }
+    }
 
-        if (!users.length) {
-            res.status(400).send('Invalid list specified.');
-            return;
-        }
+    const chartData = escape(JSON.stringify(list.renderChart('total', false)));
 
-        const library = new Library();
-        let list;
-
-        if (!users[0] || typeof (users[0].library) === 'undefined') {
-            logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
-            res.status(500).send('Unknown error.');
-        }
-
-        library.load(users[0].library);
-        for (const i in library.lists) {
-            if (library.lists[i].externalId && library.lists[i].externalId == id) {
-                library.defaultListId = library.lists[i].id;
-                list = library.lists[i];
-                break;
-            }
-        }
-
-        const chartData = escape(JSON.stringify(list.renderChart('total', false)));
-
-        const renderedCategories = renderLibrary(library, {
-            itemTemplate: templates.t_itemShare,
-            categoryTemplate: templates.t_categoryShare,
-            optionalFields: library.optionalFields,
-            unitSelectTemplate: templates.t_unitSelect,
-            renderedDescription: markdown.toHTML(list.description),
-            currencySymbol: library.currencySymbol,
-        });
-
-        const renderedTotals = renderLibraryTotals(library, templates.t_totals, templates.t_unitSelect);
-
-        let model = {
-            externalId: id,
-            listName: list.name,
-            chartData,
-            renderedCategories,
-            renderedTotals,
-            optionalFields: library.optionalFields,
-            renderedDescription: markdown.toHTML(list.description),
-            baseUrl: config.get('deployUrl'),
-            styles: shareStylesLinks,
-            scripts: shareScriptsLinks,
-        };
-        model = extend(model, templates);
-        model.renderedTemplate = escape(Mustache.render(embedTemplate, model));
-        res.send(Mustache.render(embedJTemplate, model));
+    const renderedCategories = renderLibrary(library, {
+        itemTemplate: templates.t_itemShare,
+        categoryTemplate: templates.t_categoryShare,
+        optionalFields: library.optionalFields,
+        unitSelectTemplate: templates.t_unitSelect,
+        renderedDescription: markdown.toHTML(list.description),
+        currencySymbol: library.currencySymbol,
     });
+
+    const renderedTotals = renderLibraryTotals(library, templates.t_totals, templates.t_unitSelect);
+
+    let model = {
+        externalId: id,
+        listName: list.name,
+        chartData,
+        renderedCategories,
+        renderedTotals,
+        optionalFields: library.optionalFields,
+        renderedDescription: markdown.toHTML(list.description),
+        baseUrl: config.get('deployUrl'),
+        styles: shareStylesLinks,
+        scripts: shareScriptsLinks,
+    };
+    model = extend(model, templates);
+    model.renderedTemplate = escape(Mustache.render(embedTemplate, model));
+    res.send(Mustache.render(embedJTemplate, model));
 });
 
-router.get('/csv/:id', (req, res) => {
+router.get('/csv/:id', async (req, res) => {
     const id = req.params.id;
 
     if (!id) {
@@ -209,81 +217,85 @@ router.get('/csv/:id', (req, res) => {
         return;
     }
 
-    db.users.find({ 'library.lists.externalId': id }, (err, users) => {
-        if (err) {
-            res.status(500).send('An error occurred.');
-            return;
+    let users;
+    try {
+        users = await getDb().collection('users')
+            .find({ 'library.lists.externalId': id })
+            .toArray();
+    } catch (err) {
+        res.status(500).send('An error occurred.');
+        return;
+    }
+
+    if (!users.length) {
+        res.status(400).send('Invalid list specified.');
+        return;
+    }
+
+    const library = new Library();
+    let list;
+
+    if (!users[0] || typeof (users[0].library) === 'undefined') {
+        logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
+        res.status(500).send('Unknown error.');
+        return;
+    }
+
+    library.load(users[0].library);
+    for (var i in library.lists) {
+        if (library.lists[i].externalId && library.lists[i].externalId == id) {
+            library.defaultListId = library.lists[i].id;
+            list = library.lists[i];
+            break;
         }
+    }
 
-        if (!users.length) {
-            res.status(400).send('Invalid list specified.');
-            return;
-        }
+    const fullUnits = {
+        oz: 'ounce', lb: 'pound', g: 'gram', kg: 'kilogram',
+    };
+    let out = 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable\n';
 
-        const library = new Library();
-        let list;
+    for (var i in list.categoryIds) {
+        const category = library.getCategoryById(list.categoryIds[i]);
+        if (category) {
+            for (const j in category.categoryItems) {
+                const categoryItem = category.categoryItems[j];
 
-        if (!users[0] || typeof (users[0].library) === 'undefined') {
-            logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
-            res.status(500).send('Unknown error.');
-        }
+                if (categoryItem) {
+                    const item = library.getItemById(categoryItem.itemId);
 
-        library.load(users[0].library);
-        for (var i in library.lists) {
-            if (library.lists[i].externalId && library.lists[i].externalId == id) {
-                library.defaultListId = library.lists[i].id;
-                list = library.lists[i];
-                break;
-            }
-        }
+                    const itemRow = [item.name];
+                    itemRow.push(category.name);
+                    itemRow.push(item.description);
+                    itemRow.push(`${categoryItem.qty}`);
+                    itemRow.push(`${weightUtils.MgToWeight(item.weight, item.authorUnit)}`);
+                    itemRow.push(fullUnits[item.authorUnit]);
+                    itemRow.push(item.url);
+                    itemRow.push(`${item.price}`);
+                    itemRow.push(categoryItem.worn ? 'Worn' : '');
+                    itemRow.push(categoryItem.consumable ? 'Consumable' : '');
 
-        const fullUnits = {
-            oz: 'ounce', lb: 'pound', g: 'gram', kg: 'kilogram',
-        };
-        let out = 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable\n';
-
-        for (var i in list.categoryIds) {
-            const category = library.getCategoryById(list.categoryIds[i]);
-            if (category) {
-                for (const j in category.categoryItems) {
-                    const categoryItem = category.categoryItems[j];
-
-                    if (categoryItem) {
-                        const item = library.getItemById(categoryItem.itemId);
-
-                        const itemRow = [item.name];
-                        itemRow.push(category.name);
-                        itemRow.push(item.description);
-                        itemRow.push(`${categoryItem.qty}`);
-                        itemRow.push(`${weightUtils.MgToWeight(item.weight, item.authorUnit)}`);
-                        itemRow.push(fullUnits[item.authorUnit]);
-                        itemRow.push(item.url);
-                        itemRow.push(`${item.price}`);
-                        itemRow.push(categoryItem.worn ? 'Worn' : '');
-                        itemRow.push(categoryItem.consumable ? 'Consumable' : '');
-
-                        for (const k in itemRow) {
-                            const field = itemRow[k];
-                            if (k > 0) out += ',';
-                            if (typeof (field) === 'string') {
-                                if (field.indexOf(',') > -1) out += `"${field.replace(/\"/g, '""')}"`;
-                                else out += field;
-                            } else out += field;
-                        }
-                        out += '\n';
+                    for (const k in itemRow) {
+                        const field = itemRow[k];
+                        if (k > 0) out += ',';
+                        if (typeof (field) === 'string') {
+                            if (field.indexOf(',') > -1) out += `"${field.replace(/\"/g, '""')}"`;
+                            else out += field;
+                        } else out += field;
                     }
+                    out += '\n';
                 }
             }
         }
+    }
 
-        let filename = list.name;
-        if (!filename) filename = id;
-        filename = filename.replace(/[^a-z0-9\-]/gi, '_');
+    let filename = list.name;
+    if (!filename) filename = id;
+    filename = filename.replace(/[^a-z0-9\-]/gi, '_');
 
-        res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', `attachment;filename=${filename}.csv`);
-        res.send(out);
-    });
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment;filename=${filename}.csv`);
+    res.send(out);
 });
 
 function init() {
