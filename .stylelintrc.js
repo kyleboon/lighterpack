@@ -30,6 +30,7 @@ module.exports = {
         'no-empty-source': null, // for vue file support
         'no-invalid-double-slash-comments': null, // valid in SCSS
         'order/properties-alphabetical-order': true, // stylistic preference
+        'import-notation': null, // project uses Sass @import, not CSS url() notation
         'selector-class-pattern': null, // project uses lp-prefixed camelCase
         'selector-id-pattern': null, // project uses lp-prefixed camelCase
     },
