@@ -46,11 +46,14 @@ LighterPack helps you track the gear you bring on adventures.
 ## Available Scripts
 
 ```bash
-npm run dev          # Start dev server with hot reload (webpack dev server on :8080)
-npm run start        # Production build + start server
-npm run build        # Webpack production build only
-npm run lint:js      # ESLint with auto-fix (.js and .vue files)
-npm run lint:css     # Stylelint with auto-fix (.scss and .vue files)
+npm run dev              # Start dev server with hot reload (Vite on :5173)
+npm run start            # Production build + start server
+npm run build            # Vite production build only
+npm run lint:js          # ESLint with auto-fix (.js and .vue files)
+npm run lint:css         # Stylelint with auto-fix (.scss and .vue files)
+npm run test:unit        # Run Vitest unit tests
+npm run test:unit:watch  # Run Vitest in watch mode
+npm run test:unit:coverage  # Run Vitest with V8 coverage report
 ```
 
 ## Testing
@@ -93,7 +96,7 @@ Playwright automatically starts the app server before running tests (via `npm ru
 - ✅ Add Prettier + `husky` + `lint-staged` for consistent formatting and pre-commit enforcement
 - ✅ Enable stricter ESLint rules: `no-shadow`, `no-param-reassign`, `consistent-return`
 - ✅ Add GitHub Actions CI (lint + E2E tests on every push/PR)
-- Add Vitest + `@vue/test-utils` for unit and component tests
+- ✅ Add Vitest + `@vue/test-utils` for unit and component tests
 - Add `tsconfig.json` with strict mode; enable `@ts-check` in existing JS files
 - Enable `vue/require-prop-types` and `vue/require-explicit-emits` in ESLint
 

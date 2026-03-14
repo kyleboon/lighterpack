@@ -90,4 +90,8 @@ export default defineConfig({
             vue: 'vue/dist/vue.esm-bundler.js',
         },
     },
+    test: {
+        environment: 'jsdom',
+        include: ['test/unit/**/*.spec.{js,ts}'],
+    },
 });

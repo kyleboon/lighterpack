@@ -80,6 +80,24 @@ export default [
             'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
         },
     },
+    // Unit test files
+    {
+        files: ['test/unit/**/*.spec.{js,ts}'],
+        ...js.configs.recommended,
+        languageOptions: {
+            ecmaVersion: 2022,
+            globals: {
+                require: 'readonly',
+                module: 'writable',
+                exports: 'writable',
+                console: 'readonly',
+            },
+        },
+        rules: {
+            ...sharedRules,
+            ...prettier.rules,
+        },
+    },
     // Vue files — apply vue plugin rules on top of js recommended
     ...pluginVue.configs['flat/recommended'].map((config) => ({
         ...config,
