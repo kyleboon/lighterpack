@@ -23,7 +23,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../css/globals';
+@use '../css/globals' as *;
 
 $sidebarWidth: 280px;
 $sidebarOverflow: 1000px;

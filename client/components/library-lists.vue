@@ -96,7 +96,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../css/globals';
+@use '../css/globals' as *;
 
 #listContainer {
     flex: 0 0 auto;

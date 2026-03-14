@@ -99,7 +99,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../css/globals';
+@use '../css/globals' as *;
 
 #lp-moderation {
     display: grid;

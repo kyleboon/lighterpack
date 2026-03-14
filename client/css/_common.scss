@@ -1,4 +1,5 @@
-@import '_globals.scss';
+@use 'sass:color';
+@use '_globals' as *;
 
 .lp {
     &,
@@ -239,7 +240,7 @@
         background-position: 0 0;
         box-shadow:
             0 0 1px rgb(255 255 255 / 50%) inset,
-            0 1px 3px darken($orange2, 25%);
+            0 1px 3px color.adjust($orange2, $lightness: -25%);
     }
 
     &:focus,
@@ -249,8 +250,8 @@
 
     &:focus:not(:active) {
         box-shadow:
-            0 0 0 1px darken($orange2, 15%) inset,
-            0 1px 3px darken($orange2, 25%);
+            0 0 0 1px color.adjust($orange2, $lightness: -15%) inset,
+            0 1px 3px color.adjust($orange2, $lightness: -25%);
         outline: none;
     }
 
@@ -335,7 +336,7 @@
 }
 
 .lpSuccess {
-    color: darken($green1, 10%);
+    color: color.adjust($green1, $lightness: -10%);
 }
 
 .lpWarning {

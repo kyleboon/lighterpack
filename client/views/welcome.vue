@@ -68,7 +68,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../css/globals';
+@use '../css/globals' as *;
 
 $welcomeVerticalSpacing: 80px;
 

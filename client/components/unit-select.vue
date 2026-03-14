@@ -80,7 +80,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../css/globals';
+@use '../css/globals' as *;
 
 .lpUnitSelect {
     border: 1px solid transparent;

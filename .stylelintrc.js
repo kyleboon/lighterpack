@@ -21,7 +21,18 @@ module.exports = {
         'function-no-unknown': [
             true,
             {
-                ignoreFunctions: ['darken', 'lighten', 'saturate', 'desaturate', 'mix', 'fade', 'alpha', 'rgba'],
+                ignoreFunctions: [
+                    'adjust',
+                    'scale',
+                    'darken',
+                    'lighten',
+                    'saturate',
+                    'desaturate',
+                    'mix',
+                    'fade',
+                    'alpha',
+                    'rgba',
+                ],
             },
         ],
         'declaration-property-value-no-unknown': null, // doesn't understand SCSS variables in values

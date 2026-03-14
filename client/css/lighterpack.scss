@@ -1,5 +1,5 @@
-@import '_common.scss';
-@import '_edit.scss';
-@import '_list.scss';
-@import '_print.scss';
-@import '_sprite.scss';
+@use '_common';
+@use '_edit';
+@use '_list';
+@use '_print';
+@use '_sprite';

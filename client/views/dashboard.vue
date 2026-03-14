@@ -143,7 +143,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../css/globals';
+@use '../css/globals' as *;
 
 #header {
     align-items: baseline;
