@@ -1,21 +1,11 @@
 listReport = function () {
     const $list = $('.lpList');
     const $categories = $('.lpCategories');
-    const $chartContainer = $('.lpChart');
     const $imageModal = $('#lpImageDialog');
     const $modalOverlay = $('.lpModalOverlay');
-    let chart = null;
-    const list = null;
-    const library = null;
 
     function init() {
         initEventHandlers();
-
-        if (typeof chartData !== "undefined") {
-            chartData = JSON.parse(unescape(chartData));
-            addParents(chartData, false);
-            chart = pies({ processedData: chartData, container: $chartContainer, hoverCallback: chartHover });
-        }
     }
 
     function WeightToMg(value, unit) {
@@ -51,20 +41,6 @@ listReport = function () {
             } else {
                 return Math.round(100 * value / 453592.0, 2) / 100;
             }
-        }
-    }
-
-    function addParents(chartData, parent) {
-        if (parent) chartData.parent = parent;
-        for (const i in chartData.points) {
-            addParents(chartData.points[i], chartData);
-        }
-    }
-
-    function chartHover(chartItem) {
-        $('.hover').removeClass('hover');
-        if (chartItem && chartItem.id) {
-            $(`#total_${chartItem.id}`).addClass('hover');
         }
     }
 

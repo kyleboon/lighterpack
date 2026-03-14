@@ -13,7 +13,7 @@
                 <h1 class="lpListName">{{listName}}</h1>
                 <div class="lpListSummary">
                     <div class="lpChartContainer">
-                        <canvas class="lpChart" height="260" width="260"></canvas>
+                        {{{chartSvg}}}
                     </div>
                     <div class="lpTotalsContainer">
                         {{{renderedTotals}}}
@@ -35,6 +35,5 @@
         <div class="lpModalOverlay"></div>
         <script type="text/javascript" src="/js/jquery.min.js?v=4"></script>
         {{{scripts}}}
-        <script type="text/javascript">chartData="{{{chartData}}}";</script>
     </body>
 </html>

@@ -1,7 +1,12 @@
 <template>
     <div class="lpListSummary">
         <div class="lpChartContainer">
-            <canvas class="lpChart" height="260" width="260" />
+            <donut-chart
+                :categories="categories"
+                :total-weight="list.totalWeight"
+                :library="library"
+                @category-hover="hoveredCategoryId = $event"
+            />
         </div>
         <div class="lpTotalsContainer">
             <ul class="lpTotals lpTable lpDataTable">
@@ -125,8 +130,8 @@
 <script>
 import colorPicker from './colorpicker.vue';
 import unitSelect from './unit-select.vue';
+import donutChart from './donut-chart.vue';
 
-import pies from '../pies.js';
 import utilsMixin from '../mixins/utils-mixin.js';
 import colorUtils from '../utils/color.js';
 
@@ -135,12 +140,12 @@ export default {
     components: {
         colorPicker,
         unitSelect,
+        donutChart,
     },
     mixins: [utilsMixin],
     props: ['list'],
     data() {
         return {
-            chart: null,
             hoveredCategoryId: null,
         };
     },
@@ -149,53 +154,22 @@ export default {
             return this.$store.library;
         },
         categories() {
-            return this.list.categoryIds.map((id) => {
+            return this.list.categoryIds.map((id, i) => {
                 const category = this.library.getCategoryById(id);
                 category.activeHover = this.hoveredCategoryId === category.id;
+                category.displayColor = colorUtils.rgbToString(category.color || colorUtils.getColor(i));
                 return category;
             });
         },
     },
-    watch: {
-        '$store.library.defaultListId': 'updateChart',
-        'list.totalWeight': 'updateChart',
-        'list.categoryIds': 'updateChart',
-    },
-    mounted() {
-        this.updateChart();
-    },
     methods: {
-        updateChart(type) {
-            const chartData = this.library.renderChart(type);
-
-            if (chartData) {
-                if (this.chart) {
-                    this.chart.update({ processedData: chartData });
-                } else {
-                    this.chart = pies({
-                        processedData: chartData,
-                        container: document.getElementsByClassName('lpChart')[0],
-                        hoverCallback: this.chartHover,
-                    });
-                }
-            }
-            return chartData;
-        },
-        chartHover(chartItem) {
-            if (chartItem && chartItem.id) {
-                this.hoveredCategoryId = chartItem.id;
-            } else {
-                this.hoveredCategoryId = null;
-            }
-        },
         setTotalUnit(unit) {
             this.$store.setTotalUnit(unit);
         },
         updateColor(category, color) {
             category.color = colorUtils.hexToRgb(color);
-            category.displayColor = colorUtils.rgbToString(colorUtils.hexToRgb(color));
+            category.displayColor = colorUtils.rgbToString(category.color);
             this.$store.updateCategoryColor(category);
-            this.updateChart();
         },
         colorToHex(color) {
             return colorUtils.rgbToHex(colorUtils.stringToRgb(color));

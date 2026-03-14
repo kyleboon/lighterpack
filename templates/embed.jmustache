@@ -2,37 +2,14 @@ listReport_{{externalId}} = function() {
     var $ = jQuery,
         $list = $("#{{externalId}}"),
         $categories,
-        $chartContainer,
-        chart = null,
         externalId = "{{externalId}}",
-        renderedTemplate = "{{{renderedTemplate}}}",
-        chartData = "{{{chartData}}}";
+        renderedTemplate = "{{{renderedTemplate}}}";
 
 
     function init() {
         $list.append(unescape(renderedTemplate));
         $categories = $(".lpCategories", $list);
-        $chartContainer = $(".lpChart", $list);
-        if (chartData) {
-            chartData = JSON.parse(unescape(chartData));
-            addParents(chartData, false);
-            chart = pies({processedData: chartData, container: $chartContainer, hoverCallback: chartHover});    
-        }
         initEventHandlers();
-    }
-
-    function addParents(chartData, parent) {
-        if (parent) chartData.parent = parent;
-        for (var i in chartData.points) {
-            addParents(chartData.points[i], chartData);
-        }
-    }
-
-    function chartHover(chartItem) {
-        $(".hover").removeClass("hover");
-        if (chartItem && chartItem.id) {
-            $("#total_"+chartItem.id).addClass("hover");
-        }
     }
 
     function updateSubtotalsUnit(unit) {

@@ -12,6 +12,7 @@ const { getDb } = require('./db.js');
 
 const weightUtils = require('../client/utils/weight.js');
 const dataTypes = require('../client/dataTypes.js');
+const { renderChartSvg } = require('./chart-svg.js');
 
 const Item = dataTypes.Item;
 const Category = dataTypes.Category;
@@ -110,7 +111,6 @@ router.get('/r/:id', async (req, res) => {
         }
     }
 
-    const chartData = escape(JSON.stringify(list.renderChart('total', false)));
     const renderedCategories = renderLibrary(library, {
         itemTemplate: templates.t_itemShare,
         categoryTemplate: templates.t_categoryShare,
@@ -120,10 +120,11 @@ router.get('/r/:id', async (req, res) => {
     });
 
     const renderedTotals = renderLibraryTotals(library, templates.t_totals, templates.t_unitSelect);
+    const chartSvg = renderChartSvg(library);
 
     let model = {
         listName: list.name,
-        chartData,
+        chartSvg,
         renderedCategories,
         renderedTotals,
         optionalFields: library.optionalFields,
@@ -175,8 +176,6 @@ router.get('/e/:id', async (req, res) => {
         }
     }
 
-    const chartData = escape(JSON.stringify(list.renderChart('total', false)));
-
     const renderedCategories = renderLibrary(library, {
         itemTemplate: templates.t_itemShare,
         categoryTemplate: templates.t_categoryShare,
@@ -187,11 +186,12 @@ router.get('/e/:id', async (req, res) => {
     });
 
     const renderedTotals = renderLibraryTotals(library, templates.t_totals, templates.t_unitSelect);
+    const chartSvg = renderChartSvg(library);
 
     let model = {
         externalId: id,
         listName: list.name,
-        chartData,
+        chartSvg,
         renderedCategories,
         renderedTotals,
         optionalFields: library.optionalFields,
