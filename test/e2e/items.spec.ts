@@ -10,7 +10,7 @@ async function freshUser(page: any) {
 }
 
 /**
- * Seeds the list with 3 categories and 6 items so tests start with
+ * Seeds the list with 4 categories and 8 items so tests start with
  * meaningful data rather than a single unnamed category and item.
  *
  * Result:
@@ -18,12 +18,15 @@ async function freshUser(page: any) {
  *   Shelter  — Tent (800 oz, $500, qty 1), Sleeping Bag (600 oz, $200, qty 1)
  *   Clothing — Rain Jacket (300 oz, $150, qty 1), Fleece (250 oz, $100, qty 1)
  *   Kitchen  — Stove (100 oz, $80, qty 1), Fuel Canister (200 oz, $15, qty 3)
+ *   Food     — Trail Mix (8 oz, $8, qty 1, consumable), Energy Bars (6 oz, $12, qty 3, consumable)
+ *              consumable totals: 26 oz, $44.00
  */
 async function seedListData(page: any) {
-    // Enable item prices and list description via Settings
+    // Enable item prices, list description, and consumable items via Settings
     await page.locator('#settings').hover();
     await page.getByLabel('Item prices').check();
     await page.getByLabel('List descriptions').check();
+    await page.getByLabel('Consumable items').check();
     // Click away to close the popover before interacting with the list
     await page.locator('.lpListBody').click();
 
@@ -72,6 +75,22 @@ async function seedListData(page: any) {
     await page.locator('.lpCategory').nth(2).locator('input.lpWeight').nth(1).fill('200');
     await page.locator('.lpCategory').nth(2).locator('input.lpPrice').nth(1).fill('15');
     await page.locator('.lpCategory').nth(2).locator('input.lpQty').nth(1).fill('3');
+
+    // Add Food category with 2 consumable items
+    await page.getByText('Add new category').click();
+    await page.locator('input.lpCategoryName').nth(3).fill('Food');
+    await page.locator('.lpCategory').nth(3).locator('input.lpName').first().fill('Trail Mix');
+    await page.locator('.lpCategory').nth(3).locator('input.lpDescription').first().fill('Assorted nuts and dried fruit');
+    await page.locator('.lpCategory').nth(3).locator('input.lpWeight').first().fill('8');
+    await page.locator('.lpCategory').nth(3).locator('input.lpPrice').first().fill('8');
+    await page.locator('.lpCategory').nth(3).locator('.lpConsumable').first().click({ force: true });
+    await page.locator('.lpCategory').nth(3).getByText('Add new item').click();
+    await page.locator('.lpCategory').nth(3).locator('input.lpName').nth(1).fill('Energy Bars');
+    await page.locator('.lpCategory').nth(3).locator('input.lpDescription').nth(1).fill('High protein snack bars');
+    await page.locator('.lpCategory').nth(3).locator('input.lpWeight').nth(1).fill('6');
+    await page.locator('.lpCategory').nth(3).locator('input.lpPrice').nth(1).fill('12');
+    await page.locator('.lpCategory').nth(3).locator('input.lpQty').nth(1).fill('3');
+    await page.locator('.lpCategory').nth(3).locator('.lpConsumable').nth(1).click({ force: true });
 }
 
 test.describe('Item and category management', () => {
@@ -87,7 +106,7 @@ test.describe('Item and category management', () => {
         await freshUser(page);
         await seedListData(page);
         await page.getByText('Add new category').click();
-        await expect(page.locator('.lpCategory')).toHaveCount(4);
+        await expect(page.locator('.lpCategory')).toHaveCount(5);
     });
 
     test('should rename an item', async ({ page }) => {
@@ -102,7 +121,7 @@ test.describe('Item and category management', () => {
         await freshUser(page);
         await seedListData(page);
         await page.locator('.lpCategory').nth(1).getByText('Add new item').click();
-        await expect(page.locator('.lpItem')).toHaveCount(7);
+        await expect(page.locator('.lpItem')).toHaveCount(9);
     });
 
     test('should show category subtotal weight for seeded items', async ({ page }) => {
@@ -117,7 +136,7 @@ test.describe('Item and category management', () => {
         await freshUser(page);
         await seedListData(page);
         await page.locator('.lpRemoveItem').first().click({ force: true });
-        await expect(page.locator('.lpItem')).toHaveCount(5);
+        await expect(page.locator('.lpItem')).toHaveCount(7);
     });
 
     test('should delete a category after confirming the speedbump', async ({ page }) => {
@@ -125,7 +144,16 @@ test.describe('Item and category management', () => {
         await seedListData(page);
         await page.locator('.lpRemoveCategory').first().click({ force: true });
         await page.getByRole('button', { name: 'Yes' }).click();
-        await expect(page.locator('.lpCategory')).toHaveCount(2);
+        await expect(page.locator('.lpCategory')).toHaveCount(3);
+    });
+
+    test('should show consumable weight and price in the list summary', async ({ page }) => {
+        await freshUser(page);
+        await seedListData(page);
+        // Trail Mix (8 oz × 1) + Energy Bars (6 oz × 3) = 26 oz, $8 + $36 = $44.00
+        await expect(page.locator('.lpConsumableWeight')).toBeVisible();
+        await expect(page.locator('.lpConsumableWeight .lpDisplaySubtotal')).toContainText('26');
+        await expect(page.locator('.lpConsumableWeight .lpCell.lpNumber.lpSubtotal').first()).toContainText('$44.00');
     });
 
     test('should mark an item as worn and show worn weight in the list summary', async ({ page }) => {
