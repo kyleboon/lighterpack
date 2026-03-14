@@ -1,5 +1,5 @@
-LighterPack contributing guide
-===========
+# LighterPack contributing guide
+
 Thanks for your interest in contributing to LighterPack!
 
 LighterPack currently has a bit of technical debt that needs to be paid down before any new feature work can resume. Namely, the original site was written in jQuery and is not very maintainable, so a rewrite using Vue.js is in-progress.

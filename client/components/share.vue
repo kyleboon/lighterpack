@@ -6,13 +6,21 @@
                 <div class="lpFields">
                     <div class="lpField">
                         <label for="shareUrl">Share your list</label>
-                        <input id="shareUrl" v-select-on-bus="'show-share-box'" v-select-on-focus type="text" :value="shareUrl">
+                        <input
+                            id="shareUrl"
+                            v-select-on-bus="'show-share-box'"
+                            v-select-on-focus
+                            type="text"
+                            :value="shareUrl"
+                        />
                     </div>
                     <div class="lpField">
                         <label for="embedUrl">Embed your list</label>
                         <textarea id="embedUrl" v-select-on-focus :value="embedCode" readonly />
                     </div>
-                    <a id="csvUrl" :href="csvUrl" target="_blank" class="lpHref"><i class="lpSprite lpSpriteDownload" />Export to CSV</a>
+                    <a id="csvUrl" :href="csvUrl" target="_blank" class="lpHref"
+                        ><i class="lpSprite lpSpriteDownload" />Export to CSV</a
+                    >
                 </div>
             </template>
         </PopoverHover>

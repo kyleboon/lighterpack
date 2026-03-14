@@ -1,36 +1,92 @@
 <template>
-    <li :id="item.id" :class="'lpItem '+ item.classes">
+    <li :id="item.id" :class="'lpItem ' + item.classes">
         <span class="lpHandleCell">
             <div class="lpItemHandle lpHandle" title="Reorder this item" />
         </span>
         <span v-if="library.optionalFields['images']" class="lpImageCell">
-            <img v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()">
+            <img v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()" />
         </span>
-        <input v-model="item.name" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" placeholder="Name" @input="saveItem">
-        <input v-model="item.description" type="text" class="lpDescription lpSilent" placeholder="Description" @input="saveItem">
+        <input
+            v-model="item.name"
+            v-focus-on-create="categoryItem._isNew"
+            type="text"
+            class="lpName lpSilent"
+            placeholder="Name"
+            @input="saveItem"
+        />
+        <input
+            v-model="item.description"
+            type="text"
+            class="lpDescription lpSilent"
+            placeholder="Description"
+            @input="saveItem"
+        />
         <span class="lpActionsCell">
             <i class="lpSprite lpCamera" title="Upload a photo or use a photo from the web" @click="updateItemImage" />
-            <i class="lpSprite lpLink" :class="{lpActive: item.url}" title="Add a link for this item" @click="updateItemLink" />
-            <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" title="Mark this item as worn" @click="toggleWorn" />
-            <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" title="Mark this item as a consumable" @click="toggleConsumable" />
+            <i
+                class="lpSprite lpLink"
+                :class="{ lpActive: item.url }"
+                title="Add a link for this item"
+                @click="updateItemLink"
+            />
+            <i
+                v-if="library.optionalFields['worn']"
+                class="lpSprite lpWorn"
+                :class="{ lpActive: categoryItem.worn }"
+                title="Mark this item as worn"
+                @click="toggleWorn"
+            />
+            <i
+                v-if="library.optionalFields['consumable']"
+                class="lpSprite lpConsumable"
+                :class="{ lpActive: categoryItem.consumable }"
+                title="Mark this item as a consumable"
+                @click="toggleConsumable"
+            />
             <i :class="'lpSprite lpStar lpStar' + categoryItem.star" title="Star this item" @click="cycleStar" />
         </span>
         <span v-if="library.optionalFields['price']" class="lpPriceCell">
-            <input v-model="displayPrice" v-empty-if-zero type="text" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @keydown.up="incrementPrice($event)" @keydown.down="decrementPrice($event)" @blur="setDisplayPrice">
+            <input
+                v-model="displayPrice"
+                v-empty-if-zero
+                type="text"
+                :class="{ lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError }"
+                @input="savePrice"
+                @keydown.up="incrementPrice($event)"
+                @keydown.down="decrementPrice($event)"
+                @blur="setDisplayPrice"
+            />
         </span>
         <span class="lpWeightCell lpNumber">
-            <input v-model="displayWeight" v-empty-if-zero type="text" :class="{lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError}" @input="saveWeight" @keydown.up="incrementWeight($event)" @keydown.down="decrementWeight($event)">
+            <input
+                v-model="displayWeight"
+                v-empty-if-zero
+                type="text"
+                :class="{ lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError }"
+                @input="saveWeight"
+                @keydown.up="incrementWeight($event)"
+                @keydown.down="decrementWeight($event)"
+            />
             <unitSelect :unit="item.authorUnit" :on-change="setUnit" />
         </span>
         <span class="lpQtyCell">
-            <input v-model="displayQty" type="text" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
+            <input
+                v-model="displayQty"
+                type="text"
+                :class="{ lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError }"
+                @input="saveQty"
+                @keydown.up="incrementQty($event)"
+                @keydown.down="decrementQty($event)"
+            />
             <span class="lpArrows">
                 <span class="lpSprite lpUp" @click="incrementQty($event)" />
                 <span class="lpSprite lpDown" @click="decrementQty($event)" />
             </span>
         </span>
         <span class="lpRemoveCell">
-            <a class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem"><i class="lpSprite lpSpriteRemove" /></a>
+            <a class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem"
+                ><i class="lpSprite lpSpriteRemove"
+            /></a>
         </span>
     </li>
 </template>
@@ -72,7 +128,8 @@ export default {
         thumbnailImage() {
             if (this.item.image) {
                 return `https://i.imgur.com/${this.item.image}s.jpg`;
-            } if (this.item.imageUrl) {
+            }
+            if (this.item.imageUrl) {
                 return this.item.imageUrl;
             }
             return '';
@@ -80,7 +137,8 @@ export default {
         fullImage() {
             if (this.item.image) {
                 return `https://i.imgur.com/${this.item.image}l.jpg`;
-            } if (this.item.imageUrl) {
+            }
+            if (this.item.imageUrl) {
                 return this.item.imageUrl;
             }
             return '';
@@ -276,7 +334,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 .lpItem {
     &:hover,
     &.ui-sortable-helper {
@@ -325,5 +382,4 @@ export default {
         top: 11px;
     }
 }
-
 </style>

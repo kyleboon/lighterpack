@@ -139,7 +139,11 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 const categoryItem = dropCategory.getCategoryItemById(item.id);
                 const categoryItemIndex = dropCategory.categoryItems.indexOf(categoryItem);
                 if (categoryItem && categoryItemIndex !== -1) {
-                    dropCategory.categoryItems = arrayMove(dropCategory.categoryItems, categoryItemIndex, args.dropIndex);
+                    dropCategory.categoryItems = arrayMove(
+                        dropCategory.categoryItems,
+                        categoryItemIndex,
+                        args.dropIndex,
+                    );
                 }
                 this.library.getListById(this.library.defaultListId).calculateTotals();
             }
@@ -292,55 +296,63 @@ export const useLighterpackStore = defineStore('lighterpack', {
 
 // Auto-save plugin — watches state changes and saves debounced
 export function setupAutoSave(store) {
-    const debouncedSave = debounce((state) => {
-        if (!state.library) return;
+    const debouncedSave = debounce(
+        (state) => {
+            if (!state.library) return;
 
-        const saveData = JSON.stringify(state.library.save());
+            const saveData = JSON.stringify(state.library.save());
 
-        if (saveData === state.lastSaveData) return;
+            if (saveData === state.lastSaveData) return;
 
-        const saveRemotely = function () {
-            if (state.isSaving) {
-                setTimeout(() => store.setIsSaving(false), saveInterval + 1);
-                return;
-            }
+            const saveRemotely = function () {
+                if (state.isSaving) {
+                    setTimeout(() => store.setIsSaving(false), saveInterval + 1);
+                    return;
+                }
 
-            const currentSaveData = JSON.stringify(state.library.save());
-            store.setIsSaving(true);
-            store.setLastSaveData(currentSaveData);
+                const currentSaveData = JSON.stringify(state.library.save());
+                store.setIsSaving(true);
+                store.setLastSaveData(currentSaveData);
 
-            return fetchJson('/saveLibrary/', {
-                method: 'POST',
-                body: JSON.stringify({ syncToken: state.syncToken, username: state.loggedIn, data: currentSaveData }),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-            })
-                .then((response) => {
-                    store.setSyncToken(response.syncToken);
-                    store.setIsSaving(false);
+                return fetchJson('/saveLibrary/', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        syncToken: state.syncToken,
+                        username: state.loggedIn,
+                        data: currentSaveData,
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
                 })
-                .catch((response) => {
-                    store.setIsSaving(false);
-                    let error = 'An error occurred while attempting to save your data.';
-                    if (response.json && response.json.status) {
-                        error = response.json.status;
-                    }
-                    if (response.status == 401) {
-                        bus.$emit('unauthorized', error);
-                    } else {
-                        alert(error); // TODO
-                    }
-                });
-        };
+                    .then((response) => {
+                        store.setSyncToken(response.syncToken);
+                        store.setIsSaving(false);
+                    })
+                    .catch((response) => {
+                        store.setIsSaving(false);
+                        let error = 'An error occurred while attempting to save your data.';
+                        if (response.json && response.json.status) {
+                            error = response.json.status;
+                        }
+                        if (response.status == 401) {
+                            bus.$emit('unauthorized', error);
+                        } else {
+                            alert(error); // TODO
+                        }
+                    });
+            };
 
-        if (state.saveType === 'remote') {
-            saveRemotely();
-        } else if (state.saveType === 'local') {
-            localStorage.library = saveData;
-        }
-    }, saveInterval, { maxWait: saveInterval * 3 });
+            if (state.saveType === 'remote') {
+                saveRemotely();
+            } else if (state.saveType === 'local') {
+                localStorage.library = saveData;
+            }
+        },
+        saveInterval,
+        { maxWait: saveInterval * 3 },
+    );
 
     store.$subscribe((mutation, state) => {
         const ignore = [

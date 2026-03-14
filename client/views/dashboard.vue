@@ -1,12 +1,21 @@
 <template>
-    <div v-if="isLoaded" id="main" :class="{lpHasSidebar: library.showSidebar}">
+    <div v-if="isLoaded" id="main" :class="{ lpHasSidebar: library.showSidebar }">
         <sidebar />
         <div class="lpList lpTransition">
             <div id="header" class="clearfix">
                 <span class="headerItem">
                     <a id="hamburger" class="lpTransition" @click="toggleSidebar"><i class="lpSprite lpHamburger" /></a>
                 </span>
-                <input id="lpListName" :value="list.name" type="text" class="lpListName lpSilent headerItem" placeholder="List Name" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
+                <input
+                    id="lpListName"
+                    :value="list.name"
+                    type="text"
+                    class="lpListName lpSilent headerItem"
+                    placeholder="List Name"
+                    autocomplete="off"
+                    name="lastpass-disable-search"
+                    @input="updateListName"
+                />
                 <share />
                 <listSettings />
                 <accountDropdown v-if="isSignedIn" />
@@ -22,12 +31,28 @@
 
             <div id="lpFooter">
                 <div class="lpSiteBy">
-                    Site by <a class="lpHref" href="https://www.galenmaly.com/" target="_blank" rel="noopener noreferrer">Galen Maly</a>
-                    and <a class="lpHref" href="https://github.com/galenmaly/lighterpack/graphs/contributors" target="_blank" rel="noopener noreferrer">friends</a>.
+                    Site by
+                    <a class="lpHref" href="https://www.galenmaly.com/" target="_blank" rel="noopener noreferrer"
+                        >Galen Maly</a
+                    >
+                    and
+                    <a
+                        class="lpHref"
+                        href="https://github.com/galenmaly/lighterpack/graphs/contributors"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >friends</a
+                    >.
                 </div>
                 <div class="lpContact">
-                    <a class="lpHref" href="https://github.com/galenmaly/lighterpack" target="_blank" rel="noopener noreferrer">Copyleft</a> LighterPack 2019
-                    -
+                    <a
+                        class="lpHref"
+                        href="https://github.com/galenmaly/lighterpack"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Copyleft</a
+                    >
+                    LighterPack 2019 -
                     <a class="lpHref" href="mailto:info@lighterpack.com">Contact</a>
                 </div>
             </div>
@@ -118,7 +143,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
+@import url('../css/_globals');
 
 #header {
     align-items: baseline;

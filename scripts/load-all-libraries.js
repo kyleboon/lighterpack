@@ -33,7 +33,7 @@ db.users_prod.find({}, (err, users) => {
             erroredUsers.push(user.username);
             erroredUsersCount++;
         }
-        const listIds = user.library.lists.map(list => list.externalId);
+        const listIds = user.library.lists.map((list) => list.externalId);
     }
     console.log('complete');
     console.log('---');

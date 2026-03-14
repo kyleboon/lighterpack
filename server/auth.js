@@ -27,9 +27,7 @@ const authenticateUser = async function (req, res, next) {
                 sameSite: 'lax',
             });
         } else {
-            const users = await getDb().collection('users')
-                .find({ token: req.cookies.lp })
-                .toArray();
+            const users = await getDb().collection('users').find({ token: req.cookies.lp }).toArray();
             if (!users || !users.length) {
                 logWithRequest(req, { message: 'bad cookie!' });
                 return res.status(404).json({ message: 'Please log in again.' });

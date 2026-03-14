@@ -22,6 +22,7 @@ npx playwright test --project=chromium     # Run tests in one browser only
 ## Architecture
 
 ### Frontend (`client/`)
+
 - **Vue 2.6** SPA with **Vuex** store (`client/store/store.js`) and **Vue Router** (`client/routes.js`)
 - Entry point: `client/lighterpack.js`
 - Components in `client/components/` (~30 `.vue` files), page views in `client/views/`
@@ -31,6 +32,7 @@ npx playwright test --project=chromium     # Run tests in one browser only
 - SCSS styles in `client/css/`
 
 ### Backend (`server/`)
+
 - **Express.js** app configured in `app.js`
 - Routes split across: `server/endpoints.js` (API), `server/views.js` (SSR share pages), `server/moderation-endpoints.js` (admin)
 - **MongoDB** via mongojs — collections: `users`, `libraries`
@@ -39,10 +41,12 @@ npx playwright test --project=chromium     # Run tests in one browser only
 - Share pages rendered server-side with Mustache templates (`templates/`)
 
 ### Configuration
+
 - Uses the `config` npm package. Defaults in `config/default.json`, local overrides in `config/local.json` (gitignored)
 - Dev server port: 8080 (webpack dev server proxies to Express on port 3000)
 
 ### Build System
+
 - **Webpack 5** with separate configs: `webpack.config.js` (production) and `webpack.development.config.js` (dev)
 - Two entry points: `app` (main SPA) and `share` (share page)
 - Output to `public/dist/` — a custom `AssetJsonPlugin` generates `assets.json` for server-side template references

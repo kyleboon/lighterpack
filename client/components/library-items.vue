@@ -1,7 +1,7 @@
 <template>
     <section id="libraryContainer">
         <h2>Gear</h2>
-        <input id="librarySearch" v-model="searchText" type="text" placeholder="search items">
+        <input id="librarySearch" v-model="searchText" type="text" placeholder="search items" />
         <ul id="library">
             <li v-for="item in filteredItems" :key="item.id" class="lpLibraryItem" :data-item-id="item.id">
                 <a v-if="item.url" :href="item.url" target="_blank" class="lpName lpHref">{{ item.name }}</a>
@@ -13,7 +13,12 @@
                 <span class="lpDescription">
                     {{ item.description }}
                 </span>
-                <a class="lpRemove lpRemoveLibraryItem speedbump" title="Delete this item permanently" @click="removeItem(item)"><i class="lpSprite lpSpriteRemove" /></a>
+                <a
+                    class="lpRemove lpRemoveLibraryItem speedbump"
+                    title="Delete this item permanently"
+                    @click="removeItem(item)"
+                    ><i class="lpSprite lpSpriteRemove"
+                /></a>
                 <div v-if="!item.inCurrentList" class="lpHandle lpLibraryItemHandle" title="Reorder this item" />
             </li>
         </ul>
@@ -46,13 +51,16 @@ export default {
             let item;
             let filteredItems = [];
             if (!this.searchText) {
-                filteredItems = this.library.items.map(item => Object.assign({}, item));
+                filteredItems = this.library.items.map((item) => Object.assign({}, item));
             } else {
                 const lowerCaseSearchText = this.searchText.toLowerCase();
 
                 for (i = 0; i < this.library.items.length; i++) {
                     item = this.library.items[i];
-                    if (item.name.toLowerCase().indexOf(lowerCaseSearchText) > -1 || item.description.toLowerCase().indexOf(lowerCaseSearchText) > -1) {
+                    if (
+                        item.name.toLowerCase().indexOf(lowerCaseSearchText) > -1 ||
+                        item.description.toLowerCase().indexOf(lowerCaseSearchText) > -1
+                    ) {
                         filteredItems.push(Object.assign({}, item));
                     }
                 }
@@ -73,7 +81,7 @@ export default {
             return this.library.getListById(this.library.defaultListId);
         },
         categories() {
-            return this.list.categoryIds.map(id => this.library.getCategoryById(id));
+            return this.list.categoryIds.map((id) => this.library.getCategoryById(id));
         },
     },
     watch: {
@@ -119,7 +127,11 @@ export default {
                     return;
                 }
                 const categoryId = parseInt($target.parentElement.id); // fragile
-                this.$store.addItemToCategory({ itemId: this.itemDragId, categoryId, dropIndex: getElementIndex($el) - 1 });
+                this.$store.addItemToCategory({
+                    itemId: this.itemDragId,
+                    categoryId,
+                    dropIndex: getElementIndex($el) - 1,
+                });
                 drake.cancel(true);
             });
             this.drake = drake;
@@ -138,7 +150,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 #libraryContainer {
     display: flex;
     flex: 2 0 30vh;

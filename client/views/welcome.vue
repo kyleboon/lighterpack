@@ -2,7 +2,8 @@
     <div id="lpWelcomeContainer">
         <div id="lpLaunchBanner">
             <div class="lpContainer">
-                <strong>Welcome to the new version of LighterPack!</strong> We hope you like it, and if you have any questions please <a href="mailto:info@lighterpack.com" class="lpHref">get in touch</a>.
+                <strong>Welcome to the new version of LighterPack!</strong> We hope you like it, and if you have any
+                questions please <a href="mailto:info@lighterpack.com" class="lpHref">get in touch</a>.
             </div>
         </div>
         <div id="lpWelcome" class="lpContainer">
@@ -10,9 +11,7 @@
             <div class="lpWelcomeContent">
                 <div class="lpWelcomeRegisterContainer">
                     <div class="lpWelcomeRegister">
-                        <h3 class="lpWelcomeContainerHeader">
-                            Register an account
-                        </h3>
+                        <h3 class="lpWelcomeContainerHeader">Register an account</h3>
                         <registerForm />
                     </div>
                     <div class="lpValuePropContainer">
@@ -27,13 +26,15 @@
                                 <h3><strong>3.</strong>Share your lists with others</h3>
                             </li>
                         </ul>
-                        <img id="lpWelcomeScreenshot" src="/images/screenshot.jpg" alt="A screenshot of the LighterPack interface">
+                        <img
+                            id="lpWelcomeScreenshot"
+                            src="/images/screenshot.jpg"
+                            alt="A screenshot of the LighterPack interface"
+                        />
                     </div>
                 </div>
                 <div class="lpWelcomeSigninContainer">
-                    <h3 class="lpWelcomeContainerHeader">
-                        Sign in
-                    </h3>
+                    <h3 class="lpWelcomeContainerHeader">Sign in</h3>
                     <SigninForm />
                 </div>
             </div>
@@ -67,12 +68,12 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
+@import url('../css/_globals');
 
 $welcomeVerticalSpacing: 80px;
 
 #lpWelcomeContainer {
-    background: #385f8b url("/images/lp_bg2.jpg") 50% 50%;
+    background: #385f8b url('/images/lp_bg2.jpg') 50% 50%;
     background-size: cover;
     min-height: 100vh;
     padding-top: $welcomeVerticalSpacing;
@@ -168,5 +169,4 @@ $welcomeVerticalSpacing: 80px;
     text-align: center;
     top: 0;
 }
-
 </style>

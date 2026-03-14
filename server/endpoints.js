@@ -15,7 +15,10 @@ const { authenticateUser, verifyPassword } = require('./auth.js');
 
 function generateId(alphabet, size) {
     const bytes = crypto.randomBytes(size * 2);
-    return Array.from(bytes).map(b => alphabet[b % alphabet.length]).join('').slice(0, size);
+    return Array.from(bytes)
+        .map((b) => alphabet[b % alphabet.length])
+        .join('')
+        .slice(0, size);
 }
 
 let mg;
@@ -70,13 +73,17 @@ router.post('/register', async (req, res) => {
     const existingByUsername = await users.find({ username }).toArray();
     if (existingByUsername.length) {
         logWithRequest(req, { message: 'User exists', username });
-        return res.status(400).json({ errors: [{ field: 'username', message: 'That username already exists, please pick a different username.' }] });
+        return res.status(400).json({
+            errors: [{ field: 'username', message: 'That username already exists, please pick a different username.' }],
+        });
     }
 
     const existingByEmail = await users.find({ email }).toArray();
     if (existingByEmail.length) {
         logWithRequest(req, { message: 'User email exists', email });
-        return res.status(400).json({ errors: [{ field: 'email', message: 'A user with that email already exists.' }] });
+        return res
+            .status(400)
+            .json({ errors: [{ field: 'email', message: 'A user with that email already exists.' }] });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -134,12 +141,20 @@ router.post('/saveLibrary', authenticateUser, async (req, res) => {
     }
     if (!req.body.username || !req.body.data) {
         logWithRequest(req, { message: 'bad save: missing username or data', username: user.username });
-        return res.status(400).json({ message: 'An error occurred while saving your data. Please refresh your browser and try again.' });
+        return res
+            .status(400)
+            .json({ message: 'An error occurred while saving your data. Please refresh your browser and try again.' });
     }
 
     if (req.body.username != user.username) {
-        logWithRequest(req, { message: 'bad save: bad username', initatedby: user.username, initiatedfor: req.body.username });
-        return res.status(401).json({ message: 'An error occurred while saving your data. Please refresh your browser and login again.' });
+        logWithRequest(req, {
+            message: 'bad save: bad username',
+            initatedby: user.username,
+            initiatedfor: req.body.username,
+        });
+        return res.status(401).json({
+            message: 'An error occurred while saving your data. Please refresh your browser and login again.',
+        });
     }
 
     if (req.body.syncToken != user.syncToken) {
@@ -152,7 +167,14 @@ router.post('/saveLibrary', authenticateUser, async (req, res) => {
         library = JSON.parse(req.body.data);
     } catch (e) {
         logWithRequest(req, { message: 'Library parsing issue', username: user.username });
-        return res.status(400).json({ errors: [{ message: 'An error occurred while saving your data - unable to parse library. If this persists, please contact support.' }] });
+        return res.status(400).json({
+            errors: [
+                {
+                    message:
+                        'An error occurred while saving your data - unable to parse library. If this persists, please contact support.',
+                },
+            ],
+        });
     }
 
     user.library = library;
@@ -170,9 +192,7 @@ router.post('/externalId', authenticateUser, async (req, res) => {
     while (true) {
         id = generateId('1234567890abcdefghijklmnopqrstuvwxyz', 6);
         logWithRequest(req, { message: 'Id generated', id });
-        const existing = await getDb().collection('users')
-            .find({ 'library.lists.externalId': id })
-            .toArray();
+        const existing = await getDb().collection('users').find({ 'library.lists.externalId': id }).toArray();
         if (!existing.length) break;
         logWithRequest(req, { message: 'Id collision detected', id });
     }
@@ -264,7 +284,9 @@ router.post('/account', authenticateUser, async (req, res) => {
         verified = await verifyPassword(user.username, String(req.body.currentPassword));
     } catch (err) {
         logWithRequest(req, { message: 'Account bad current password', username: user.username });
-        return res.status(400).json({ errors: [{ field: 'currentPassword', message: 'Your current password is incorrect.' }] });
+        return res
+            .status(400)
+            .json({ errors: [{ field: 'currentPassword', message: 'Your current password is incorrect.' }] });
     }
 
     if (req.body.newPassword) {
@@ -309,12 +331,20 @@ router.post('/delete-account', authenticateUser, async (req, res) => {
         verified = await verifyPassword(user.username, String(req.body.password));
     } catch (err) {
         logWithRequest(req, { message: 'Bad account deletion - invalid password', username: req.body.username });
-        return res.status(400).json({ errors: [{ field: 'currentPassword', message: 'Your current password is incorrect.' }] });
+        return res
+            .status(400)
+            .json({ errors: [{ field: 'currentPassword', message: 'Your current password is incorrect.' }] });
     }
 
     if (req.body.username !== verified.username) {
-        logWithRequest(req, { message: 'Bad account deletion - wrong user', requestedUsername: req.body.username, initiatedby: user.username });
-        return res.status(400).json({ errors: [{ message: 'An error occurred, please try logging out and in again.' }] });
+        logWithRequest(req, {
+            message: 'Bad account deletion - wrong user',
+            requestedUsername: req.body.username,
+            initiatedby: user.username,
+        });
+        return res
+            .status(400)
+            .json({ errors: [{ message: 'An error occurred, please try logging out and in again.' }] });
     }
 
     await getDb().collection('users').deleteOne({ _id: verified._id });

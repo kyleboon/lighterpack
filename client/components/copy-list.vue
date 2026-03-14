@@ -6,9 +6,10 @@
                 {{ list.name }}
             </option>
         </select>
-        <br><br>
+        <br /><br />
         <p class="lpWarning">
-            <b>Note:</b> Copying a list will link the items between your lists. Updating an item in one list will alter that item in all other lists that item is in.
+            <b>Note:</b> Copying a list will link the items between your lists. Updating an item in one list will alter
+            that item in all other lists that item is in.
         </p>
         <a id="copyConfirm" class="lpButton" @click="copyList">Copy List</a>
         <a class="lpButton close" @click="shown = false">Cancel</a>
@@ -52,6 +53,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
-
+@import url('../css/_globals');
 </style>

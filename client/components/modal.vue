@@ -6,7 +6,11 @@
             </div>
         </transition>
         <transition name="lpModal">
-            <div v-if="shown" :class="{'lpModalOverlay': true, 'lpBlackout': blackout, 'lpTransparent': transparentOverlay}" @click="hide" />
+            <div
+                v-if="shown"
+                :class="{ lpModalOverlay: true, lpBlackout: blackout, lpTransparent: transparentOverlay }"
+                @click="hide"
+            />
         </transition>
     </div>
 </template>
@@ -60,7 +64,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
+@import url('../css/_globals');
 
 .lpModal {
     background: $background1;
@@ -121,7 +125,7 @@ export default {
 
     &.lpBlackout {
         animation: none;
-        background: url("/images/lp_bg2.jpg") 50% 50%;
+        background: url('/images/lp_bg2.jpg') 50% 50%;
         background-size: cover;
         opacity: 1;
     }
@@ -139,5 +143,4 @@ export default {
         transform: translateX(-50%) translateY(-50%) scale(0.95);
     }
 }
-
 </style>

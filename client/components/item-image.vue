@@ -5,35 +5,27 @@
                 <div class="lpHalf">
                     <h2>Add image by URL</h2>
                     <form id="itemImageUrlForm" @submit.prevent="saveImageUrl()">
-                        <input id="itemImageUrl" v-model="imageUrl" type="text" placeholder="Image URL">
-                        <input type="submit" class="lpButton" value="Save">
+                        <input id="itemImageUrl" v-model="imageUrl" type="text" placeholder="Image URL" />
+                        <input type="submit" class="lpButton" value="Save" />
                         <a class="lpHref close" @click="shown = false">Cancel</a>
                     </form>
                 </div>
                 <div class="lpHalf">
                     <h2>Upload image from disk</h2>
                     <template v-if="!item.image">
-                        <p class="imageUploadDescription">
-                            Your image will be hosted on imgur.
-                        </p>
-                        <button id="itemImageUpload" class="lpButton" @click="triggerImageUpload">
-                            Upload Image
-                        </button>
+                        <p class="imageUploadDescription">Your image will be hosted on imgur.</p>
+                        <button id="itemImageUpload" class="lpButton" @click="triggerImageUpload">Upload Image</button>
                         <a class="lpHref close" @click="shown = false">Cancel</a>
-                        <p v-if="uploading">
-                            Uploading image...
-                        </p>
+                        <p v-if="uploading">Uploading image...</p>
                     </template>
                     <template v-if="item.image">
-                        <button id="itemImageUpload" class="lpButton" @click="removeItemImage">
-                            Remove Image
-                        </button>
+                        <button id="itemImageUpload" class="lpButton" @click="removeItemImage">Remove Image</button>
                     </template>
                 </div>
             </div>
         </modal>
         <form id="imageUpload" ref="imageUploadForm">
-            <input id="image" ref="imageInput" type="file" name="image" @change="uploadImage">
+            <input id="image" ref="imageInput" type="file" name="image" @change="uploadImage" />
         </form>
     </div>
 </template>
@@ -103,7 +95,8 @@ export default {
                     this.uploading = false;
                     this.$store.updateItemImage({ image: response.data.id, item: this.item });
                     this.shown = false;
-                }).catch((response) => {
+                })
+                .catch((response) => {
                     this.uploading = false;
                     alert('Upload failed! If this issue persists please file a bug.');
                 });
@@ -116,6 +109,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

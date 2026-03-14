@@ -35,18 +35,19 @@ function getAllIds() {
             }
             console.log(`found ${users.length} users`);
 
-
             users.forEach((user) => {
                 user.library.categories.forEach((category) => {
                     console.log(category.id);
                 });
 
-                const userListIds = user.library.lists.map(list => list.externalId).filter((listId) => {
-                    if (!listId) {
-                        return false;
-                    }
-                    return true;
-                });
+                const userListIds = user.library.lists
+                    .map((list) => list.externalId)
+                    .filter((listId) => {
+                        if (!listId) {
+                            return false;
+                        }
+                        return true;
+                    });
                 workingListIds = workingListIds.concat(userListIds);
             });
 
@@ -69,8 +70,7 @@ function compareNextListRender() {
     if (!(workingListIds.length % 50)) {
         console.log(`${Math.round(((originalIdsLength - workingListIds.length) / originalIdsLength) * 100)}%`);
     }
-    return compareListRender(listId)
-        .then(compareNextListRender);
+    return compareListRender(listId).then(compareNextListRender);
 }
 
 function compareListRender(listId) {
@@ -78,18 +78,14 @@ function compareListRender(listId) {
         const fullUrlOld = `${oldBaseUrl}/r/${listId}`;
         const fullUrlNew = `${newBaseUrl}/r/${listId}`;
 
-        Promise.all([
-            extractListTotal(fullUrlOld),
-            extractListTotal(fullUrlNew),
-        ])
-            .then(([oldResponse, newResponse]) => {
-                if (oldResponse !== newResponse) {
-                    console.log('difference found!');
-                    console.log(listId);
-                    resolve();
-                }
+        Promise.all([extractListTotal(fullUrlOld), extractListTotal(fullUrlNew)]).then(([oldResponse, newResponse]) => {
+            if (oldResponse !== newResponse) {
+                console.log('difference found!');
+                console.log(listId);
                 resolve();
-            });
+            }
+            resolve();
+        });
     });
 }
 

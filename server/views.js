@@ -20,8 +20,8 @@ const Library = dataTypes.Library;
 
 const templates = {};
 
-const vueRoutes = [ /* TODO - get this from same data source as Vue */
-    { path: '/' },
+const vueRoutes = [
+    /* TODO - get this from same data source as Vue */ { path: '/' },
     { path: '/signin' },
     { path: '/signin/reset-password' },
     { path: '/signin/forgot-username' },
@@ -81,9 +81,7 @@ router.get('/r/:id', async (req, res) => {
 
     let users;
     try {
-        users = await getDb().collection('users')
-            .find({ 'library.lists.externalId': id })
-            .toArray();
+        users = await getDb().collection('users').find({ 'library.lists.externalId': id }).toArray();
     } catch (err) {
         res.status(500).send('An error occurred.');
         return;
@@ -97,7 +95,7 @@ router.get('/r/:id', async (req, res) => {
     const library = new Library();
     let list;
 
-    if (!users[0] || typeof (users[0].library) === 'undefined') {
+    if (!users[0] || typeof users[0].library === 'undefined') {
         logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
         res.status(500).send('Unknown error.');
         return;
@@ -148,9 +146,7 @@ router.get('/e/:id', async (req, res) => {
 
     let users;
     try {
-        users = await getDb().collection('users')
-            .find({ 'library.lists.externalId': id })
-            .toArray();
+        users = await getDb().collection('users').find({ 'library.lists.externalId': id }).toArray();
     } catch (err) {
         res.status(500).send('An error occurred.');
         return;
@@ -164,7 +160,7 @@ router.get('/e/:id', async (req, res) => {
     const library = new Library();
     let list;
 
-    if (!users[0] || typeof (users[0].library) === 'undefined') {
+    if (!users[0] || typeof users[0].library === 'undefined') {
         logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
         res.status(500).send('Unknown error.');
         return;
@@ -219,9 +215,7 @@ router.get('/csv/:id', async (req, res) => {
 
     let users;
     try {
-        users = await getDb().collection('users')
-            .find({ 'library.lists.externalId': id })
-            .toArray();
+        users = await getDb().collection('users').find({ 'library.lists.externalId': id }).toArray();
     } catch (err) {
         res.status(500).send('An error occurred.');
         return;
@@ -235,7 +229,7 @@ router.get('/csv/:id', async (req, res) => {
     const library = new Library();
     let list;
 
-    if (!users[0] || typeof (users[0].library) === 'undefined') {
+    if (!users[0] || typeof users[0].library === 'undefined') {
         logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
         res.status(500).send('Unknown error.');
         return;
@@ -251,7 +245,10 @@ router.get('/csv/:id', async (req, res) => {
     }
 
     const fullUnits = {
-        oz: 'ounce', lb: 'pound', g: 'gram', kg: 'kilogram',
+        oz: 'ounce',
+        lb: 'pound',
+        g: 'gram',
+        kg: 'kilogram',
     };
     let out = 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable\n';
 
@@ -278,7 +275,7 @@ router.get('/csv/:id', async (req, res) => {
                     for (const k in itemRow) {
                         const field = itemRow[k];
                         if (k > 0) out += ',';
-                        if (typeof (field) === 'string') {
+                        if (typeof field === 'string') {
                             if (field.indexOf(',') > -1) out += `"${field.replace(/\"/g, '""')}"`;
                             else out += field;
                         } else out += field;
@@ -304,11 +301,13 @@ function init() {
             logger.info('Error loading templates');
             logger.info(err);
         }
-        files.filter((file) => (file.substr(0, 2) == 't_' && file.substr(-9) == '.mustache')).forEach((file) => {
-            const fileShort = file.substr(0, file.length - 9);
-            const data = fs.readFileSync(path.join(__dirname, '../templates/', file));
-            templates[fileShort] = data.toString();
-        });
+        files
+            .filter((file) => file.substr(0, 2) == 't_' && file.substr(-9) == '.mustache')
+            .forEach((file) => {
+                const fileShort = file.substr(0, file.length - 9);
+                const data = fs.readFileSync(path.join(__dirname, '../templates/', file));
+                templates[fileShort] = data.toString();
+            });
 
         fs.readFile(path.join(__dirname, '../templates/share.mustache'), (err, data) => {
             if (!err) {
@@ -357,7 +356,15 @@ const renderItem = function (item, args) {
 
     const starClass = item.star ? `lpStar${item.star}` : '';
     const out = {
-        classes, unit, displayWeight, unitSelect, showImages: args.showImages, showPrices: args.showPrices, starClass, displayPrice, currencySymbol: args.currencySymbol,
+        classes,
+        unit,
+        displayWeight,
+        unitSelect,
+        showImages: args.showImages,
+        showPrices: args.showPrices,
+        starClass,
+        displayPrice,
+        currencySymbol: args.currencySymbol,
     };
     Object.assign(out, item);
 
@@ -378,7 +385,10 @@ const renderCategory = function (category, args) {
     category.subtotalPriceDisplay = category.subtotalPrice ? category.subtotalPrice.toFixed(2) : '0.00';
     let temp = Object.assign({}, category);
     temp = Object.assign(temp, {
-        items, subtotalUnit: args.totalUnit, currencySymbol: args.currencySymbol, showPrices: args.showPrices,
+        items,
+        subtotalUnit: args.totalUnit,
+        currencySymbol: args.currencySymbol,
+        showPrices: args.showPrices,
     });
 
     return Mustache.render(args.categoryTemplate, temp);
@@ -453,11 +463,25 @@ const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, uni
 };
 
 var renderLibraryTotals = function (library, totalsTemplate, unitSelectTemplate) {
-    return renderListTotals(library.getListById(library.defaultListId), totalsTemplate, unitSelectTemplate, library.totalUnit);
+    return renderListTotals(
+        library.getListById(library.defaultListId),
+        totalsTemplate,
+        unitSelectTemplate,
+        library.totalUnit,
+    );
 };
 
 function renderUnitSelect(unit, unitSelectTemplate, weight) {
-    const temp = { unit, units: [{ unit: 'oz', selected: (unit == 'oz') }, { unit: 'lb', selected: (unit == 'lb') }, { unit: 'g', selected: (unit == 'g') }, { unit: 'kg', selected: (unit == 'kg') }], weight };
+    const temp = {
+        unit,
+        units: [
+            { unit: 'oz', selected: unit == 'oz' },
+            { unit: 'lb', selected: unit == 'lb' },
+            { unit: 'g', selected: unit == 'g' },
+            { unit: 'kg', selected: unit == 'kg' },
+        ],
+        weight,
+    };
     return Mustache.render(unitSelectTemplate, temp);
 }
 

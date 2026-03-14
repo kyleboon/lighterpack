@@ -6,7 +6,7 @@ const collections = ['users', 'libraries'];
 const db = mongojs(config.get('databaseUrl'), collections);
 
 console.log('loading users....');
-db.users.find({username: { '$regex' : '[A-Z]'} }, (err, users) => {
+db.users.find({ username: { $regex: '[A-Z]' } }, (err, users) => {
     if (!users.length) {
         console.log('no users found');
         return;

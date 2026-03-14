@@ -20,7 +20,9 @@ router.get('/moderation/search', authenticateUser, requireModerator, async (req,
         users.find({ email: { $regex: `${searchQuery}.*`, $options: 'si' } }).toArray(),
     ]);
 
-    const allResults = [].concat(nameResult).concat(emailResult)
+    const allResults = []
+        .concat(nameResult)
+        .concat(emailResult)
         .map((user) => ({
             username: user.username,
             library: user.library,

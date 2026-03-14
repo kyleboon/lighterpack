@@ -23,7 +23,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
+@import url('../css/_globals');
 
 $sidebarWidth: 280px;
 $sidebarOverflow: 1000px;
@@ -40,7 +40,7 @@ $sidebarPadding: 20px;
     padding-right: $sidebarPadding;
     position: fixed;
     transition: opacity $transitionDurationSlow ease-in-out 0s;
-    width: $sidebarWidth + $sidebarOverflow + $sidebarPadding*2;
+    width: $sidebarWidth + $sidebarOverflow + $sidebarPadding * 2;
     z-index: $sidebar;
 
     .lpHasSidebar & {
@@ -93,5 +93,4 @@ $sidebarPadding: 20px;
         flex: 0 0 auto;
     }
 }
-
 </style>

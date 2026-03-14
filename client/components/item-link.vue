@@ -2,8 +2,8 @@
     <modal id="itemLinkDialog" :shown="shown" @hide="shown = false">
         <h2>Add a link for this item</h2>
         <form id="itemLinkForm" @submit.prevent="addLink">
-            <input v-model="url" type="text" d="itemLink" placeholder="Item Link">
-            <input type="submit" class="lpButton" value="Save">
+            <input v-model="url" type="text" d="itemLink" placeholder="Item Link" />
+            <input type="submit" class="lpButton" value="Save" />
             <a class="lpHref close" @click="shown = false">Cancel</a>
         </form>
     </modal>
@@ -40,6 +40,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

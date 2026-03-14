@@ -1,10 +1,10 @@
 <template>
     <form class="lpRegister lpFields" @submit.prevent="submit">
         <div class="lpFields">
-            <input v-model="username" v-focus-on-create type="text" placeholder="Username" name="username">
-            <input v-model="email" type="email" placeholder="Email" name="email">
-            <input v-model="password" type="password" placeholder="Password" name="password">
-            <input v-model="passwordConfirm" type="password" placeholder="Confirm password" name="passwordConfirm">
+            <input v-model="username" v-focus-on-create type="text" placeholder="Username" name="username" />
+            <input v-model="email" type="email" placeholder="Email" name="email" />
+            <input v-model="password" type="password" placeholder="Password" name="password" />
+            <input v-model="passwordConfirm" type="password" placeholder="Confirm password" name="passwordConfirm" />
         </div>
         <errors :errors="errors" />
         <div class="lpButtons">
@@ -66,7 +66,10 @@ export default {
             }
 
             if (this.username && (this.username.length < 3 || this.username.length > 32)) {
-                this.errors.push({ field: 'username', message: 'Please enter a username between 3 and 32 characters.' });
+                this.errors.push({
+                    field: 'username',
+                    message: 'Please enter a username between 3 and 32 characters.',
+                });
             }
 
             if (!this.email) {
@@ -86,7 +89,10 @@ export default {
             }
 
             if (this.password && (this.password.length < 5 || this.password.length > 60)) {
-                this.errors.push({ field: 'password', message: 'Please enter a password between 5 and 60 characters.' });
+                this.errors.push({
+                    field: 'password',
+                    message: 'Please enter a password between 5 and 60 characters.',
+                });
             }
 
             if (this.errors.length) {
@@ -130,6 +136,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

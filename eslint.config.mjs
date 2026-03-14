@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
+import prettier from 'eslint-config-prettier';
 
 const sharedRules = {
     'consistent-return': 'off',
@@ -15,11 +16,7 @@ const sharedRules = {
 
 export default [
     {
-        ignores: [
-            'public/dist/**',
-            'public/js/**',
-            'node_modules/**',
-        ],
+        ignores: ['public/dist/**', 'public/js/**', 'node_modules/**'],
     },
     // Server/Node files
     {
@@ -44,7 +41,7 @@ export default [
         },
         rules: {
             ...sharedRules,
-            'indent': ['error', 4],
+            ...prettier.rules,
         },
     },
     // Client JS files (ESM + browser)
@@ -79,12 +76,12 @@ export default [
         },
         rules: {
             ...sharedRules,
-            'indent': ['error', 4],
+            ...prettier.rules,
             'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
         },
     },
     // Vue files — apply vue plugin rules on top of js recommended
-    ...pluginVue.configs['flat/recommended'].map(config => ({
+    ...pluginVue.configs['flat/recommended'].map((config) => ({
         ...config,
         files: ['client/**/*.vue'],
     })),
@@ -118,9 +115,8 @@ export default [
         },
         rules: {
             ...sharedRules,
-            'indent': ['error', 4],
+            ...prettier.rules,
             'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-            'vue/html-indent': ['error', 4],
             'vue/max-attributes-per-line': 'off',
             'vue/multi-word-component-names': 'off',
             'vue/require-prop-types': 'off',

@@ -2,12 +2,8 @@
     <div id="signinContainer">
         <modal id="signin" :shown="true" :blackout="true">
             <div class="lpModalHeader">
-                <h2>
-                    Sign in
-                </h2>
-                <router-link to="/register" class="lpHref">
-                    Need to register?
-                </router-link>
+                <h2>Sign in</h2>
+                <router-link to="/register" class="lpHref"> Need to register? </router-link>
             </div>
             <SigninForm :message="message" />
         </modal>
@@ -42,6 +38,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

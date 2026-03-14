@@ -1,10 +1,10 @@
 <template>
     <Popover id="lpPickerContainer" :shown="shown" @hide="shown = false">
         <template #target>
-            <span class="lpLegend" :style="{'background-color': color}" @click="shown = true" />
+            <span class="lpLegend" :style="{ 'background-color': color }" @click="shown = true" />
         </template>
         <template #content>
-            <input type="color" :value="color" @input="onColorChange">
+            <input type="color" :value="color" @input="onColorChange" />
         </template>
     </Popover>
 </template>
@@ -17,9 +17,7 @@ export default {
     components: {
         Popover,
     },
-    props: [
-        'color',
-    ],
+    props: ['color'],
     data() {
         return {
             shown: false,
@@ -31,9 +29,6 @@ export default {
         },
     },
 };
-
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

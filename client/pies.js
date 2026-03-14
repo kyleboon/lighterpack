@@ -73,7 +73,7 @@ module.exports = function (args) {
 
         for (var key in srcData) {
             var value = srcData[key];
-            if (typeof (value) === 'object') {
+            if (typeof value === 'object') {
                 total += preprocess(value).total;
             } else {
                 total += value;
@@ -83,7 +83,7 @@ module.exports = function (args) {
 
         for (var key in srcData) {
             var value = srcData[key];
-            if (typeof (value) === 'object') {
+            if (typeof value === 'object') {
                 data.points[key] = preprocess(value, data);
                 data.points[key].name = key;
                 data.points[key].visiblePoints = false;
@@ -236,9 +236,10 @@ module.exports = function (args) {
 
             let percentAnimated = (d.getTime() - ring.startTime) / ring.deltaTime;
             if (percentAnimated > 1) percentAnimated = 1;
-            ring.innerMinRadius = ring.startMinRadius + (ring.deltaMinRadius * ring.radiusFunction(percentAnimated));
-            ring.innerMaxRadius = ring.startMaxRadius + (ring.deltaMaxRadius * ring.radiusFunction(percentAnimated));
-            ring.angleMultiplier = ring.startAngleMultiplier + (ring.deltaAngleMultiplier * ring.angleMultiplierFunction(percentAnimated));
+            ring.innerMinRadius = ring.startMinRadius + ring.deltaMinRadius * ring.radiusFunction(percentAnimated);
+            ring.innerMaxRadius = ring.startMaxRadius + ring.deltaMaxRadius * ring.radiusFunction(percentAnimated);
+            ring.angleMultiplier =
+                ring.startAngleMultiplier + ring.deltaAngleMultiplier * ring.angleMultiplierFunction(percentAnimated);
             render(ring);
         }
         setTimeout(animateStep, frameRate);
@@ -252,9 +253,12 @@ module.exports = function (args) {
     function hoverHandle(evt) {
         const containerRect = container.getBoundingClientRect();
         const size = { x: containerRect.width, y: containerRect.height };
-        const offset = { x: (evt.pageX - containerRect.left) * (bounds.x / size.x), y: (evt.pageY - containerRect.top) * (bounds.y / size.y) };
-        const dX = (offset.x - center.x);
-        const dY = (offset.y - center.y);
+        const offset = {
+            x: (evt.pageX - containerRect.left) * (bounds.x / size.x),
+            y: (evt.pageY - containerRect.top) * (bounds.y / size.y),
+        };
+        const dX = offset.x - center.x;
+        const dY = offset.y - center.y;
         let angle = Math.atan(dY / dX);
         if (dX < 0) angle += Math.PI;
         else if (dY < 0) angle += Math.PI * 2;
@@ -333,11 +337,22 @@ module.exports = function (args) {
             if (typeof i.parent.startAngle !== 'undefined') startAngle = i.parent.startAngle;
 
             if (radius < i.maxRadius && radius > i.minRadius) {
-                if (i.minAngle <= Math.PI * 2 && i.maxAngle > Math.PI * 2 && (angle > i.minAngle || angle + Math.PI * 2 < i.maxAngle)) {
+                if (
+                    i.minAngle <= Math.PI * 2 &&
+                    i.maxAngle > Math.PI * 2 &&
+                    (angle > i.minAngle || angle + Math.PI * 2 < i.maxAngle)
+                ) {
                     return i;
-                } if (i.minAngle >= Math.PI * 2 && i.maxAngle > Math.PI * 2 && angle + Math.PI * 2 > i.minAngle && angle + Math.PI * 2 < i.maxAngle) {
+                }
+                if (
+                    i.minAngle >= Math.PI * 2 &&
+                    i.maxAngle > Math.PI * 2 &&
+                    angle + Math.PI * 2 > i.minAngle &&
+                    angle + Math.PI * 2 < i.maxAngle
+                ) {
                     return i;
-                } if (angle > i.minAngle && angle < i.maxAngle) {
+                }
+                if (angle > i.minAngle && angle < i.maxAngle) {
                     return i;
                 }
             }
@@ -400,8 +415,8 @@ module.exports = function (args) {
     }
 
     function getMinMax(level, levels) {
-        const minRadius = pieHole * (1 / levels) + (((level - 1) / levels) * (1 - pieHole));
-        let maxRadius = pieHole * (1 / levels) + ((level / levels - spacing) * (1 - pieHole));
+        const minRadius = pieHole * (1 / levels) + ((level - 1) / levels) * (1 - pieHole);
+        let maxRadius = pieHole * (1 / levels) + (level / levels - spacing) * (1 - pieHole);
         if (levels == 1) {
             maxRadius *= 0.8;
         }

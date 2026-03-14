@@ -9,12 +9,14 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
+@import url('../css/_globals');
 
 $spinnerSize: 18px;
 
 @keyframes spinner {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .lpSpinner::before {
@@ -22,7 +24,7 @@ $spinnerSize: 18px;
     border: 1px solid $orange1;
     border-radius: 50%;
     border-top-color: transparent;
-    content: "";
+    content: '';
     display: block;
     height: $spinnerSize;
     width: $spinnerSize;

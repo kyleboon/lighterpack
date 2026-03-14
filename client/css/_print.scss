@@ -31,9 +31,19 @@
     .lpRemoveCell,
     .lpActionsCell .lpLink,
     .lpActionsCell .lpCamera,
-    .lpQtyCell .lpArrows { display: none !important; }
+    .lpQtyCell .lpArrows {
+        display: none !important;
+    }
 
-    .lpActionsCell { width: 80px !important; }
-    .lpQtyCell { width: 20px !important; }
-    .lpWeightCell { width: 99px !important; }
+    .lpActionsCell {
+        width: 80px !important;
+    }
+
+    .lpQtyCell {
+        width: 20px !important;
+    }
+
+    .lpWeightCell {
+        width: 99px !important;
+    }
 }

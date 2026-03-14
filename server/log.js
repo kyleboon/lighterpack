@@ -14,16 +14,12 @@ class TimestampFirst {
 }
 
 const logger = winston.createLogger({
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        new TimestampFirst(true),
-        winston.format.json(),
-    ),
+    format: winston.format.combine(winston.format.timestamp(), new TimestampFirst(true), winston.format.json()),
     transports: [new winston.transports.Console()],
 });
 
 const logWithRequest = function (req, data) {
-    if (typeof (data) === 'string') {
+    if (typeof data === 'string') {
         data = { message: data };
     }
 

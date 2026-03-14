@@ -1,5 +1,5 @@
-LighterPack
-===========
+# LighterPack
+
 LighterPack helps you track the gear you bring on adventures.
 
 ## Tech Stack
@@ -17,25 +17,29 @@ LighterPack helps you track the gear you bring on adventures.
 ## Getting Started
 
 1. Clone the repo:
-   ```bash
-   git clone https://github.com/galenmaly/lighterpack.git
-   cd lighterpack
-   ```
+
+    ```bash
+    git clone https://github.com/galenmaly/lighterpack.git
+    cd lighterpack
+    ```
 
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+
+    ```bash
+    npm install
+    ```
 
 3. Start MongoDB via Docker Compose:
-   ```bash
-   docker compose up -d
-   ```
+
+    ```bash
+    docker compose up -d
+    ```
 
 4. Start the app in development mode:
-   ```bash
-   npm run dev
-   ```
+
+    ```bash
+    npm run dev
+    ```
 
 5. Open http://localhost:8080
 
@@ -56,6 +60,7 @@ E2E tests use Playwright and run against Chromium and Firefox.
 ### First-time setup
 
 Install Playwright browsers (only needed once):
+
 ```bash
 npx playwright install
 ```
@@ -88,7 +93,7 @@ Playwright automatically starts the app server before running tests (via `npm ru
 - Add Vitest + `@vue/test-utils` for unit and component tests
 - Add `tsconfig.json` with strict mode; enable `@ts-check` in existing JS files
 - Enable disabled ESLint rules: `no-shadow`, `no-param-reassign`, `consistent-return`
-- Add Prettier + `husky` + `lint-staged` for consistent formatting and pre-commit enforcement
+- ✅ Add Prettier + `husky` + `lint-staged` for consistent formatting and pre-commit enforcement
 - Enable `vue/require-prop-types` and `vue/require-explicit-emits` in ESLint
 
 ### Phase 3 — Composition API + remove legacy patterns (4–8 weeks)

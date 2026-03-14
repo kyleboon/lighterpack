@@ -6,17 +6,30 @@
             <p class="lpWarning">
                 <strong>This action is permanent and cannot be undone.</strong>
             </p>
-            <p>If you want to delete your account, please enter your current password and the text <strong>delete my account</strong>:</p>
+            <p>
+                If you want to delete your account, please enter your current password and the text
+                <strong>delete my account</strong>:
+            </p>
             <div class="lpFields">
-                <input v-model="currentPassword" type="password" placeholder="Current password" name="currentPassword" class="currentPassword">
+                <input
+                    v-model="currentPassword"
+                    type="password"
+                    placeholder="Current password"
+                    name="currentPassword"
+                    class="currentPassword"
+                />
 
-                <input v-model="confirmationText" type="text" name="confirmationText" placeholder="Confirmation text">
+                <input v-model="confirmationText" type="text" name="confirmationText" placeholder="Confirmation text" />
             </div>
 
             <errors :errors="errors" />
 
             <div class="lpButtons">
-                <input type="submit" value="Permanently delete account" :class="{'lpButton': true, 'lpButtonDisabled': !isConfirmationComplete}">
+                <input
+                    type="submit"
+                    value="Permanently delete account"
+                    :class="{ lpButton: true, lpButtonDisabled: !isConfirmationComplete }"
+                />
                 <a class="lpHref" @click="shown = false">Cancel</a>
             </div>
         </form>

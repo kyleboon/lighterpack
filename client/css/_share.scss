@@ -1,4 +1,5 @@
-#main.lpShare, .lpList {
+#main.lpShare,
+.lpList {
     transition: none !important;
 }
 
@@ -69,7 +70,7 @@
         padding: 0;
         position: absolute;
         top: -1px;
-        z-index: $aboveSidebar+1;
+        z-index: $aboveSidebar + 1;
 
         &.lb {
             top: -30px;
@@ -97,7 +98,7 @@
 
 .lpDialog {
     animation: fadein 0.25s linear 0s 1 forwards;
-    background: #F7F7F7;
+    background: #f7f7f7;
     box-shadow: 0 0 30px rgb(0 0 0 / 40%);
     left: 50%;
     opacity: 0;
@@ -108,33 +109,33 @@
     transform: translateX(-50%) translateY(-50%);
     width: 350px;
     z-index: 100;
-  }
+}
 
-  @keyframes fadein {
+@keyframes fadein {
     from {
-      opacity: 0;
+        opacity: 0;
     }
 
     to {
-      opacity: 1;
+        opacity: 1;
     }
-  }
+}
 
-  .lpDialog.fadeout {
+.lpDialog.fadeout {
     animation: fadeout 0.25s linear 0s 1 forwards;
-  }
+}
 
-  @keyframes fadeout {
+@keyframes fadeout {
     from {
-      opacity: 1;
+        opacity: 1;
     }
 
     to {
-      opacity: 0;
+        opacity: 0;
     }
-  }
+}
 
-  .lpModalOverlay {
+.lpModalOverlay {
     animation: fadein 0.25s linear 0s 1 forwards;
     background: rgb(0 0 0 / 50%);
     height: 100%;
@@ -144,31 +145,31 @@
     top: 0;
     width: 100%;
     z-index: 90;
-  }
+}
 
-  @keyframes fadein {
+@keyframes fadein {
     from {
-      opacity: 0;
+        opacity: 0;
     }
 
     to {
-      opacity: 1;
+        opacity: 1;
     }
-  }
+}
 
-  .lpModalOverlay.fadeout {
+.lpModalOverlay.fadeout {
     animation: fadeout 0.25s linear 0s 1 forwards;
-  }
+}
 
-  @keyframes fadeout {
+@keyframes fadeout {
     from {
-      opacity: 1;
+        opacity: 1;
     }
 
     to {
-      opacity: 0;
+        opacity: 0;
     }
-  }
+}
 
 @media only screen and (width <= 720px) {
     .lpChart {
@@ -242,7 +243,7 @@
             }
 
             &::after {
-                content: " x ";
+                content: ' x ';
                 display: inline;
                 margin-right: 5px;
             }

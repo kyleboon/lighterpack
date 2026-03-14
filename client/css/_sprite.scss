@@ -1,5 +1,5 @@
 .lpSprite {
-    background-image: url("/images/sprite2x.png?v=2");
+    background-image: url('/images/sprite2x.png?v=2');
     background-size: 400px;
     display: inline-block;
     height: 14px;
@@ -99,9 +99,18 @@
     background-position: -225px 0;
     height: 14px;
     width: 14px;
-    &.lpStar1 { background-position: -225px -25px; }
-    &.lpStar2 { background-position: -225px -50px; }
-    &.lpStar3 { background-position: -225px -75px; }
+
+    &.lpStar1 {
+        background-position: -225px -25px;
+    }
+
+    &.lpStar2 {
+        background-position: -225px -50px;
+    }
+
+    &.lpStar3 {
+        background-position: -225px -75px;
+    }
 }
 
 .lpConsumable {

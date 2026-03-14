@@ -6,16 +6,26 @@
                 <ul id="lpOptionalFields">
                     <li v-for="optionalField in optionalFieldsLookup" :key="optionalField.name" class="lpOptionalField">
                         <label>
-                            <input v-model="optionalField.value" type="checkbox" @change="toggleOptionalField($event, optionalField.name)">
+                            <input
+                                v-model="optionalField.value"
+                                type="checkbox"
+                                @change="toggleOptionalField($event, optionalField.name)"
+                            />
                             {{ optionalField.displayName }}
                         </label>
                     </li>
                 </ul>
                 <div v-if="library.optionalFields['price']" id="lpPriceSettings">
-                    <hr>
+                    <hr />
                     <label>
                         Currency:
-                        <input id="currencySymbol" type="text" maxlength="4" :value="library.currencySymbol" @input="updateCurrencySymbol($event)">
+                        <input
+                            id="currencySymbol"
+                            type="text"
+                            maxlength="4"
+                            :value="library.currencySymbol"
+                            @input="updateCurrencySymbol($event)"
+                        />
                     </label>
                 </div>
             </template>
@@ -33,32 +43,38 @@ export default {
     },
     data() {
         return {
-            optionalFieldsLookup: [{
-                name: 'images',
-                displayName: 'Item images',
-                cssClass: 'lpShowImages',
-                value: false,
-            }, {
-                name: 'price',
-                displayName: 'Item prices',
-                cssClass: 'lpShowPrices',
-                value: false,
-            }, {
-                name: 'worn',
-                displayName: 'Worn items',
-                cssClass: 'lpShowWorn',
-                value: false,
-            }, {
-                name: 'consumable',
-                displayName: 'Consumable items',
-                cssClass: 'lpShowConsumable',
-                value: false,
-            }, {
-                name: 'listDescription',
-                displayName: 'List descriptions',
-                cssClass: 'lpShowListDescription',
-                value: false,
-            }],
+            optionalFieldsLookup: [
+                {
+                    name: 'images',
+                    displayName: 'Item images',
+                    cssClass: 'lpShowImages',
+                    value: false,
+                },
+                {
+                    name: 'price',
+                    displayName: 'Item prices',
+                    cssClass: 'lpShowPrices',
+                    value: false,
+                },
+                {
+                    name: 'worn',
+                    displayName: 'Worn items',
+                    cssClass: 'lpShowWorn',
+                    value: false,
+                },
+                {
+                    name: 'consumable',
+                    displayName: 'Consumable items',
+                    cssClass: 'lpShowConsumable',
+                    value: false,
+                },
+                {
+                    name: 'listDescription',
+                    displayName: 'List descriptions',
+                    cssClass: 'lpShowListDescription',
+                    value: false,
+                },
+            ],
         };
     },
     computed: {
@@ -98,7 +114,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 #csvUrl {
     display: block;
     margin-top: 15px;

@@ -7,7 +7,6 @@
 </template>
 
 <script>
-
 export default {
     name: 'RegisterForm',
     props: ['errors'],
@@ -35,17 +34,18 @@ export default {
                     return errors;
                 }
 
-                const massagedErrors = errors.map((error) => {
-                    if (typeof error === 'string') {
-                        return { message: error };
-                    }
+                const massagedErrors = errors
+                    .map((error) => {
+                        if (typeof error === 'string') {
+                            return { message: error };
+                        }
 
-                    if (typeof error === 'object' && error.message) {
-                        return error;
-                    }
-                    return false;
-                })
-                    .filter(error => !!error.message);
+                        if (typeof error === 'object' && error.message) {
+                            return error;
+                        }
+                        return false;
+                    })
+                    .filter((error) => !!error.message);
 
                 if (massagedErrors.length) {
                     return massagedErrors;
@@ -58,6 +58,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

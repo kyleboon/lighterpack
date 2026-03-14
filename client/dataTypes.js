@@ -20,7 +20,7 @@ const Item = function ({ id, unit }) {
     if (unit) {
         this.authorUnit = unit;
     }
-    this.price = 0.00;
+    this.price = 0.0;
     this.image = '';
     this.imageUrl = '';
     this.url = '';
@@ -98,7 +98,7 @@ Category.prototype.calculateSubtotal = function () {
         this.subtotalPrice += item.price * categoryItem.qty;
 
         if (this.library.optionalFields.worn && categoryItem.worn) {
-            this.subtotalWornWeight += item.weight * ((categoryItem.qty > 0) ? 1 : 0);
+            this.subtotalWornWeight += item.weight * (categoryItem.qty > 0 ? 1 : 0);
         }
         if (this.library.optionalFields.consumable && categoryItem.consumable) {
             this.subtotalConsumableWeight += item.weight * categoryItem.qty;
@@ -209,8 +209,9 @@ List.prototype.renderChart = function (type, linkParent) {
             } else if (type === 'worn') {
                 total += category.subtotalWornWeight;
             } else if (type === 'base') {
-                total += (category.subtotalWeight - (category.subtotalConsumableWeight + category.subtotalWornWeight));
-            } else { // total weight
+                total += category.subtotalWeight - (category.subtotalConsumableWeight + category.subtotalWornWeight);
+            } else {
+                // total weight
                 total += category.subtotalWeight;
             }
         }
@@ -233,8 +234,10 @@ List.prototype.renderChart = function (type, linkParent) {
             } else if (type === 'worn') {
                 categoryTotal = category.subtotalWornWeight;
             } else if (type === 'base') {
-                categoryTotal = (category.subtotalWeight - (category.subtotalConsumableWeight + category.subtotalWornWeight));
-            } else { // total weight
+                categoryTotal =
+                    category.subtotalWeight - (category.subtotalConsumableWeight + category.subtotalWornWeight);
+            } else {
+                // total weight
                 categoryTotal = category.subtotalWeight;
             }
 
@@ -251,14 +254,24 @@ List.prototype.renderChart = function (type, linkParent) {
                 if (item.qty > 1) name += ` x ${item.qty}`;
                 var percent = value / categoryTotal;
                 const tempItem = {
-                    value, id: item.id, name, color, percent,
+                    value,
+                    id: item.id,
+                    name,
+                    color,
+                    percent,
                 };
                 if (linkParent) tempItem.parent = tempCategory;
                 points[j] = tempItem;
             }
             var percent = categoryTotal / total;
             const tempCategoryData = {
-                points, color: category.color, id: category.id, name: getTooltipText(category.name, categoryTotal, this.library.totalUnit), total: categoryTotal, percent, visiblePoints: false,
+                points,
+                color: category.color,
+                id: category.id,
+                name: getTooltipText(category.name, categoryTotal, this.library.totalUnit),
+                total: categoryTotal,
+                percent,
+                visiblePoints: false,
             };
             if (linkParent) tempCategoryData.parent = chartData;
             assignIn(tempCategory, tempCategoryData);
@@ -345,7 +358,6 @@ const Library = function () {
     this.firstRun();
     return this;
 };
-
 
 Library.prototype.firstRun = function () {
     const firstList = this.newList();
@@ -651,13 +663,13 @@ Library.prototype.sequenceShouldBeCorrect = function (serializedLibrary) {
             sequence = item.id;
         }
     });
-    serializedLibrary.sequence = (sequence + 1);
+    serializedLibrary.sequence = sequence + 1;
 };
 
 Library.prototype.idsShouldBeInts = function (serializedLibrary) {
     // Some lists of Ids were strings previously. They should be numbers.
     serializedLibrary.lists.forEach((list) => {
-        list.categoryIds = list.categoryIds.map(categoryId => parseInt(categoryId, 10));
+        list.categoryIds = list.categoryIds.map((categoryId) => parseInt(categoryId, 10));
     });
 };
 
@@ -753,8 +765,8 @@ Library.prototype.updateItemId = function (serializedLibrary, item, newId) {
 };
 
 Object.size = function (obj) {
-    let size = 0; let
-        key;
+    let size = 0;
+    let key;
     for (key in obj) {
         if (obj.hasOwnProperty(key)) size++;
     }

@@ -5,13 +5,28 @@
                 <span class="lpHandleCell">
                     <div class="lpHandle lpCategoryHandle" title="Reorder this category" />
                 </span>
-                <input v-focus-on-create="category._isNew" type="text" :value="category.name" placeholder="Category Name" class="lpCategoryName lpSilent" @input="updateCategoryName">
+                <input
+                    v-focus-on-create="category._isNew"
+                    type="text"
+                    :value="category.name"
+                    placeholder="Category Name"
+                    class="lpCategoryName lpSilent"
+                    @input="updateCategoryName"
+                />
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">Price</span>
                 <span class="lpWeightCell">Weight</span>
                 <span class="lpQtyCell">qty</span>
-                <span class="lpRemoveCell"><a class="lpRemove lpRemoveCategory" title="Remove this category" @click="removeCategory(category)"><i class="lpSprite lpSpriteRemove" /></a></span>
+                <span class="lpRemoveCell"
+                    ><a class="lpRemove lpRemoveCategory" title="Remove this category" @click="removeCategory(category)"
+                        ><i class="lpSprite lpSpriteRemove" /></a
+                ></span>
             </li>
-            <item v-for="itemContainer in itemContainers" :key="itemContainer.item.id" :item-container="itemContainer" :category="category" />
+            <item
+                v-for="itemContainer in itemContainers"
+                :key="itemContainer.item.id"
+                :item-container="itemContainer"
+                :category="category"
+            />
             <li class="lpFooter lpItemsFooter">
                 <span class="lpAddItemCell">
                     <a class="lpAdd lpAddItem" @click="newItem"><i class="lpSprite lpSpriteAdd" />Add new item</a>
@@ -20,7 +35,9 @@
                     {{ displayPrice(category.subtotalPrice, library.currencySymbol) }}
                 </span>
                 <span class="lpWeightCell lpNumber lpSubtotal">
-                    <span class="lpDisplaySubtotal">{{ displayWeight(category.subtotalWeight, library.totalUnit) }}</span>
+                    <span class="lpDisplaySubtotal">{{
+                        displayWeight(category.subtotalWeight, library.totalUnit)
+                    }}</span>
                     <span class="lpSubtotalUnit">{{ library.totalUnit }}</span>
                 </span>
                 <span class="lpQtyCell lpSubtotal">
@@ -49,7 +66,10 @@ export default {
             return this.$store.library;
         },
         itemContainers() {
-            return this.category.categoryItems.map(categoryItem => ({ categoryItem, item: this.library.getItemById(categoryItem.itemId) }));
+            return this.category.categoryItems.map((categoryItem) => ({
+                categoryItem,
+                item: this.library.getItemById(categoryItem.itemId),
+            }));
         },
     },
     methods: {
@@ -73,13 +93,12 @@ export default {
 </script>
 
 <style lang="scss">
-
 .lpQtySubtotal {
     padding-right: 25px; /* Accommodates delete column */
 }
 
-.lpPriceSubtotal { /* unused? */
+.lpPriceSubtotal {
+    /* unused? */
     padding-right: 4px;
 }
-
 </style>

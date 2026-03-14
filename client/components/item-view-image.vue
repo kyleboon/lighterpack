@@ -1,6 +1,6 @@
 <template>
     <modal id="lpImageDialog" :shown="shown" @hide="shown = false">
-        <img :src="imageUrl">
+        <img :src="imageUrl" />
     </modal>
 </template>
 
@@ -28,7 +28,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 #itemImageDialog {
     width: 640px;
 
@@ -36,5 +35,4 @@ export default {
         margin-bottom: 19px;
     }
 }
-
 </style>

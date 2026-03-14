@@ -7,7 +7,6 @@
 </template>
 
 <script>
-
 export default {
     name: 'GlobalAlerts',
     computed: {
@@ -19,7 +18,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
+@import url('../css/_globals');
 
 .lpGlobalAlerts {
     background: $yellow1;

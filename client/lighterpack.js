@@ -44,7 +44,8 @@ app.config.globalProperties.$displayPrice = displayPrice;
 // Keep window.router for legacy global access
 window.router = router;
 
-store.init()
+store
+    .init()
     .then(() => {
         app.mount('#lp');
     })

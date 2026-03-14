@@ -6,21 +6,25 @@
             <ol>
                 <li>Click on things to edit them. Give your list and category a name.</li>
                 <li>Add new categories and give items weights to start the visualization.</li>
-                <li v-if="!isLocalSaving">
-                    When you're done, share your list with others!
-                </li>
+                <li v-if="!isLocalSaving">When you're done, share your list with others!</li>
             </ol>
             <p v-if="isLocalSaving" class="lpWarning">
-                <strong>Note:</strong> Your data is being saved to your local computer. In order to share your lists please register an account.
+                <strong>Note:</strong> Your data is being saved to your local computer. In order to share your lists
+                please register an account.
             </p>
         </div>
         <list-summary v-if="!isListNew" :list="list" />
 
-
-        <div style="clear: both;" />
+        <div style="clear: both" />
 
         <div v-if="library.optionalFields['listDescription']" id="listDescriptionContainer">
-            <h3>List Description</h3> <p>(<a href="https://guides.github.com/features/mastering-markdown/" target="_blank" class="lpHref">Markdown</a> supported)</p>
+            <h3>List Description</h3>
+            <p>
+                (<a href="https://guides.github.com/features/mastering-markdown/" target="_blank" class="lpHref"
+                    >Markdown</a
+                >
+                supported)
+            </p>
             <textarea id="listDescription" v-model="list.description" @input="updateListDescription" />
         </div>
 
@@ -28,7 +32,7 @@
             <category v-for="category in categories" :key="category.id" :category="category" />
         </ul>
 
-        <hr>
+        <hr />
 
         <a class="lpAdd addCategory" @click="newCategory"><i class="lpSprite lpSpriteAdd" />Add new category</a>
     </div>
@@ -63,7 +67,7 @@ export default {
             return this.$store.activeList;
         },
         categories() {
-            return this.list.categoryIds.map(id => this.library.getCategoryById(id));
+            return this.list.categoryIds.map((id) => this.library.getCategoryById(id));
         },
         isListNew() {
             return this.list.totalWeight === 0;
@@ -112,7 +116,10 @@ export default {
             drake.on('drop', ($el, $target, $source, $sibling) => {
                 const categoryId = parseInt($target.parentElement.id); // fragile
                 this.$store.reorderItem({
-                    list: this.list, itemId: this.itemDragId, categoryId, dropIndex: getElementIndex($el) - 1,
+                    list: this.list,
+                    itemId: this.itemDragId,
+                    categoryId,
+                    dropIndex: getElementIndex($el) - 1,
                 });
                 drake.cancel(true);
             });
@@ -129,7 +136,11 @@ export default {
                 this.categoryDragStartIndex = getElementIndex($el);
             });
             drake.on('drop', ($el, $target, $source, $sibling) => {
-                this.$store.reorderCategory({ list: this.list, before: this.categoryDragStartIndex, after: getElementIndex($el) });
+                this.$store.reorderCategory({
+                    list: this.list,
+                    before: this.categoryDragStartIndex,
+                    after: getElementIndex($el),
+                });
                 drake.cancel(true);
             });
         },
@@ -138,7 +149,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
+@import url('../css/_globals');
 
 #listDescriptionContainer {
     margin: 25px 0;
@@ -183,5 +194,4 @@ export default {
         }
     }
 }
-
 </style>

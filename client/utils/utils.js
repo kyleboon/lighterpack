@@ -13,7 +13,12 @@ class lpError extends Error {
 
         if (response.message) {
             this.message = response.message;
-        } else if (response.errors && response.errors instanceof Array && response.errors.length && response.errors[0].message) {
+        } else if (
+            response.errors &&
+            response.errors instanceof Array &&
+            response.errors.length &&
+            response.errors[0].message
+        ) {
             this.message = response.errors[0].message;
         }
 
@@ -26,7 +31,7 @@ class lpError extends Error {
 window.fetchJson = (url, options) => {
     const fetchOptions = {
         method: 'GET',
-        headers: {}
+        headers: {},
     };
 
     if (options) {
@@ -56,7 +61,7 @@ window.fetchJson = (url, options) => {
                         json,
                     });
                 })
-                .catch(err => reject(err));
+                .catch((err) => reject(err));
         });
     }
 
@@ -102,7 +107,7 @@ window.readCookie = function (name) {
 window.createCookie = function (name, value, days) {
     if (days) {
         const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
         var expires = `; expires=${date.toGMTString()}`;
     } else var expires = '';
     document.cookie = `${name}=${value}${expires}; path=/`;

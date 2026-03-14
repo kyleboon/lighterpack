@@ -44,6 +44,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
-
+@import url('../css/_globals');
 </style>

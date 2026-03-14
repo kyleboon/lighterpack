@@ -1,5 +1,5 @@
 <template>
-    <div class="lpUnitSelect" :class="{lpOpen: isOpen, lpHover: isFocused}" @click="toggle($event)">
+    <div class="lpUnitSelect" :class="{ lpOpen: isOpen, lpHover: isFocused }" @click="toggle($event)">
         <select class="lpUnit lpInvisible" :value="unit" @keyup="keyup($event)" @focus="focusSelect" @blur="blurSelect">
             <option v-for="unit in units" :key="unit" :value="unit">
                 {{ unit }}
@@ -21,12 +21,7 @@ export default {
     props: ['weight', 'unit', 'onChange'],
     data() {
         return {
-            units: [
-                'oz',
-                'lb',
-                'g',
-                'kg',
-            ],
+            units: ['oz', 'lb', 'g', 'kg'],
             isOpen: false,
             isFocused: false,
         };
@@ -85,7 +80,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
+@import url('../css/_globals');
 
 .lpUnitSelect {
     border: 1px solid transparent;
@@ -129,7 +124,7 @@ export default {
         padding: 0;
         position: absolute;
         top: -1px;
-        z-index: $aboveSidebar+1;
+        z-index: $aboveSidebar + 1;
 
         &.lb {
             top: -30px;

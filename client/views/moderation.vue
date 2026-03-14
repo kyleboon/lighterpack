@@ -3,7 +3,7 @@
         <h1>Admin panel</h1>
 
         <form @submit.prevent="searchUsers">
-            <input v-model="searchQuery" type="text" placeholder="Search for a user...">
+            <input v-model="searchQuery" type="text" placeholder="Search for a user..." />
             <button>Search</button>
         </form>
         <ul v-if="resultsLoaded" class="lp-moderation-search-results">
@@ -15,15 +15,9 @@
         <div v-if="userToInspect" class="lp-moderation-user-to-inspect">
             <h2>{{ userToInspect.username }}</h2>
             <section>
-                <button @click="clearSession(userToInspect)">
-                    Clear session
-                </button>
-                <button @click="resetPassword(userToInspect)">
-                    Reset password
-                </button>
-                <template v-if="newPassword">
-                    <strong>New Password:</strong> {{ newPassword }}
-                </template>
+                <button @click="clearSession(userToInspect)">Clear session</button>
+                <button @click="resetPassword(userToInspect)">Reset password</button>
+                <template v-if="newPassword"> <strong>New Password:</strong> {{ newPassword }} </template>
             </section>
             <section>
                 <textarea id="lp-moderation-user-library-json" v-model="editableLibrary" />
@@ -35,11 +29,10 @@
 <script>
 export default {
     name: 'Admin',
-    components: {
-    },
+    components: {},
     data() {
         return {
-            searchQuery: "",
+            searchQuery: '',
             searchResults: null,
             userToInspect: null,
             editableLibrary: null,
@@ -49,7 +42,7 @@ export default {
     computed: {
         resultsLoaded() {
             return !!this.searchResults;
-        }
+        },
     },
     methods: {
         searchUsers() {
@@ -76,10 +69,10 @@ export default {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({username: user.username}),
+                body: JSON.stringify({ username: user.username }),
             })
                 .then((response) => {
-                    console.log("clear session success");
+                    console.log('clear session success');
                 })
                 .catch((err) => {
                     console.log(err);
@@ -92,7 +85,7 @@ export default {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({username: user.username}),
+                body: JSON.stringify({ username: user.username }),
             })
                 .then((response) => {
                     this.newPassword = response.newPassword;
@@ -100,21 +93,21 @@ export default {
                 .catch((err) => {
                     console.log(err);
                 });
-        }
+        },
     },
 };
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
-
+@import url('../css/_globals');
 
 #lp-moderation {
     display: grid;
     grid-template-columns: 15em auto;
     padding: 0 2em;
 
-    h1, & > form {
+    h1,
+    & > form {
         grid-column: 1 / 3;
     }
 

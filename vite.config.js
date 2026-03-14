@@ -14,12 +14,12 @@ function assetsJsonPlugin() {
                     if (chunk.name === 'lighterpack') {
                         assets.files.app.push(fileName);
                         if (chunk.viteMetadata && chunk.viteMetadata.importedCss) {
-                            chunk.viteMetadata.importedCss.forEach(css => assets.files.app.push(css));
+                            chunk.viteMetadata.importedCss.forEach((css) => assets.files.app.push(css));
                         }
                     } else if (chunk.name === 'share') {
                         assets.files.share.push(fileName);
                         if (chunk.viteMetadata && chunk.viteMetadata.importedCss) {
-                            chunk.viteMetadata.importedCss.forEach(css => assets.files.share.push(css));
+                            chunk.viteMetadata.importedCss.forEach((css) => assets.files.share.push(css));
                         }
                     }
                 } else if (chunk.type === 'asset' && fileName.endsWith('.css')) {

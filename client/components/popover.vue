@@ -1,5 +1,5 @@
 <template>
-    <div v-click-outside="hide" :class="{'lpPopover': true, 'lpPopoverShown': shown}">
+    <div v-click-outside="hide" :class="{ lpPopover: true, lpPopoverShown: shown }">
         <div class="lpTarget">
             <slot name="target" />
         </div>
@@ -48,7 +48,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../css/_globals";
+@import url('../css/_globals');
 
 .lpPopover {
     display: block;
@@ -82,7 +82,7 @@ export default {
         &::before {
             background-color: #fff;
             box-shadow: 0 0 6px rgb(0 0 0 / 25%);
-            content: "";
+            content: '';
             display: block;
             height: 20px;
             left: 50%;
@@ -96,7 +96,7 @@ export default {
 
         &::after {
             background: #fff;
-            content: "";
+            content: '';
             display: block;
             height: 15px;
             left: 0;
@@ -118,7 +118,8 @@ export default {
             margin-bottom: 0;
         }
 
-        ul, a {
+        ul,
+        a {
             line-height: 25px;
         }
 
@@ -141,5 +142,4 @@ export default {
         }
     }
 }
-
 </style>

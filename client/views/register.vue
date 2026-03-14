@@ -2,16 +2,13 @@
     <div id="registerContainer">
         <modal id="register" :shown="true" :blackout="true">
             <div class="lpModalHeader">
-                <h2>
-                    Register an account
-                </h2>
-                <router-link to="/signin" class="lpHref">
-                    Already registered?
-                </router-link>
+                <h2>Register an account</h2>
+                <router-link to="/signin" class="lpHref"> Already registered? </router-link>
             </div>
 
             <p v-if="isLocalSaving" class="lpWarning">
-                <strong>Note:</strong> Your existing data on your computer <strong>will</strong> be saved to your new account.
+                <strong>Note:</strong> Your existing data on your computer <strong>will</strong> be saved to your new
+                account.
             </p>
 
             <registerForm />
@@ -45,6 +42,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

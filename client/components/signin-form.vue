@@ -4,8 +4,22 @@
             {{ message }}
         </p>
         <div class="lpFields">
-            <input v-model="username" v-focus-on-create type="text" placeholder="Username" name="username" class="username">
-            <input v-model="password" v-select-on-bus="'focus-signin-password'" type="password" placeholder="Password" name="password" class="password">
+            <input
+                v-model="username"
+                v-focus-on-create
+                type="text"
+                placeholder="Username"
+                name="username"
+                class="username"
+            />
+            <input
+                v-model="password"
+                v-select-on-bus="'focus-signin-password'"
+                type="password"
+                placeholder="Password"
+                name="password"
+                class="password"
+            />
         </div>
 
         <errors :errors="errors" />

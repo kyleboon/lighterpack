@@ -26,7 +26,7 @@
             <a class="lpButton close" @click="shown = false">Cancel Import</a>
         </modal>
         <form id="csvUpload">
-            <input id="csv" type="file" name="csv">
+            <input id="csv" type="file" name="csv" />
         </form>
     </div>
 </template>
@@ -45,7 +45,20 @@ export default {
             listId: false,
             importData: {},
             fullUnitToUnit: {
-                ounce: 'oz', ounces: 'oz', oz: 'oz', pound: 'lb', pounds: 'lb', lb: 'lb', lbs: 'lb', gram: 'g', grams: 'g', g: 'g', kilogram: 'kg', kilograms: 'kg', kg: 'kg', kgs: 'kg',
+                ounce: 'oz',
+                ounces: 'oz',
+                oz: 'oz',
+                pound: 'lb',
+                pounds: 'lb',
+                lb: 'lb',
+                lbs: 'lb',
+                gram: 'g',
+                grams: 'g',
+                g: 'g',
+                kilogram: 'kg',
+                kilograms: 'kg',
+                kg: 'kg',
+                kgs: 'kg',
             },
             shown: false,
         };
@@ -83,9 +96,12 @@ export default {
             }
             const reader = new FileReader();
 
-            reader.onload = ((theFile) => {
-                this.validateImport(theFile.target.result, file.name.substring(0, file.name.length - 4).replace(/\_/g, ' '));
-            });
+            reader.onload = (theFile) => {
+                this.validateImport(
+                    theFile.target.result,
+                    file.name.substring(0, file.name.length - 4).replace(/\_/g, ' '),
+                );
+            };
 
             reader.readAsText(file);
         },
@@ -94,18 +110,14 @@ export default {
             const arrData = [[]];
             let arrMatches = null;
 
-
             const objPattern = new RegExp(
-                (
-                    `(\\${strDelimiter}|\\r?\\n|\\r|^)`
-                    + '(?:"([^"]*(?:""[^"]*)*)"|'
-                    + `([^"\\${strDelimiter}\\r\\n]*))`
-                ), 'gi',
+                `(\\${strDelimiter}|\\r?\\n|\\r|^)` + '(?:"([^"]*(?:""[^"]*)*)"|' + `([^"\\${strDelimiter}\\r\\n]*))`,
+                'gi',
             );
 
-            while (arrMatches = objPattern.exec(strData)) {
+            while ((arrMatches = objPattern.exec(strData))) {
                 const strMatchedDelimiter = arrMatches[1];
-                if (strMatchedDelimiter.length && (strMatchedDelimiter != strDelimiter)) {
+                if (strMatchedDelimiter.length && strMatchedDelimiter != strDelimiter) {
                     arrData.push([]);
                 }
 
@@ -152,13 +164,11 @@ export default {
             this.$store.importCSV(this.importData);
             this.shown = false;
         },
-
     },
 };
 </script>
 
 <style lang="scss">
-
 #importValidate {
     height: 500px;
     overflow-y: scroll;
@@ -168,5 +178,4 @@ export default {
         margin-bottom: 30px;
     }
 }
-
 </style>

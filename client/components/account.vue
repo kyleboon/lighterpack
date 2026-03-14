@@ -4,13 +4,31 @@
 
         <form id="accountForm" @submit.prevent="updateAccount()">
             <div class="lpFields">
-                <input type="text" name="username" class="username" disabled :value="username">
-                <input v-model="currentPassword" type="password" placeholder="Current Password" name="currentPassword" class="currentPassword">
-                <hr>
-                <input v-model="newEmail" type="email" placeholder="New Email" name="newEmail" class="newEmail">
-                <hr>
-                <input v-model="newPassword" type="password" placeholder="New Password" name="newPassword" class="newPassword">
-                <input v-model="confirmNewPassword" type="password" placeholder="Confirm New Password" name="confirmNewPassword" class="confirmNewPassword">
+                <input type="text" name="username" class="username" disabled :value="username" />
+                <input
+                    v-model="currentPassword"
+                    type="password"
+                    placeholder="Current Password"
+                    name="currentPassword"
+                    class="currentPassword"
+                />
+                <hr />
+                <input v-model="newEmail" type="email" placeholder="New Email" name="newEmail" class="newEmail" />
+                <hr />
+                <input
+                    v-model="newPassword"
+                    type="password"
+                    placeholder="New Password"
+                    name="newPassword"
+                    class="newPassword"
+                />
+                <input
+                    v-model="confirmNewPassword"
+                    type="password"
+                    placeholder="Confirm New Password"
+                    name="confirmNewPassword"
+                    class="confirmNewPassword"
+                />
             </div>
 
             <errors :errors="errors" />
@@ -76,7 +94,10 @@ export default {
             }
 
             if (this.newPassword && (this.newPassword.length < 5 || this.newPassword.length > 60)) {
-                this.errors.push({ field: 'newPassword', message: 'Please enter a password between 5 and 60 characters.' });
+                this.errors.push({
+                    field: 'newPassword',
+                    message: 'Please enter a password between 5 and 60 characters.',
+                });
             }
 
             if (this.errors.length) {
@@ -126,6 +147,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>
