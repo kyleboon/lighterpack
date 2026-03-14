@@ -14,16 +14,23 @@ async function freshUser(page: any) {
  * meaningful data rather than a single unnamed category and item.
  *
  * Result:
+ *   List description: markdown prose with heading, bold, italic, and a link
  *   Shelter  — Tent (800 oz, $500, qty 1), Sleeping Bag (600 oz, $200, qty 1)
  *   Clothing — Rain Jacket (300 oz, $150, qty 1), Fleece (250 oz, $100, qty 1)
  *   Kitchen  — Stove (100 oz, $80, qty 1), Fuel Canister (200 oz, $15, qty 3)
  */
 async function seedListData(page: any) {
-    // Enable item prices via Settings
+    // Enable item prices and list description via Settings
     await page.locator('#settings').hover();
     await page.getByLabel('Item prices').check();
+    await page.getByLabel('List descriptions').check();
     // Click away to close the popover before interacting with the list
     await page.locator('.lpListBody').click();
+
+    // Set the list description using markdown
+    await page.locator('#listDescription').fill(
+        '## Summer Backpacking Kit\n\nA **lightweight** setup for 3-season trips.\n\n- Targets a [base weight](https://en.wikipedia.org/wiki/Ultralight_backpacking) under 10 lb\n- Suitable for *moderate* trails',
+    );
 
     // Fill the default category and its existing item
     await page.locator('input.lpCategoryName').first().fill('Shelter');
