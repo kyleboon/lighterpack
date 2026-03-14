@@ -1,3 +1,5 @@
+import '../../client/css/share.scss';
+
 listReport = function () {
     const $list = $('.lpList');
     const $categories = $('.lpCategories');
