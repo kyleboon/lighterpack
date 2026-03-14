@@ -16,17 +16,19 @@ async function freshUser(page: any) {
  * Result:
  *   List description: markdown prose with heading, bold, italic, and a link
  *   Shelter  — Tent (800 oz, $500, qty 1), Sleeping Bag (600 oz, $200, qty 1)
- *   Clothing — Rain Jacket (300 oz, $150, qty 1), Fleece (250 oz, $100, qty 1)
+ *   Clothing — Rain Jacket (300 oz, $150, qty 1, worn), Fleece (250 oz, $100, qty 1, worn)
+ *              worn total: 550 oz (the worn row intentionally has no price column in the summary)
  *   Kitchen  — Stove (100 oz, $80, qty 1), Fuel Canister (200 oz, $15, qty 3)
  *   Food     — Trail Mix (8 oz, $8, qty 1, consumable), Energy Bars (6 oz, $12, qty 3, consumable)
  *              consumable totals: 26 oz, $44.00
  */
 async function seedListData(page: any) {
-    // Enable item prices, list description, and consumable items via Settings
+    // Enable item prices, list description, consumable items, and worn items via Settings
     await page.locator('#settings').hover();
     await page.getByLabel('Item prices').check();
     await page.getByLabel('List descriptions').check();
     await page.getByLabel('Consumable items').check();
+    await page.getByLabel('Worn items').check();
     // Click away to close the popover before interacting with the list
     await page.locator('.lpListBody').click();
 
@@ -56,11 +58,13 @@ async function seedListData(page: any) {
     await page.locator('.lpCategory').nth(1).locator('input.lpDescription').first().fill('Waterproof hardshell');
     await page.locator('.lpCategory').nth(1).locator('input.lpWeight').first().fill('300');
     await page.locator('.lpCategory').nth(1).locator('input.lpPrice').first().fill('150');
+    await page.locator('.lpCategory').nth(1).locator('.lpWorn').first().click({ force: true });
     await page.locator('.lpCategory').nth(1).getByText('Add new item').click();
     await page.locator('.lpCategory').nth(1).locator('input.lpName').nth(1).fill('Fleece');
     await page.locator('.lpCategory').nth(1).locator('input.lpDescription').nth(1).fill('Midlayer insulation');
     await page.locator('.lpCategory').nth(1).locator('input.lpWeight').nth(1).fill('250');
     await page.locator('.lpCategory').nth(1).locator('input.lpPrice').nth(1).fill('100');
+    await page.locator('.lpCategory').nth(1).locator('.lpWorn').nth(1).click({ force: true });
 
     // Add Kitchen category — same pattern
     await page.getByText('Add new category').click();
@@ -156,18 +160,12 @@ test.describe('Item and category management', () => {
         await expect(page.locator('.lpConsumableWeight .lpCell.lpNumber.lpSubtotal').first()).toContainText('$44.00');
     });
 
-    test('should mark an item as worn and show worn weight in the list summary', async ({ page }) => {
+    test('should show worn weight for clothing items in the list summary', async ({ page }) => {
         await freshUser(page);
         await seedListData(page);
-
-        // Enable the worn optional field via Settings
-        await page.locator('#settings').hover();
-        await page.getByLabel('Worn items').check();
-
-        // Toggle worn on the first item (Tent, 800 oz)
-        await page.locator('.lpWorn').first().click({ force: true });
-
-        // The worn breakdown row should now appear in the list summary
+        // Rain Jacket (300 oz) + Fleece (250 oz) = 550 oz worn
+        // Note: the worn row has no price column in the summary template
         await expect(page.locator('.lpWornWeight')).toBeVisible();
+        await expect(page.locator('.lpWornWeight .lpDisplaySubtotal')).toContainText('550');
     });
 });
