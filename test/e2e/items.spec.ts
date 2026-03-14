@@ -14,9 +14,9 @@ async function freshUser(page: any) {
  * meaningful data rather than a single unnamed category and item.
  *
  * Result:
- *   Shelter    — Tent (800 oz, $500), Sleeping Bag (600 oz, $200)
- *   Clothing   — Rain Jacket (300 oz, $150), Fleece (250 oz, $100)
- *   Kitchen    — Stove (100 oz, $80), Fuel Canister (200 oz, $15)
+ *   Shelter  — Tent (800 oz, $500, qty 1), Sleeping Bag (600 oz, $200, qty 1)
+ *   Clothing — Rain Jacket (300 oz, $150, qty 1), Fleece (250 oz, $100, qty 1)
+ *   Kitchen  — Stove (100 oz, $80, qty 1), Fuel Canister (200 oz, $15, qty 3)
  */
 async function seedListData(page: any) {
     // Enable item prices via Settings
@@ -28,12 +28,14 @@ async function seedListData(page: any) {
     // Fill the default category and its existing item
     await page.locator('input.lpCategoryName').first().fill('Shelter');
     await page.locator('.lpCategory').first().locator('input.lpName').first().fill('Tent');
+    await page.locator('.lpCategory').first().locator('input.lpDescription').first().fill('3-season backpacking tent');
     await page.locator('.lpCategory').first().locator('input.lpWeight').first().fill('800');
     await page.locator('.lpCategory').first().locator('input.lpPrice').first().fill('500');
 
     // Add second item to Shelter
     await page.locator('.lpCategory').first().getByText('Add new item').click();
     await page.locator('.lpCategory').first().locator('input.lpName').nth(1).fill('Sleeping Bag');
+    await page.locator('.lpCategory').first().locator('input.lpDescription').nth(1).fill('20°F down sleeping bag');
     await page.locator('.lpCategory').first().locator('input.lpWeight').nth(1).fill('600');
     await page.locator('.lpCategory').first().locator('input.lpPrice').nth(1).fill('200');
 
@@ -41,10 +43,12 @@ async function seedListData(page: any) {
     await page.getByText('Add new category').click();
     await page.locator('input.lpCategoryName').nth(1).fill('Clothing');
     await page.locator('.lpCategory').nth(1).locator('input.lpName').first().fill('Rain Jacket');
+    await page.locator('.lpCategory').nth(1).locator('input.lpDescription').first().fill('Waterproof hardshell');
     await page.locator('.lpCategory').nth(1).locator('input.lpWeight').first().fill('300');
     await page.locator('.lpCategory').nth(1).locator('input.lpPrice').first().fill('150');
     await page.locator('.lpCategory').nth(1).getByText('Add new item').click();
     await page.locator('.lpCategory').nth(1).locator('input.lpName').nth(1).fill('Fleece');
+    await page.locator('.lpCategory').nth(1).locator('input.lpDescription').nth(1).fill('Midlayer insulation');
     await page.locator('.lpCategory').nth(1).locator('input.lpWeight').nth(1).fill('250');
     await page.locator('.lpCategory').nth(1).locator('input.lpPrice').nth(1).fill('100');
 
@@ -52,12 +56,15 @@ async function seedListData(page: any) {
     await page.getByText('Add new category').click();
     await page.locator('input.lpCategoryName').nth(2).fill('Kitchen');
     await page.locator('.lpCategory').nth(2).locator('input.lpName').first().fill('Stove');
+    await page.locator('.lpCategory').nth(2).locator('input.lpDescription').first().fill('Canister stove');
     await page.locator('.lpCategory').nth(2).locator('input.lpWeight').first().fill('100');
     await page.locator('.lpCategory').nth(2).locator('input.lpPrice').first().fill('80');
     await page.locator('.lpCategory').nth(2).getByText('Add new item').click();
     await page.locator('.lpCategory').nth(2).locator('input.lpName').nth(1).fill('Fuel Canister');
+    await page.locator('.lpCategory').nth(2).locator('input.lpDescription').nth(1).fill('100g canister');
     await page.locator('.lpCategory').nth(2).locator('input.lpWeight').nth(1).fill('200');
     await page.locator('.lpCategory').nth(2).locator('input.lpPrice').nth(1).fill('15');
+    await page.locator('.lpCategory').nth(2).locator('input.lpQty').nth(1).fill('3');
 }
 
 test.describe('Item and category management', () => {
