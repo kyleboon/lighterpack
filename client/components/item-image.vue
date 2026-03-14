@@ -86,7 +86,7 @@ export default {
 
             this.uploading = true;
 
-            return fetchJson('/imageUpload', {
+            fetchJson('/imageUpload', {
                 method: 'POST',
                 body: formData,
                 credentials: 'same-origin',

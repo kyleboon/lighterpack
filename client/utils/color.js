@@ -116,8 +116,8 @@ module.exports = (function () {
     }
 
     function stringToRgb(rgbString) {
-        rgbString = rgbString.substring(4, rgbString.length - 1);
-        const split = rgbString.split(',');
+        const trimmed = rgbString.substring(4, rgbString.length - 1);
+        const split = trimmed.split(',');
         return {
             r: parseInt(split[0]),
             g: parseInt(split[1]),

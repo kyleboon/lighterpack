@@ -149,7 +149,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('../css/_globals');
+@import '../css/globals';
 
 #listDescriptionContainer {
     margin: 25px 0;

@@ -48,7 +48,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('../css/_globals');
+@import '../css/globals';
 
 .lpPopover {
     display: block;

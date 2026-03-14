@@ -83,11 +83,11 @@ export default {
                     this.$router.push('/signin/reset-password');
                 })
                 .catch((response) => {
-                    let errors = [{ message: 'An error occurred, please try again later.' }];
+                    let localErrors = [{ message: 'An error occurred, please try again later.' }];
                     if (response.json && response.json.errors) {
-                        errors = response.json.errors;
+                        localErrors = response.json.errors;
                     }
-                    this.forgotPasswordErrors = errors;
+                    this.forgotPasswordErrors = localErrors;
                 });
         },
         forgotUsername() {
@@ -105,11 +105,11 @@ export default {
                     this.$router.push('/signin/forgot-username');
                 })
                 .catch((response) => {
-                    let errors = [{ message: 'An error occurred, please try again later.' }];
+                    let localErrors = [{ message: 'An error occurred, please try again later.' }];
                     if (response.json && response.json.errors) {
-                        errors = response.json.errors;
+                        localErrors = response.json.errors;
                     }
-                    this.forgotUsernameErrors = errors;
+                    this.forgotUsernameErrors = localErrors;
                 });
         },
     },

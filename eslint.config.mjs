@@ -3,11 +3,11 @@ import pluginVue from 'eslint-plugin-vue';
 import prettier from 'eslint-config-prettier';
 
 const sharedRules = {
-    'consistent-return': 'off',
+    'consistent-return': 'error',
     'func-names': 'off',
     'max-len': 'off',
-    'no-shadow': 'off',
-    'no-param-reassign': 'off',
+    'no-shadow': 'error',
+    'no-param-reassign': ['error', { props: false }],
     'no-plusplus': 'off',
     'prefer-destructuring': 'off',
     'no-underscore-dangle': 'off',

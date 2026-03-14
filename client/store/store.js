@@ -52,8 +52,8 @@ export const useLighterpackStore = defineStore('lighterpack', {
         loadLibraryData(libraryData) {
             const library = new Library();
             try {
-                libraryData = JSON.parse(libraryData);
-                library.load(libraryData);
+                const parsed = JSON.parse(libraryData);
+                library.load(parsed);
                 this.library = library;
             } catch (err) {
                 this.globalAlerts.push({ message: 'An error occurred while loading your data.' });
@@ -284,11 +284,11 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 .catch((response) => {
                     if (response.status == 401) {
                         bus.$emit('unauthorized');
-                    } else {
-                        return new Promise((resolve, reject) => {
-                            reject('An error occurred while fetching your data, please try again later.');
-                        });
+                        return undefined;
                     }
+                    return new Promise((resolve, reject) => {
+                        reject('An error occurred while fetching your data, please try again later.');
+                    });
                 });
         },
     },
@@ -314,7 +314,7 @@ export function setupAutoSave(store) {
                 store.setIsSaving(true);
                 store.setLastSaveData(currentSaveData);
 
-                return fetchJson('/saveLibrary/', {
+                fetchJson('/saveLibrary/', {
                     method: 'POST',
                     body: JSON.stringify({
                         syncToken: state.syncToken,

@@ -36,14 +36,13 @@ const authenticateUser = async function (req, res, next) {
         }
         req.lighterpackusername = user.username || 'UNKNOWN';
         req.user = user;
-        next();
+        return next();
     } catch (err) {
         logWithRequest(req, err);
         if (err.code && err.message) {
-            res.status(err.code).json({ message: err.message });
-        } else {
-            res.status(500).json({ message: 'An error occurred, please try again later.' });
+            return res.status(err.code).json({ message: err.message });
         }
+        return res.status(500).json({ message: 'An error occurred, please try again later.' });
     }
 };
 
@@ -51,7 +50,7 @@ const requireModerator = function (req, res, next) {
     if (!isModerator(req.user.username)) {
         return res.status(403).json({ message: 'Denied.' });
     }
-    next();
+    return next();
 };
 
 const verifyPassword = async function (username, password) {

@@ -74,7 +74,7 @@ export default {
 
             this.fetching = true;
 
-            return fetchJson('/signin/', {
+            fetchJson('/signin/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

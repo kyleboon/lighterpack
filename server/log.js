@@ -19,15 +19,13 @@ const logger = winston.createLogger({
 });
 
 const logWithRequest = function (req, data) {
-    if (typeof data === 'string') {
-        data = { message: data };
-    }
+    const logData = typeof data === 'string' ? { message: data } : data;
 
     if (req && req.uuid) {
-        logger.info({ ...data, requestid: req.uuid });
+        logger.info({ ...logData, requestid: req.uuid });
         return;
     }
-    logger.info(data);
+    logger.info(logData);
 };
 
 module.exports = {

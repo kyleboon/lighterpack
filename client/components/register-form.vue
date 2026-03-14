@@ -106,7 +106,7 @@ export default {
             }
 
             this.saving = true;
-            return fetchJson('/register', {
+            fetchJson('/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

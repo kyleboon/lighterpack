@@ -179,12 +179,12 @@ List.prototype.addCategory = function (categoryId) {
 };
 
 List.prototype.removeCategory = function (categoryId) {
-    categoryId = parseInt(categoryId);
-    let index = this.categoryIds.indexOf(categoryId);
+    const catId = parseInt(categoryId);
+    let index = this.categoryIds.indexOf(catId);
     if (index == -1) {
-        index = this.categoryIds.indexOf(`${categoryId}`);
+        index = this.categoryIds.indexOf(`${catId}`);
         if (index == -1) {
-            console.warn(`Unable to delete category, it does not exist in this list:${categoryId}`);
+            console.warn(`Unable to delete category, it does not exist in this list:${catId}`);
             return false;
         }
     }
@@ -193,11 +193,9 @@ List.prototype.removeCategory = function (categoryId) {
     return true;
 };
 
-List.prototype.renderChart = function (type, linkParent) {
+List.prototype.renderChart = function (type, linkParent = true) {
     const chartData = { points: {} };
     let total = 0;
-
-    if (typeof linkParent === 'undefined') linkParent = true;
 
     for (var i in this.categoryIds) {
         var category = this.library.getCategoryById(this.categoryIds[i]);
@@ -458,7 +456,7 @@ Library.prototype.removeList = function (id) {
 
 Library.prototype.copyList = function (id) {
     const oldList = this.getListById(id);
-    if (!oldList) return;
+    if (!oldList) return undefined;
 
     const copiedList = this.newList();
 
@@ -531,6 +529,7 @@ Library.prototype.findCategoryWithItemById = function (itemId, listId) {
             }
         }
     }
+    return undefined;
 };
 
 Library.prototype.findListWithCategoryById = function (id) {
@@ -540,6 +539,7 @@ Library.prototype.findListWithCategoryById = function (id) {
             if (list.categoryIds[j] == id) return list;
         }
     }
+    return undefined;
 };
 
 Library.prototype.nextSequence = function () {

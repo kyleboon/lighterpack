@@ -74,7 +74,7 @@ window.fetchJson = (url, options) => {
                 }
                 if (response.status && (response.status === 401 || response.status === 403)) {
                     bus.$emit('unauthorized');
-                    return;
+                    return undefined;
                 }
 
                 if (response.json) {
@@ -84,11 +84,8 @@ window.fetchJson = (url, options) => {
                 return reject(new lpError(response));
             })
             .catch((err) => {
-                if (err && err instanceof TypeError && err.message === 'Failed to fetch') {
-                    err = {};
-                }
-
-                return reject(new lpError(err));
+                const wrappedErr = err && err instanceof TypeError && err.message === 'Failed to fetch' ? {} : err;
+                return reject(new lpError(wrappedErr));
             });
     });
 };
@@ -115,7 +112,8 @@ window.createCookie = function (name, value, days) {
 
 window.getElementIndex = function (node) {
     let index = 0;
-    while ((node = node.previousElementSibling)) {
+    let currentNode = node;
+    while ((currentNode = currentNode.previousElementSibling)) {
         index++;
     }
     return index;

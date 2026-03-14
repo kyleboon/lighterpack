@@ -309,8 +309,8 @@ function init() {
                 templates[fileShort] = data.toString();
             });
 
-        fs.readFile(path.join(__dirname, '../templates/share.mustache'), (err, data) => {
-            if (!err) {
+        fs.readFile(path.join(__dirname, '../templates/share.mustache'), (readErr, data) => {
+            if (!readErr) {
                 shareTemplate = data.toString();
                 shareTemplate = shareTemplate.replace(/\r?\n|\r/g, '');
             } else {
@@ -318,8 +318,8 @@ function init() {
             }
         });
 
-        fs.readFile(path.join(__dirname, '../templates/embed.mustache'), (err, data) => {
-            if (!err) {
+        fs.readFile(path.join(__dirname, '../templates/embed.mustache'), (readErr, data) => {
+            if (!readErr) {
                 embedTemplate = data.toString();
                 embedTemplate = embedTemplate.replace(/\r?\n|\r/g, '');
             } else {
@@ -327,8 +327,8 @@ function init() {
             }
         });
 
-        fs.readFile(path.join(__dirname, '../templates/embed.jmustache'), (err, data) => {
-            if (!err) {
+        fs.readFile(path.join(__dirname, '../templates/embed.jmustache'), (readErr, data) => {
+            if (!readErr) {
                 embedJTemplate = data.toString();
             } else {
                 logger.info('ERROR reading embed.jmustache');

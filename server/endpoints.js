@@ -355,9 +355,9 @@ router.post('/delete-account', authenticateUser, async (req, res) => {
 router.post('/imageUpload', async (req, res) => {
     const form = new formidable.IncomingForm();
     const { fields, files } = await new Promise((resolve, reject) => {
-        form.parse(req, (err, fields, files) => {
+        form.parse(req, (err, parsedFields, parsedFiles) => {
             if (err) reject(err);
-            else resolve({ fields, files });
+            else resolve({ fields: parsedFields, files: parsedFiles });
         });
     });
 

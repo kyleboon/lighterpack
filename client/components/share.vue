@@ -71,7 +71,7 @@ export default {
     methods: {
         focusShare(evt) {
             if (!this.list.externalId) {
-                return fetchJson('/externalId', {
+                fetchJson('/externalId', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

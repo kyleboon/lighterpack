@@ -51,7 +51,7 @@ export default {
             let item;
             let filteredItems = [];
             if (!this.searchText) {
-                filteredItems = this.library.items.map((item) => Object.assign({}, item));
+                filteredItems = this.library.items.map((libItem) => Object.assign({}, libItem));
             } else {
                 const lowerCaseSearchText = this.searchText.toLowerCase();
 

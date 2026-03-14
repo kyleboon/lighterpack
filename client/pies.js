@@ -50,13 +50,13 @@ module.exports = function (args) {
         document.getElementsByTagName('body')[0].appendChild(tooltip);
     }
 
-    function update(args) {
+    function update(updateArgs) {
         const oldVisibleRings = getVisibleRings(data);
 
-        if (args.data) {
-            data = preprocess(args.data);
-        } else if (args.processedData) {
-            data = args.processedData;
+        if (updateArgs.data) {
+            data = preprocess(updateArgs.data);
+        } else if (updateArgs.processedData) {
+            data = updateArgs.processedData;
         } else {
             return;
         }
@@ -66,42 +66,42 @@ module.exports = function (args) {
         drawGraph();
     }
 
-    function preprocess(srcData, parent) {
-        const data = {};
+    function preprocess(inputData, parent) {
+        const processedData = {};
         let total = 0;
-        data.points = {};
+        processedData.points = {};
 
-        for (var key in srcData) {
-            var value = srcData[key];
+        for (var key in inputData) {
+            var value = inputData[key];
             if (typeof value === 'object') {
                 total += preprocess(value).total;
             } else {
                 total += value;
             }
         }
-        data.total = total;
+        processedData.total = total;
 
-        for (var key in srcData) {
-            var value = srcData[key];
+        for (var key in inputData) {
+            var value = inputData[key];
             if (typeof value === 'object') {
-                data.points[key] = preprocess(value, data);
-                data.points[key].name = key;
-                data.points[key].visiblePoints = false;
+                processedData.points[key] = preprocess(value, processedData);
+                processedData.points[key].name = key;
+                processedData.points[key].visiblePoints = false;
             } else {
-                data.points[key] = {
+                processedData.points[key] = {
                     value,
                     percent: value / total,
                     name: key,
-                    parent: data,
+                    parent: processedData,
                 };
             }
         }
 
         if (parent) {
-            data.percent = total / parent.total;
-            data.parent = parent;
+            processedData.percent = total / parent.total;
+            processedData.parent = parent;
         }
-        return data;
+        return processedData;
     }
 
     function render(myData) {
@@ -262,9 +262,9 @@ module.exports = function (args) {
         let angle = Math.atan(dY / dX);
         if (dX < 0) angle += Math.PI;
         else if (dY < 0) angle += Math.PI * 2;
-        const radius = Math.sqrt(dX * dX + dY * dY);
+        const mouseRadius = Math.sqrt(dX * dX + dY * dY);
 
-        const newHovered = findHovered(data, angle, radius);
+        const newHovered = findHovered(data, angle, mouseRadius);
 
         if (newHovered) {
             if (newHovered != hovered) {
@@ -326,17 +326,17 @@ module.exports = function (args) {
         animateAdd();
     }
 
-    function findHovered(data, angle, radius) {
-        for (const key in data.points) {
-            const i = data.points[key];
+    function findHovered(pointData, angle, mouseRadius) {
+        for (const key in pointData.points) {
+            const i = pointData.points[key];
             if (i.points && i.visiblePoints) {
-                const found = findHovered(i, angle, radius);
+                const found = findHovered(i, angle, mouseRadius);
                 if (found) return found;
             }
             let startAngle = 0;
             if (typeof i.parent.startAngle !== 'undefined') startAngle = i.parent.startAngle;
 
-            if (radius < i.maxRadius && radius > i.minRadius) {
+            if (mouseRadius < i.maxRadius && mouseRadius > i.minRadius) {
                 if (
                     i.minAngle <= Math.PI * 2 &&
                     i.maxAngle > Math.PI * 2 &&
@@ -367,10 +367,10 @@ module.exports = function (args) {
         return false;
     }
 
-    function recursivelySetAttribute(data, key, value) {
-        data[key] = value;
-        for (const i in data.points) {
-            recursivelySetAttribute(data.points[i], key, value);
+    function recursivelySetAttribute(nodeData, key, value) {
+        nodeData[key] = value;
+        for (const i in nodeData.points) {
+            recursivelySetAttribute(nodeData.points[i], key, value);
         }
     }
 
@@ -389,28 +389,28 @@ module.exports = function (args) {
         attachEvents();
     }
 
-    function getVisibleRings(data) {
-        let out = [data];
-        for (const i in data.points) {
-            if (data.points[i].visiblePoints) {
-                if (data.points[i].points) out = out.concat(getVisibleRings(data.points[i]));
+    function getVisibleRings(ringData) {
+        let out = [ringData];
+        for (const i in ringData.points) {
+            if (ringData.points[i].visiblePoints) {
+                if (ringData.points[i].points) out = out.concat(getVisibleRings(ringData.points[i]));
                 break;
             }
         }
         return out;
     }
 
-    function setVisibleRings(rings, data) {
+    function setVisibleRings(rings, ringData) {
         // pass in old visible rings to translate to new data
-        if (typeof data.id !== 'undefined') {
+        if (typeof ringData.id !== 'undefined') {
             for (var i in rings) {
-                if (data.id == rings[i].id) {
-                    data.visiblePoints = true;
+                if (ringData.id == rings[i].id) {
+                    ringData.visiblePoints = true;
                 }
             }
         }
-        for (var i in data.points) {
-            setVisibleRings(rings, data.points[i]);
+        for (var i in ringData.points) {
+            setVisibleRings(rings, ringData.points[i]);
         }
     }
 
