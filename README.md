@@ -92,7 +92,7 @@ Playwright automatically starts the app server before running tests (via `npm ru
 - ✅ Upgrade `markdown@0.5.0` (from 2012) to `marked@14.x`
 - ✅ Add security hardening: `helmet`, `express-rate-limit` on auth endpoints, `httpOnly` + `sameSite` cookie attributes
 
-### Phase 2 — Code quality ✅
+### Phase 2 — Code quality
 
 - ✅ Add Prettier + `husky` + `lint-staged` for consistent formatting and pre-commit enforcement
 - ✅ Enable stricter ESLint rules: `no-shadow`, `no-param-reassign`, `consistent-return`
@@ -100,8 +100,16 @@ Playwright automatically starts the app server before running tests (via `npm ru
 - ✅ Add Vitest + `@vue/test-utils` for unit and component tests
 - ✅ Add `tsconfig.json` with strict mode; enable `@ts-check` in existing JS files
 - Enable `vue/require-prop-types` and `vue/require-explicit-emits` in ESLint
+- Expand Playwright E2E test coverage:
+    - `items.spec.ts` — add/edit/delete items and categories; mark worn/consumable; verify weight totals
+    - `list-management.spec.ts` — create, switch, copy, and delete lists
+    - `list-settings.spec.ts` — toggle unit system and column visibility; change currency
+    - `share.spec.ts` — share page shows correct data without login; donut chart renders
+    - `import-csv.spec.ts` — import valid CSV; handle malformed CSV gracefully
+    - `auth-errors.spec.ts` — wrong password, duplicate username, mismatched passwords
+    - `forgot-password.spec.ts` — valid and unknown email submission
 
-### Phase 3 — Composition API + remove legacy patterns (4–8 weeks)
+### Phase 3 — Composition API + remove legacy patterns
 
 - Convert all ~30 components from Options API to Composition API with `<script setup>`
 - Remove `window.bus` event emitter and `mixins/utils-mixin.js` — replace with composables
