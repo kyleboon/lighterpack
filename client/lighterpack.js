@@ -1,60 +1,56 @@
-import '@babel/polyfill';
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import mitt from 'mitt';
 
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import './css/lighterpack.scss';
+import 'dragula/dist/dragula.css';
+import App from './App.vue';
+import router from './routes';
+import { useLighterpackStore, setupAutoSave } from './store/store';
 
-import routes from './routes';
-import store from './store/store';
+import { registerDirectives as focusDirectives } from './utils/focus.js';
+import { displayWeight, displayPrice } from './utils/utils.js';
 
-const focusDirectives = require('./utils/focus.js');
-const dataTypes = require('./dataTypes.js');
+// Set up global event bus (mitt replaces Vue 2 event bus)
+const emitter = mitt();
+window.bus = {
+    $on: (event, handler) => emitter.on(event, handler),
+    $off: (event, handler) => emitter.off(event, handler),
+    $emit: (event, data) => emitter.emit(event, data),
+};
 
-const Item = dataTypes.Item;
-const Category = dataTypes.Category;
-const List = dataTypes.List;
-const Library = dataTypes.Library;
-
-Vue.use(VueRouter);
-
-const utils = require('./utils/utils.js');
-
-window.Vue = Vue; // surfacing Vue globally for utils methods
-window.bus = new Vue(); // global event bus
-window.router = new VueRouter({
-    mode: 'history',
-    routes,
-});
-
-bus.$on('unauthorized', (error) => {
+bus.$on('unauthorized', () => {
     window.location = '/signin';
 });
 
-store.dispatch('init')
+const pinia = createPinia();
+const app = createApp(App);
+
+app.use(pinia);
+app.use(router);
+
+// Register global directives
+focusDirectives(app);
+
+// Expose store as $store global property (preserves this.$store in Options API components)
+const store = useLighterpackStore();
+app.config.globalProperties.$store = store;
+setupAutoSave(store);
+
+// Expose display helpers globally for use in templates
+app.config.globalProperties.$displayWeight = displayWeight;
+app.config.globalProperties.$displayPrice = displayPrice;
+
+// Keep window.router for legacy global access
+window.router = router;
+
+store.init()
     .then(() => {
-        initLighterPack();
+        app.mount('#lp');
     })
-    .catch((error) => {
-        if (!store.state.library) {
+    .catch(() => {
+        if (!store.library) {
             router.push('/welcome');
         }
-        initLighterPack();
+        app.mount('#lp');
     });
-
-var initLighterPack = function () {
-    window.LighterPack = new Vue({
-        router,
-        store,
-        data: {
-            path: '',
-            fatal: '',
-        },
-        watch: {
-            $route(to, from) {
-                this.path = to.path;
-            },
-        },
-        mounted() {
-            this.path = router.currentRoute.path;
-        },
-    }).$mount('#lp');
-};

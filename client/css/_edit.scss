@@ -6,13 +6,13 @@
 
     &:hover {
         background-color: #fff;
-        border: 1px solid rgba(0, 0, 0, 0.15);
+        border: 1px solid rgb(0 0 0 / 15%);
     }
 
     &:focus {
         background-color: #fff;
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
+        border: 1px solid rgb(0 0 0 / 15%);
+        box-shadow: 0 1px 3px rgb(0 0 0 / 15%) inset;
         outline: none;
     }
 
@@ -49,7 +49,7 @@
 }
 
 .gu-mirror {
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+    filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
     filter: alpha(opacity=80);
     margin: 0 !important;
     opacity: 0.8;
@@ -62,14 +62,11 @@
 }
 
 .gu-unselectable {
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
     user-select: none !important;
 }
 
 .gu-transit {
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+    filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
     filter: alpha(opacity=20);
     opacity: 0.2;
 }

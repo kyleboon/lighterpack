@@ -1,7 +1,3 @@
-<style lang="scss">
-
-</style>
-
 <template>
     <modal id="itemLinkDialog" :shown="shown" @hide="shown = false">
         <h2>Add a link for this item</h2>
@@ -37,9 +33,13 @@ export default {
     },
     methods: {
         addLink() {
-            this.$store.commit('updateItemLink', { url: this.url, item: this.item });
+            this.$store.updateItemLink({ url: this.url, item: this.item });
             this.shown = false;
         },
     },
 };
 </script>
+
+<style lang="scss">
+
+</style>

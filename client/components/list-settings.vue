@@ -1,43 +1,8 @@
-<style lang="scss">
-
-#csvUrl {
-    display: block;
-    margin-top: 15px;
-}
-
-#lpOptionalFields {
-    margin: 0;
-    padding: 0;
-}
-
-.lpOptionalField {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-#lpPriceSettings {
-    input {
-        display: inline-block;
-        margin-left: 10px;
-        width: 50px;
-    }
-}
-
-#share .lpContent {
-    width: 330px;
-}
-
-#settings .lpContent {
-    width: 200px;
-}
-</style>
-
 <template>
     <span v-if="isSignedIn" id="settings" class="headerItem hasPopover">
         <PopoverHover>
-            <span slot="target"><i class="lpSprite lpSettings" /> Settings</span>
-            <div slot="content">
+            <template #target><i class="lpSprite lpSettings" /> Settings</template>
+            <template #content>
                 <ul id="lpOptionalFields">
                     <li v-for="optionalField in optionalFieldsLookup" :key="optionalField.name" class="lpOptionalField">
                         <label>
@@ -53,7 +18,7 @@
                         <input id="currencySymbol" type="text" maxlength="4" :value="library.currencySymbol" @input="updateCurrencySymbol($event)">
                     </label>
                 </div>
-            </div>
+            </template>
         </PopoverHover>
     </span>
 </template>
@@ -98,10 +63,10 @@ export default {
     },
     computed: {
         library() {
-            return this.$store.state.library;
+            return this.$store.library;
         },
         isSignedIn() {
-            return this.$store.state.loggedIn;
+            return this.$store.loggedIn;
         },
     },
     beforeMount() {
@@ -114,10 +79,10 @@ export default {
     },
     methods: {
         toggleOptionalField(evt, optionalField) {
-            this.$store.commit('toggleOptionalField', optionalField);
+            this.$store.toggleOptionalField(optionalField);
         },
         updateCurrencySymbol(evt) {
-            this.$store.commit('updateCurrencySymbol', evt.target.value);
+            this.$store.updateCurrencySymbol(evt.target.value);
         },
         updateOptionalFieldValues() {
             let i;
@@ -131,3 +96,38 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+
+#csvUrl {
+    display: block;
+    margin-top: 15px;
+}
+
+#lpOptionalFields {
+    margin: 0;
+    padding: 0;
+}
+
+.lpOptionalField {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#lpPriceSettings {
+    input {
+        display: inline-block;
+        margin-left: 10px;
+        width: 50px;
+    }
+}
+
+#share .lpContent {
+    width: 330px;
+}
+
+#settings .lpContent {
+    width: 200px;
+}
+</style>

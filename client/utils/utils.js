@@ -1,4 +1,5 @@
 import assignIn from 'lodash/assignIn';
+import weightUtils from './weight.js';
 
 class lpError extends Error {
     constructor(response, statusCode = null) {
@@ -122,3 +123,19 @@ window.arrayMove = function (inputArray, oldIndex, newIndex) {
     array.splice(newIndex, 0, element);
     return array;
 };
+
+// Display helper functions (formerly Vue 2 filters)
+window.displayWeight = function (mg, unit) {
+    return weightUtils.MgToWeight(mg, unit) || 0;
+};
+
+window.displayPrice = function (price, symbol) {
+    let amount = '0.00';
+    if (typeof price === 'number') {
+        amount = price.toFixed(2);
+    }
+    return symbol + amount;
+};
+
+export const displayWeight = window.displayWeight;
+export const displayPrice = window.displayPrice;

@@ -1,7 +1,3 @@
-<style lang="scss">
-
-</style>
-
 <template>
     <form class="lpRegister lpFields" @submit.prevent="submit">
         <div class="lpFields">
@@ -25,7 +21,7 @@
 import errors from './errors.vue';
 import spinner from './spinner.vue';
 
-const dataTypes = require('../dataTypes.js');
+import dataTypes from '../dataTypes.js';
 
 const Library = dataTypes.Library;
 
@@ -47,20 +43,20 @@ export default {
     },
     computed: {
         isLocalSaving() {
-            return this.$store.state.saveType === 'local';
+            return this.$store.saveType === 'local';
         },
     },
     methods: {
         loadLocal() {
             if (this.isLocalSaving) {
-                router.push('/');
+                this.$router.push('/');
                 return;
             }
             const library = new Library();
-            this.$store.commit('loadLibraryData', JSON.stringify(library.save()));
-            this.$store.commit('setSaveType', 'local');
-            this.$store.commit('setLoggedIn', false);
-            router.push('/');
+            this.$store.loadLibraryData(JSON.stringify(library.save()));
+            this.$store.setSaveType('local');
+            this.$store.setLoggedIn(false);
+            this.$router.push('/');
         },
         submit() {
             this.errors = [];
@@ -113,17 +109,17 @@ export default {
                 body: JSON.stringify(registerData),
             })
                 .then((response) => {
-                    this.$store.commit('setSyncToken', response.syncToken);
-                    this.$store.commit('loadLibraryData', response.library);
-                    this.$store.commit('setSaveType', 'remote');
-                    this.$store.commit('setLoggedIn', response.username);
+                    this.$store.setSyncToken(response.syncToken);
+                    this.$store.loadLibraryData(response.library);
+                    this.$store.setSaveType('remote');
+                    this.$store.setLoggedIn(response.username);
 
                     if (registerData.library) {
                         localStorage.registeredLibrary = localStorage.library;
                         delete localStorage.library;
                     }
                     this.saving = false;
-                    router.push('/');
+                    this.$router.push('/');
                 })
                 .catch((err) => {
                     this.saving = false;
@@ -133,3 +129,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+
+</style>

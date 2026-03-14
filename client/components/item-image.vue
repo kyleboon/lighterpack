@@ -1,7 +1,3 @@
-<style lang="scss">
-
-</style>
-
 <template>
     <div>
         <modal id="itemImageDialog" :shown="shown" @hide="shown = false">
@@ -37,7 +33,7 @@
             </div>
         </modal>
         <form id="imageUpload" ref="imageUploadForm">
-            <input id="image" type="file" name="image" ref="imageInput" @change="uploadImage">
+            <input id="image" ref="imageInput" type="file" name="image" @change="uploadImage">
         </form>
     </div>
 </template>
@@ -67,7 +63,7 @@ export default {
     },
     methods: {
         saveImageUrl() {
-            this.$store.commit('updateItemImageUrl', { imageUrl: this.imageUrl, item: this.item });
+            this.$store.updateItemImageUrl({ imageUrl: this.imageUrl, item: this.item });
             this.shown = false;
         },
         triggerImageUpload() {
@@ -105,7 +101,7 @@ export default {
             })
                 .then((response) => {
                     this.uploading = false;
-                    this.$store.commit('updateItemImage', { image: response.data.id, item: this.item });
+                    this.$store.updateItemImage({ image: response.data.id, item: this.item });
                     this.shown = false;
                 }).catch((response) => {
                     this.uploading = false;
@@ -113,9 +109,13 @@ export default {
                 });
         },
         removeItemImage() {
-            this.$store.commit('removeItemImage', this.item);
+            this.$store.removeItemImage(this.item);
             this.item.image = '';
         },
     },
 };
 </script>
+
+<style lang="scss">
+
+</style>

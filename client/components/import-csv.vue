@@ -1,17 +1,3 @@
-<style lang="scss">
-
-#importValidate {
-    height: 500px;
-    overflow-y: scroll;
-    width: 650px;
-
-    .lpButton {
-        margin-bottom: 30px;
-    }
-}
-
-</style>
-
 <template>
     <div id="importCSV">
         <modal id="importValidate" :shown="shown" @hide="shown = false">
@@ -26,7 +12,7 @@
                         <span class="lpCell">Weight</span>
                         <span class="lpCell">Unit</span>
                     </li>
-                    <li v-for="row in importData.data" class="lpRow">
+                    <li v-for="(row, index) in importData.data" :key="index" class="lpRow">
                         <span class="lpCell">{{ row.name }}</span>
                         <span class="lpCell">{{ row.category }}</span>
                         <span class="lpCell">{{ row.description }}</span>
@@ -66,7 +52,7 @@ export default {
     },
     computed: {
         library() {
-            return this.$store.state.library;
+            return this.$store.library;
         },
     },
     mounted() {
@@ -163,10 +149,24 @@ export default {
             }
         },
         importList() {
-            this.$store.commit('importCSV', this.importData);
+            this.$store.importCSV(this.importData);
             this.shown = false;
         },
 
     },
 };
 </script>
+
+<style lang="scss">
+
+#importValidate {
+    height: 500px;
+    overflow-y: scroll;
+    width: 650px;
+
+    .lpButton {
+        margin-bottom: 30px;
+    }
+}
+
+</style>

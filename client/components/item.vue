@@ -1,56 +1,3 @@
-<style lang="scss">
-
-.lpItem {
-    &:hover,
-    &.ui-sortable-helper {
-        background: #fff;
-
-        .lpRemove,
-        .lpWorn,
-        .lpConsumable,
-        .lpCamera,
-        .lpLink,
-        .lpHandle,
-        .lpArrows,
-        .lpStar {
-            visibility: visible;
-        }
-    }
-
-    input,
-    select {
-        padding: 3px;
-    }
-}
-
-.lpArrows {
-    display: inline-block;
-    height: 14px;
-    position: relative;
-    visibility: hidden;
-    width: 10px;
-
-    .lpUp,
-    .lpDown {
-        cursor: pointer;
-        left: 0;
-        margin: 2px;
-        opacity: 0.5;
-        position: absolute;
-        top: 0;
-
-        &:hover {
-            opacity: 1;
-        }
-    }
-
-    .lpDown {
-        top: 11px;
-    }
-}
-
-</style>
-
 <template>
     <li :id="item.id" :class="'lpItem '+ item.classes">
         <span class="lpHandleCell">
@@ -91,8 +38,8 @@
 <script>
 import unitSelect from './unit-select.vue';
 
-const utilsMixin = require('../mixins/utils-mixin.js');
-const weightUtils = require('../utils/weight.js');
+import utilsMixin from '../mixins/utils-mixin.js';
+import weightUtils from '../utils/weight.js';
 
 export default {
     name: 'Item',
@@ -114,13 +61,13 @@ export default {
     },
     computed: {
         library() {
-            return this.$store.state.library;
+            return this.$store.library;
         },
         item() {
-            return Vue.util.extend({}, this.itemContainer.item);
+            return Object.assign({}, this.itemContainer.item);
         },
         categoryItem() {
-            return Vue.util.extend({}, this.itemContainer.categoryItem);
+            return Object.assign({}, this.itemContainer.categoryItem);
         },
         thumbnailImage() {
             if (this.item.image) {
@@ -154,14 +101,14 @@ export default {
     },
     methods: {
         saveItem() {
-            this.$store.commit('updateItem', this.item);
+            this.$store.updateItem(this.item);
         },
         saveCategoryItem() {
-            this.$store.commit('updateCategoryItem', { category: this.category, categoryItem: this.categoryItem });
+            this.$store.updateCategoryItem({ category: this.category, categoryItem: this.categoryItem });
         },
         setUnit(unit) {
             this.item.authorUnit = unit;
-            this.$store.commit('updateItemUnit', unit);
+            this.$store.updateItemUnit(unit);
             this.saveWeight(); // calling saveWeight preserves the text in the weight box instead of converting units.
         },
         savePrice() {
@@ -322,8 +269,61 @@ export default {
             this.saveItem();
         },
         removeItem() {
-            this.$store.commit('removeItemFromCategory', { itemId: this.item.id, category: this.category });
+            this.$store.removeItemFromCategory({ itemId: this.item.id, category: this.category });
         },
     },
 };
-</script>,
+</script>
+
+<style lang="scss">
+
+.lpItem {
+    &:hover,
+    &.ui-sortable-helper {
+        background: #fff;
+
+        .lpRemove,
+        .lpWorn,
+        .lpConsumable,
+        .lpCamera,
+        .lpLink,
+        .lpHandle,
+        .lpArrows,
+        .lpStar {
+            visibility: visible;
+        }
+    }
+
+    input,
+    select {
+        padding: 3px;
+    }
+}
+
+.lpArrows {
+    display: inline-block;
+    height: 14px;
+    position: relative;
+    visibility: hidden;
+    width: 10px;
+
+    .lpUp,
+    .lpDown {
+        cursor: pointer;
+        left: 0;
+        margin: 2px;
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    .lpDown {
+        top: 11px;
+    }
+}
+
+</style>

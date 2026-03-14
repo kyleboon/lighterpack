@@ -1,4 +1,3 @@
-const Vue = require('vue');
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
@@ -44,34 +43,27 @@ const shareScriptsLinks = [];
 let appScriptsHtml = '';
 let appStylesHtml = '';
 
-if (config.get('environment') === 'production') {
-    assetData = JSON.parse(fs.readFileSync(path.join(__dirname, '../public/dist/assets.json'), 'utf8'));
-    const appAssetFiles = assetData.files.app;
+assetData = JSON.parse(fs.readFileSync(path.join(__dirname, '../public/dist/assets.json'), 'utf8'));
+const appAssetFiles = assetData.files.app;
 
-    appAssetFiles.forEach((assetName) => {
-        if (assetName.substr(assetName.length - 3) === '.js') {
-            appScriptsHtml += `<script src='/dist/${assetName}'></script>`;
-        } else if (assetName.substr(assetName.length - 4) === '.css') {
-            appStylesHtml += `<link rel='stylesheet' href='/dist/${assetName}' />`;
-        }
-    });
+appAssetFiles.forEach((assetName) => {
+    if (assetName.substr(assetName.length - 3) === '.js') {
+        appScriptsHtml += `<script type='module' src='/dist/${assetName}'></script>`;
+    } else if (assetName.substr(assetName.length - 4) === '.css') {
+        appStylesHtml += `<link rel='stylesheet' href='/dist/${assetName}' />`;
+    }
+});
 
-    const shareAssetFiles = assetData.files.share;
-    shareAssetFiles.forEach((assetName) => {
-        if (assetName.substr(assetName.length - 3) === '.js') {
-            shareScriptsHtml += `<script src='/dist/${assetName}'></script>`;
-            shareScriptsLinks.push(assetName);
-        } else if (assetName.substr(assetName.length - 4) === '.css') {
-            shareStylesHtml += `<link rel='stylesheet' href='/dist/${assetName}' />`;
-            shareStylesLinks.push(assetName);
-        }
-    });
-} else {
-    appStylesHtml = '';
-    appScriptsHtml = '<script src=\'/dist/app.js\'></script>';
-    shareStylesHtml = '';
-    shareScriptsHtml = '<script src=\'/dist/share.js\'></script>';
-}
+const shareAssetFiles = assetData.files.share;
+shareAssetFiles.forEach((assetName) => {
+    if (assetName.substr(assetName.length - 3) === '.js') {
+        shareScriptsHtml += `<script type='module' src='/dist/${assetName}'></script>`;
+        shareScriptsLinks.push(assetName);
+    } else if (assetName.substr(assetName.length - 4) === '.css') {
+        shareStylesHtml += `<link rel='stylesheet' href='/dist/${assetName}' />`;
+        shareStylesLinks.push(assetName);
+    }
+});
 
 index = index.replace('{{styles}}', appStylesHtml);
 index = index.replace('{{scripts}}', appScriptsHtml);
@@ -355,7 +347,7 @@ const renderItem = function (item, args) {
     const out = {
         classes, unit, displayWeight, unitSelect, showImages: args.showImages, showPrices: args.showPrices, starClass, displayPrice, currencySymbol: args.currencySymbol,
     };
-    Vue.util.extend(out, item);
+    Object.assign(out, item);
 
     return Mustache.render(args.itemTemplate, out);
 };
@@ -372,8 +364,8 @@ const renderCategory = function (category, args) {
     category.calculateSubtotal();
     category.subtotalWeightDisplay = weightUtils.MgToWeight(category.subtotalWeight, args.totalUnit);
     category.subtotalPriceDisplay = category.subtotalPrice ? category.subtotalPrice.toFixed(2) : '0.00';
-    let temp = Vue.util.extend({}, category);
-    temp = Vue.util.extend(temp, {
+    let temp = Object.assign({}, category);
+    temp = Object.assign(temp, {
         items, subtotalUnit: args.totalUnit, currencySymbol: args.currencySymbol, showPrices: args.showPrices,
     });
 
@@ -392,7 +384,7 @@ const renderList = function (list, args) {
 };
 
 var renderLibrary = function (library, args) {
-    Vue.util.extend(args, { itemUnit: library.itemUnit, totalUnit: library.totalUnit });
+    Object.assign(args, { itemUnit: library.itemUnit, totalUnit: library.totalUnit });
     return renderList(library.getListById(library.defaultListId), args);
 };
 

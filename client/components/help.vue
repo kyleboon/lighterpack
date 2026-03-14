@@ -1,11 +1,3 @@
-<style lang="scss">
-
-#help {
-    width: 800px;
-}
-
-</style>
-
 <template>
     <modal id="help" :shown="shown" @hide="shown = false">
         <h2>Help</h2>
@@ -47,3 +39,11 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+
+#help {
+    width: 800px;
+}
+
+</style>

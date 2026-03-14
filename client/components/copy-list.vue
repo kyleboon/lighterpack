@@ -1,13 +1,8 @@
-<style lang="scss">
-@import "../css/_globals";
-
-</style>
-
 <template>
     <modal id="copyListDialog" :shown="shown" @hide="shown = false">
         <h2>Choose the list to copy</h2>
         <select id="listToCopy" v-model="listId">
-            <option v-for="list in library.lists" :value="list.id">
+            <option v-for="list in library.lists" :key="list.id" :value="list.id">
                 {{ list.name }}
             </option>
         </select>
@@ -36,7 +31,7 @@ export default {
     },
     computed: {
         library() {
-            return this.$store.state.library;
+            return this.$store.library;
         },
     },
     beforeMount() {
@@ -49,9 +44,14 @@ export default {
             if (!this.listId) {
                 return; // TODO: errors
             }
-            this.$store.commit('copyList', this.listId);
+            this.$store.copyList(this.listId);
             this.shown = false;
         },
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_globals";
+
+</style>

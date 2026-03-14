@@ -1,9 +1,70 @@
+<template>
+    <div class="lpModalContainer">
+        <transition name="lpModal">
+            <div v-if="shown" :id="id" class="lpModal">
+                <slot />
+            </div>
+        </transition>
+        <transition name="lpModal">
+            <div v-if="shown" :class="{'lpModalOverlay': true, 'lpBlackout': blackout, 'lpTransparent': transparentOverlay}" @click="hide" />
+        </transition>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'Modal',
+    props: {
+        id: {
+            type: String,
+            required: false,
+        },
+        shown: {
+            type: Boolean,
+            required: true,
+        },
+        blackout: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
+        transparentOverlay: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
+    },
+    beforeMount() {
+        this.bindEscape();
+    },
+    beforeUnmount() {
+        this.unbindEscape();
+    },
+    methods: {
+        hide() {
+            this.$emit('hide');
+        },
+        bindEscape() {
+            window.addEventListener('keyup', this.closeOnEscape);
+        },
+        unbindEscape() {
+            window.removeEventListener('keyup', this.closeOnEscape);
+        },
+        closeOnEscape(evt) {
+            if (this.shown && evt.keyCode === 27) {
+                this.hide();
+            }
+        },
+    },
+};
+</script>
+
 <style lang="scss">
 @import "../css/_globals";
 
 .lpModal {
     background: $background1;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0 30px rgb(0 0 0 / 25%);
     left: 50%;
     max-height: calc(90% - (#{$spacingLarge} * 2));
     overflow-y: auto;
@@ -49,7 +110,7 @@
 }
 
 .lpModalOverlay {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgb(0 0 0 / 50%);
     height: 100%;
     left: 0;
     position: fixed;
@@ -66,7 +127,7 @@
     }
 
     &.lpTransparent {
-        background: rgba(0, 0, 0, 0.01);
+        background: rgb(0 0 0 / 1%);
     }
 }
 
@@ -80,64 +141,3 @@
 }
 
 </style>
-
-<template>
-    <div class="lpModalContainer">
-        <transition name="lpModal">
-            <div v-if="shown" :id="id" class="lpModal">
-                <slot />
-            </div>
-        </transition>
-        <transition name="lpModal">
-            <div v-if="shown" :class="{'lpModalOverlay': true, 'lpBlackout': blackout, 'lpTransparent': transparentOverlay}" @click="hide" />
-        </transition>
-    </div>
-</template>
-
-<script>
-export default {
-    name: 'Modal',
-    props: {
-        id: {
-            type: String,
-            required: false,
-        },
-        shown: {
-            type: Boolean,
-            required: true,
-        },
-        blackout: {
-            type: Boolean,
-            required: false,
-            default: false,
-        },
-        transparentOverlay: {
-            type: Boolean,
-            required: false,
-            default: false,
-        },
-    },
-    beforeMount() {
-        this.bindEscape();
-    },
-    beforeDestroy() {
-        this.unbindEscape();
-    },
-    methods: {
-        hide() {
-            this.$emit('hide');
-        },
-        bindEscape() {
-            window.addEventListener('keyup', this.closeOnEscape);
-        },
-        unbindEscape() {
-            window.removeEventListener('keyup', this.closeOnEscape);
-        },
-        closeOnEscape(evt) {
-            if (this.shown && evt.keyCode === 27) {
-                this.hide();
-            }
-        },
-    },
-};
-</script>

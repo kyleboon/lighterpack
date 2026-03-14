@@ -1,3 +1,52 @@
+<template>
+    <div v-click-outside="hide" :class="{'lpPopover': true, 'lpPopoverShown': shown}">
+        <div class="lpTarget">
+            <slot name="target" />
+        </div>
+        <div class="lpContent">
+            <slot name="content" />
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'Popover',
+    props: {
+        id: {
+            type: String,
+            required: false,
+        },
+        shown: {
+            type: Boolean,
+            required: true,
+        },
+    },
+    beforeMount() {
+        this.bindEscape();
+    },
+    beforeUnmount() {
+        this.unbindEscape();
+    },
+    methods: {
+        hide() {
+            this.$emit('hide');
+        },
+        bindEscape() {
+            window.addEventListener('keyup', this.closeOnEscape);
+        },
+        unbindEscape() {
+            window.removeEventListener('keyup', this.closeOnEscape);
+        },
+        closeOnEscape(evt) {
+            if (this.shown && evt.keyCode === 27) {
+                this.hide();
+            }
+        },
+    },
+};
+</script>
+
 <style lang="scss">
 @import "../css/_globals";
 
@@ -15,7 +64,7 @@
 
     .lpContent {
         background: #fff;
-        box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 0 6px rgb(0 0 0 / 25%);
         color: $content;
         left: 50%;
         margin-top: 15px;
@@ -32,7 +81,7 @@
 
         &::before {
             background-color: #fff;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 0 6px rgb(0 0 0 / 25%);
             content: "";
             display: block;
             height: 20px;
@@ -94,52 +143,3 @@
 }
 
 </style>
-
-<template>
-    <div v-click-outside="hide" :class="{'lpPopover': true, 'lpPopoverShown': shown}">
-        <div class="lpTarget">
-            <slot name="target" />
-        </div>
-        <div class="lpContent">
-            <slot name="content" />
-        </div>
-    </div>
-</template>
-
-<script>
-export default {
-    name: 'Popover',
-    props: {
-        id: {
-            type: String,
-            required: false,
-        },
-        shown: {
-            type: Boolean,
-            required: true,
-        },
-    },
-    beforeMount() {
-        this.bindEscape();
-    },
-    beforeDestroy() {
-        this.unbindEscape();
-    },
-    methods: {
-        hide() {
-            this.$emit('hide');
-        },
-        bindEscape() {
-            window.addEventListener('keyup', this.closeOnEscape);
-        },
-        unbindEscape() {
-            window.removeEventListener('keyup', this.closeOnEscape);
-        },
-        closeOnEscape(evt) {
-            if (this.shown && evt.keyCode === 27) {
-                this.hide();
-            }
-        },
-    },
-};
-</script>

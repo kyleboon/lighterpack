@@ -1,11 +1,3 @@
-<style lang="scss">
-
-#forgotPassword {
-    width: 620px;
-}
-
-</style>
-
 <template>
     <div id="forgotPasswordContainer">
         <modal id="forgotPassword" :shown="true" :blackout="true">
@@ -82,7 +74,7 @@ export default {
                 body: JSON.stringify({ username: this.forgotPasswordUsername }),
             })
                 .then((response) => {
-                    router.push('/signin/reset-password');
+                    this.$router.push('/signin/reset-password');
                 })
                 .catch((response) => {
                     let errors = [{ message: 'An error occurred, please try again later.' }];
@@ -104,7 +96,7 @@ export default {
                 body: JSON.stringify({ email: this.forgotUsernameEmail }),
             })
                 .then((response) => {
-                    router.push('/signin/forgot-username');
+                    this.$router.push('/signin/forgot-username');
                 })
                 .catch((response) => {
                     let errors = [{ message: 'An error occurred, please try again later.' }];
@@ -117,3 +109,11 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+
+#forgotPassword {
+    width: 620px;
+}
+
+</style>

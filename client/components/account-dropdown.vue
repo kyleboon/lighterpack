@@ -1,18 +1,12 @@
-<style lang="scss">
-#headerPopover .lpContent {
-    min-width: 9em;
-}
-</style>
-
 <template>
     <span class="headerItem hasPopover">
         <PopoverHover id="headerPopover">
-            <span slot="target">Signed in as <span class="username">{{ username }}</span> <i class="lpSprite lpExpand" /></span>
-            <div slot="content">
+            <template #target>Signed in as <span class="username">{{ username }}</span> <i class="lpSprite lpExpand" /></template>
+            <template #content>
                 <a class="lpHref accountSettings" @click="showAccount">Account Settings</a><br>
                 <a class="lpHref" @click="showHelp">Help</a><br>
                 <a class="lpHref signout" @click="signout">Sign Out</a>
-            </div>
+            </template>
         </PopoverHover>
     </span>
 </template>
@@ -27,10 +21,10 @@ export default {
     },
     computed: {
         library() {
-            return this.$store.state.library;
+            return this.$store.library;
         },
         username() {
-            return this.$store.state.loggedIn;
+            return this.$store.loggedIn;
         },
     },
     methods: {
@@ -41,9 +35,15 @@ export default {
             bus.$emit('showHelp');
         },
         signout() {
-            this.$store.commit('signout');
-            router.push('/signin');
+            this.$store.signout();
+            this.$router.push('/signin');
         },
     },
 };
 </script>
+
+<style lang="scss">
+#headerPopover .lpContent {
+    min-width: 9em;
+}
+</style>

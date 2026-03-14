@@ -1,7 +1,3 @@
-<style lang="scss">
-
-</style>
-
 <template>
     <modal id="accountSettings" :shown="shown" @hide="shown = false">
         <h2>Account Settings</h2>
@@ -56,10 +52,10 @@ export default {
     },
     computed: {
         library() {
-            return this.$store.state.library;
+            return this.$store.library;
         },
         username() {
-            return this.$store.state.loggedIn;
+            return this.$store.loggedIn;
         },
     },
     beforeMount() {
@@ -129,3 +125,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+
+</style>

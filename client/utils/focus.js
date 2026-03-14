@@ -1,78 +1,78 @@
-import Vue from 'vue';
 import uniqueId from 'lodash/uniqueId';
+import { useLighterpackStore } from '../store/store.js';
 
-import store from '../store/store.js';
+export function registerDirectives(app) {
+    app.directive('select-on-focus', {
+        mounted(el) {
+            el.addEventListener('focus', () => {
+                el.select();
+            });
+        },
+    });
 
-Vue.directive('select-on-focus', {
-    inserted(el) {
-        el.addEventListener('focus', (evt) => {
-            el.select();
-        });
-    },
-});
-
-Vue.directive('focus-on-create', {
-    inserted(el, binding) {
-        if (binding.expression && binding.value || !binding.expression) {
-            el.focus();
-        }
-    },
-});
-
-Vue.directive('focus-on-bus', {
-    inserted(el, binding) {
-        bus.$on(binding.value, () => {
-            el.focus();
-        });
-    },
-});
-
-Vue.directive('select-on-bus', {
-    inserted(el, binding) {
-        bus.$on(binding.value, () => {
-            el.select();
-        });
-    },
-});
-
-Vue.directive('empty-if-zero', {
-    inserted(el) {
-        el.addEventListener('focus', (evt) => {
-            if (el.value === '0' || el.value === '0.00') {
-                el.dataset.originalValue = el.value;
-                el.value = '';
+    app.directive('focus-on-create', {
+        mounted(el, binding) {
+            if (binding.expression && binding.value || !binding.expression) {
+                el.focus();
             }
-        });
+        },
+    });
 
-        el.addEventListener('blur', (evt) => {
-            if (el.value === '') {
-                el.value = el.dataset.originalValue || '0';
-            }
-        });
-    },
-});
+    app.directive('focus-on-bus', {
+        mounted(el, binding) {
+            bus.$on(binding.value, () => {
+                el.focus();
+            });
+        },
+    });
 
-Vue.directive('click-outside', {
-    inserted(el, binding) {
-        const handler = (evt) => {
-            if (el.contains(evt.target)) {
-                return;
-            }
-            if (binding && typeof binding.value === 'function') {
-                binding.value();
-            }
-        };
+    app.directive('select-on-bus', {
+        mounted(el, binding) {
+            bus.$on(binding.value, () => {
+                el.select();
+            });
+        },
+    });
 
-        window.addEventListener('click', handler);
+    app.directive('empty-if-zero', {
+        mounted(el) {
+            el.addEventListener('focus', () => {
+                if (el.value === '0' || el.value === '0.00') {
+                    el.dataset.originalValue = el.value;
+                    el.value = '';
+                }
+            });
 
-        // Store handler to clean up later
-        el.dataset.clickoutside = uniqueId();
-        store.commit('addDirectiveInstance', { key: el.dataset.clickoutside, value: handler });
-    },
-    unbind(el) {
-        // clean up event handlers
-        const handler = store.state.directiveInstances[el.dataset.clickoutside];
-        store.commit('removeDirectiveInstance', el.dataset.clickoutside);
-        window.removeEventListener('click', handler);
-    },
-});
+            el.addEventListener('blur', () => {
+                if (el.value === '') {
+                    el.value = el.dataset.originalValue || '0';
+                }
+            });
+        },
+    });
+
+    app.directive('click-outside', {
+        mounted(el, binding) {
+            const store = useLighterpackStore();
+            const handler = (evt) => {
+                if (el.contains(evt.target)) {
+                    return;
+                }
+                if (binding && typeof binding.value === 'function') {
+                    binding.value();
+                }
+            };
+
+            window.addEventListener('click', handler);
+
+            el.dataset.clickoutside = uniqueId();
+            store.addDirectiveInstance({ key: el.dataset.clickoutside, value: handler });
+        },
+        unmounted(el) {
+            const store = useLighterpackStore();
+            const handler = store.directiveInstances[el.dataset.clickoutside];
+            store.removeDirectiveInstance(el.dataset.clickoutside);
+            window.removeEventListener('click', handler);
+        },
+    });
+}

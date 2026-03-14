@@ -1,9 +1,7 @@
-import Vuex from 'vuex';
-import Vue from 'vue';
+import { defineStore } from 'pinia';
 import debounce from 'lodash/debounce';
-
-const weightUtils = require('../utils/weight.js');
-const dataTypes = require('../dataTypes.js');
+import weightUtils from '../utils/weight.js';
+import dataTypes from '../dataTypes.js';
 
 const Item = dataTypes.Item;
 const Category = dataTypes.Category;
@@ -12,10 +10,8 @@ const Library = dataTypes.Library;
 
 const saveInterval = 10000;
 
-Vue.use(Vuex);
-
-const store = new Vuex.Store({
-    state: {
+export const useLighterpackStore = defineStore('lighterpack', {
+    state: () => ({
         library: false,
         isSaving: false,
         syncToken: false,
@@ -24,103 +20,105 @@ const store = new Vuex.Store({
         loggedIn: false,
         directiveInstances: {},
         globalAlerts: [],
-    },
+    }),
+
     getters: {
         activeList(state) {
-            return state.library.getListById(state.library.defaultListId);
+            return state.library ? state.library.getListById(state.library.defaultListId) : null;
         },
     },
-    mutations: {
-        setSaveType(state, saveType) {
-            state.saveType = saveType;
+
+    actions: {
+        setSaveType(saveType) {
+            this.saveType = saveType;
         },
-        setSyncToken(state, syncToken) {
-            state.syncToken = syncToken;
+        setSyncToken(syncToken) {
+            this.syncToken = syncToken;
         },
-        setLastSaveData(state, lastSaveData) {
-            state.lastSaveData = lastSaveData;
+        setLastSaveData(lastSaveData) {
+            this.lastSaveData = lastSaveData;
         },
-        setIsSaving(state, isSaving) {
-            state.isSaving = isSaving;
+        setIsSaving(isSaving) {
+            this.isSaving = isSaving;
         },
-        signout(state) {
+        signout() {
             createCookie('lp', '', -1);
-            state.library = false; // duplicate logic
-            state.loggedIn = false; // duplicate logic
+            this.library = false;
+            this.loggedIn = false;
         },
-        setLoggedIn(state, loggedIn) {
-            state.loggedIn = loggedIn;
+        setLoggedIn(loggedIn) {
+            this.loggedIn = loggedIn;
         },
-        loadLibraryData(state, libraryData) {
+        loadLibraryData(libraryData) {
             const library = new Library();
             try {
                 libraryData = JSON.parse(libraryData);
                 library.load(libraryData);
-                state.library = library;
+                this.library = library;
             } catch (err) {
-                state.globalAlerts.push({ message: 'An error occurred while loading your data.' });
+                this.globalAlerts.push({ message: 'An error occurred while loading your data.' });
             }
-            state.lastSaveData = JSON.stringify(library.save());
+            this.lastSaveData = JSON.stringify(library.save());
         },
-        clearLibraryData(state) {
-            state.library = false;
+        clearLibraryData() {
+            this.library = false;
         },
-        toggleSidebar(state) {
-            state.library.showSidebar = !state.library.showSidebar;
+        toggleSidebar() {
+            this.library.showSidebar = !this.library.showSidebar;
         },
-        setDefaultList(state, list) {
-            state.library.defaultListId = list.id;
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+        setDefaultList(list) {
+            this.library.defaultListId = list.id;
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        setTotalUnit(state, unit) {
-            state.library.totalUnit = unit;
+        setTotalUnit(unit) {
+            this.library.totalUnit = unit;
         },
-        toggleOptionalField(state, optionalField) {
-            state.library.optionalFields[optionalField] = !state.library.optionalFields[optionalField];
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+        toggleOptionalField(optionalField) {
+            this.library.optionalFields[optionalField] = !this.library.optionalFields[optionalField];
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        updateCurrencySymbol(state, currencySymbol) {
-            state.library.currencySymbol = currencySymbol;
+        updateCurrencySymbol(currencySymbol) {
+            this.library.currencySymbol = currencySymbol;
         },
-        newItem(state, { category, _isNew }) {
-            state.library.newItem({ category, _isNew });
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+        newItem({ category, _isNew }) {
+            this.library.newItem({ category, _isNew });
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        newCategory(state, list) {
-            const category = state.library.newCategory({ list, _isNew: true });
-            const item = state.library.newItem({ category });
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+        newCategory(list) {
+            const category = this.library.newCategory({ list, _isNew: true });
+            const item = this.library.newItem({ category });
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        newList(state) {
-            const list = state.library.newList();
-            const category = state.library.newCategory({ list });
-            const item = state.library.newItem({ category });
+        newList() {
+            const list = this.library.newList();
+            const category = this.library.newCategory({ list });
+            const item = this.library.newItem({ category });
             list.calculateTotals();
-            state.library.defaultListId = list.id;
+            this.library.defaultListId = list.id;
         },
-        removeItem(state, item) {
-            state.library.removeItem(item.id);
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+        removeItem(item) {
+            this.library.removeItem(item.id);
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        removeCategory(state, category) {
-            state.library.removeCategory(category.id);
+        removeCategory(category) {
+            this.library.removeCategory(category.id);
         },
-        removeList(state, list) {
-            state.library.removeList(list.id);
+        removeList(list) {
+            this.library.removeList(list.id);
         },
-        reorderList(state, args) {
-            state.library.lists = arrayMove(state.library.lists, args.before, args.after);
+        reorderList(args) {
+            this.library.lists = arrayMove(this.library.lists, args.before, args.after);
         },
-        reorderCategory(state, args) {
-            const list = state.library.getListById(args.list.id);
+        reorderCategory(args) {
+            const list = this.library.getListById(args.list.id);
             list.categoryIds = arrayMove(list.categoryIds, args.before, args.after);
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        reorderItem(state, args) {
-            const item = state.library.getItemById(args.itemId);
-            const dropCategory = state.library.getCategoryById(args.categoryId);
-            const list = state.library.getListById(args.list.id);
-            const originalCategory = state.library.findCategoryWithItemById(item.id, list.id);
+        reorderItem(args) {
+            const item = this.library.getItemById(args.itemId);
+            const dropCategory = this.library.getCategoryById(args.categoryId);
+            const list = this.library.getListById(args.list.id);
+            const originalCategory = this.library.findCategoryWithItemById(item.id, list.id);
             const oldCategoryItem = originalCategory.getCategoryItemById(item.id);
             const oldIndex = originalCategory.categoryItems.indexOf(oldCategoryItem);
 
@@ -130,11 +128,11 @@ const store = new Vuex.Store({
                 originalCategory.categoryItems.splice(oldIndex, 1);
                 dropCategory.categoryItems.splice(args.dropIndex, 0, oldCategoryItem);
             }
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        addItemToCategory(state, args) {
-            const item = state.library.getItemById(args.itemId);
-            const dropCategory = state.library.getCategoryById(args.categoryId);
+        addItemToCategory(args) {
+            const item = this.library.getItemById(args.itemId);
+            const dropCategory = this.library.getCategoryById(args.categoryId);
 
             if (item && dropCategory) {
                 dropCategory.addItem({ itemId: item.id });
@@ -143,71 +141,71 @@ const store = new Vuex.Store({
                 if (categoryItem && categoryItemIndex !== -1) {
                     dropCategory.categoryItems = arrayMove(dropCategory.categoryItems, categoryItemIndex, args.dropIndex);
                 }
-                state.library.getListById(state.library.defaultListId).calculateTotals();
+                this.library.getListById(this.library.defaultListId).calculateTotals();
             }
         },
-        updateListName(state, updatedList) {
-            const list = state.library.getListById(updatedList.id);
+        updateListName(updatedList) {
+            const list = this.library.getListById(updatedList.id);
             list.name = updatedList.name;
         },
-        updateListDescription(state, updatedList) {
-            const list = state.library.getListById(updatedList.id);
+        updateListDescription(updatedList) {
+            const list = this.library.getListById(updatedList.id);
             list.description = updatedList.description;
         },
-        setExternalId(state, args) {
-            const list = state.library.getListById(args.list.id);
+        setExternalId(args) {
+            const list = this.library.getListById(args.list.id);
             list.externalId = args.externalId;
         },
-        updateCategoryName(state, updatedCategory) {
-            const category = state.library.getCategoryById(updatedCategory.id);
+        updateCategoryName(updatedCategory) {
+            const category = this.library.getCategoryById(updatedCategory.id);
             category.name = updatedCategory.name;
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        updateCategoryColor(state, updatedCategory) {
-            const category = state.library.getCategoryById(updatedCategory.id);
+        updateCategoryColor(updatedCategory) {
+            const category = this.library.getCategoryById(updatedCategory.id);
             category.color = updatedCategory.color;
         },
-        updateItem(state, item) {
-            state.library.updateItem(item);
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+        updateItem(item) {
+            this.library.updateItem(item);
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        updateItemLink(state, args) {
-            const item = state.library.getItemById(args.item.id);
+        updateItemLink(args) {
+            const item = this.library.getItemById(args.item.id);
             item.url = args.url;
         },
-        updateItemImageUrl(state, args) {
-            const item = state.library.getItemById(args.item.id);
+        updateItemImageUrl(args) {
+            const item = this.library.getItemById(args.item.id);
             item.imageUrl = args.imageUrl;
-            state.library.optionalFields.images = true;
+            this.library.optionalFields.images = true;
             bus.$emit('optionalFieldChanged');
         },
-        updateItemImage(state, args) {
-            const item = state.library.getItemById(args.item.id);
+        updateItemImage(args) {
+            const item = this.library.getItemById(args.item.id);
             item.image = args.image;
-            state.library.optionalFields.images = true;
+            this.library.optionalFields.images = true;
             bus.$emit('optionalFieldChanged');
         },
-        updateItemUnit(state, unit) {
-            state.library.itemUnit = unit;
+        updateItemUnit(unit) {
+            this.library.itemUnit = unit;
         },
-        removeItemImage(state, updateItem) {
-            const item = state.library.getItemById(updateItem.id);
+        removeItemImage(updateItem) {
+            const item = this.library.getItemById(updateItem.id);
             item.image = '';
         },
-        updateCategoryItem(state, args) {
+        updateCategoryItem(args) {
             args.category.updateCategoryItem(args.categoryItem);
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        removeItemFromCategory(state, args) {
+        removeItemFromCategory(args) {
             args.category.removeItem(args.itemId);
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+            this.library.getListById(this.library.defaultListId).calculateTotals();
         },
-        copyList(state, listId) {
-            const copiedList = state.library.copyList(listId);
-            state.library.defaultListId = copiedList.id;
+        copyList(listId) {
+            const copiedList = this.library.copyList(listId);
+            this.library.defaultListId = copiedList.id;
         },
-        importCSV(state, importData) {
-            const list = state.library.newList({});
+        importCSV(importData) {
+            const list = this.library.newList({});
             let category;
             const newCategories = {};
             let item;
@@ -222,11 +220,11 @@ const store = new Vuex.Store({
                 if (newCategories[row.category]) {
                     category = newCategories[row.category];
                 } else {
-                    category = state.library.newCategory({ list });
+                    category = this.library.newCategory({ list });
                     newCategories[row.category] = category;
                 }
 
-                item = state.library.newItem({ category, _isNew: false });
+                item = this.library.newItem({ category, _isNew: false });
                 categoryItem = category.getCategoryItemById(item.id);
 
                 item.name = row.name;
@@ -237,38 +235,35 @@ const store = new Vuex.Store({
                 category.name = row.category;
             }
             list.calculateTotals();
-            state.library.defaultListId = list.id;
+            this.library.defaultListId = list.id;
         },
-        save() {
-            // no-op
+        addDirectiveInstance({ key, value }) {
+            this.directiveInstances[key] = value;
         },
-        addDirectiveInstance(state, { key, value }) {
-            state.directiveInstances[key] = value;
+        removeDirectiveInstance(key) {
+            delete this.directiveInstances[key];
         },
-        removeDirectiveInstance(state, key) {
-            delete state.directiveInstances[key];
-        },
-    },
-    actions: {
-        init(context) {
+
+        // Async actions
+        init() {
             if (readCookie('lp')) {
-                return context.dispatch('loadRemote');
-            } if (localStorage.library) {
-                return context.dispatch('loadLocal');
+                return this.loadRemote();
+            } else if (localStorage.library) {
+                return this.loadLocal();
             }
-            return new Promise((resolve, reject) => {
-                context.commit('setLoggedIn', false);
-                context.commit('clearLibraryData');
+            return new Promise((resolve) => {
+                this.setLoggedIn(false);
+                this.clearLibraryData();
                 resolve();
             });
         },
-        loadLocal(context) {
+        loadLocal() {
             const libraryData = localStorage.library;
-            context.commit('loadLibraryData', libraryData);
-            context.commit('setSaveType', 'local');
-            context.commit('setLoggedIn', false);
+            this.loadLibraryData(libraryData);
+            this.setSaveType('local');
+            this.setLoggedIn(false);
         },
-        loadRemote(context) {
+        loadRemote() {
             return fetchJson('/signin', {
                 method: 'POST',
                 headers: {
@@ -277,10 +272,10 @@ const store = new Vuex.Store({
                 credentials: 'same-origin',
             })
                 .then((response) => {
-                    context.commit('setSyncToken', response.syncToken);
-                    context.commit('loadLibraryData', response.library);
-                    context.commit('setSaveType', 'remote');
-                    context.commit('setLoggedIn', response.username);
+                    this.setSyncToken(response.syncToken);
+                    this.loadLibraryData(response.library);
+                    this.setSaveType('remote');
+                    this.setLoggedIn(response.username);
                 })
                 .catch((response) => {
                     if (response.status == 401) {
@@ -293,75 +288,74 @@ const store = new Vuex.Store({
                 });
         },
     },
-    plugins: [
-        function save(store) {
-            store.subscribe(debounce((mutation, state) => {
-                const ignore = [
-                    'setIsSaving',
-                    'setSaveType',
-                    'setSyncToken',
-                    'setLastSaveData',
-                    'signout',
-                    'setLoggedIn',
-                    'loadLibraryData',
-                    'clearLibraryData',
-                ];
-                if (!state.library || ignore.indexOf(mutation.type) > -1) {
-                    return;
-                }
-                const saveData = JSON.stringify(state.library.save());
-
-                if (saveData == state.lastSaveData) {
-                    return;
-                }
-
-                const saveRemotely = function (saveData) {
-                    if (state.isSaving) {
-                        setTimeout(() => { store.commit('save', true); }, saveInterval + 1);
-                        return;
-                    }
-
-                    if (!saveData) {
-                        saveData = JSON.stringify(state.library.save());
-                    }
-
-                    store.commit('setIsSaving', true);
-                    store.commit('setLastSaveData', saveData);
-
-                    return fetchJson('/saveLibrary/', {
-                        method: 'POST',
-                        body: JSON.stringify({ syncToken: state.syncToken, username: state.loggedIn, data: saveData }),
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'same-origin',
-                    })
-                        .then((response) => {
-                            store.commit('setSyncToken', response.syncToken);
-                            store.commit('setIsSaving', false);
-                        })
-                        .catch((response) => {
-                            store.commit('setIsSaving', false);
-                            let error = 'An error occurred while attempting to save your data.';
-                            if (response.json && response.json.status) {
-                                error = response.json.status;
-                            }
-                            if (response.status == 401) {
-                                bus.$emit('unauthorized', error);
-                            } else {
-                                alert(error); // TODO
-                            }
-                        });
-                };
-
-                if (state.saveType === 'remote') {
-                    saveRemotely(saveData);
-                } else if (state.saveType === 'local') {
-                    localStorage.library = saveData;
-                }
-            }, saveInterval, { maxWait: saveInterval * 3 }));
-        },
-    ],
 });
 
-export default store;
+// Auto-save plugin — watches state changes and saves debounced
+export function setupAutoSave(store) {
+    const debouncedSave = debounce((state) => {
+        if (!state.library) return;
+
+        const saveData = JSON.stringify(state.library.save());
+
+        if (saveData === state.lastSaveData) return;
+
+        const saveRemotely = function () {
+            if (state.isSaving) {
+                setTimeout(() => store.setIsSaving(false), saveInterval + 1);
+                return;
+            }
+
+            const currentSaveData = JSON.stringify(state.library.save());
+            store.setIsSaving(true);
+            store.setLastSaveData(currentSaveData);
+
+            return fetchJson('/saveLibrary/', {
+                method: 'POST',
+                body: JSON.stringify({ syncToken: state.syncToken, username: state.loggedIn, data: currentSaveData }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin',
+            })
+                .then((response) => {
+                    store.setSyncToken(response.syncToken);
+                    store.setIsSaving(false);
+                })
+                .catch((response) => {
+                    store.setIsSaving(false);
+                    let error = 'An error occurred while attempting to save your data.';
+                    if (response.json && response.json.status) {
+                        error = response.json.status;
+                    }
+                    if (response.status == 401) {
+                        bus.$emit('unauthorized', error);
+                    } else {
+                        alert(error); // TODO
+                    }
+                });
+        };
+
+        if (state.saveType === 'remote') {
+            saveRemotely();
+        } else if (state.saveType === 'local') {
+            localStorage.library = saveData;
+        }
+    }, saveInterval, { maxWait: saveInterval * 3 });
+
+    store.$subscribe((mutation, state) => {
+        const ignore = [
+            'setIsSaving',
+            'setSaveType',
+            'setSyncToken',
+            'setLastSaveData',
+            'signout',
+            'setLoggedIn',
+            'loadLibraryData',
+            'clearLibraryData',
+        ];
+        if (!state.library || ignore.indexOf(mutation.type.replace('lighterpack/', '')) > -1) {
+            return;
+        }
+        debouncedSave(state);
+    });
+}

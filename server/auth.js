@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 const config = require('config');
 const mongojs = require('mongojs');
 
@@ -11,9 +9,6 @@ const crypto = require('crypto');
 const { logWithRequest } = require('./log.js');
 
 const moderatorList = config.get('moderators');
-
-// one day in many years this can go away.
-eval(`${fs.readFileSync(path.join(__dirname, './sha3.js'))}`);
 
 const authenticateModerator = function (req, res, callback) {
     authenticateUser(req, res, (req, res, user) => {
@@ -75,42 +70,9 @@ const verifyPassword = function (username, password) {
                     return reject({ code: 500, message: 'An error occurred, please try again later.' });
                 }
                 if (!result) {
-                    const sha3password = CryptoJS.SHA3(password + username).toString(CryptoJS.enc.Base64);
-                    bcrypt.compare(sha3password, user.password, (err, result) => {
-                        if (err) {
-                            reject({ code: 500, message: 'An error occurred, please try again later.' });
-                        }
-                        if (!result) {
-                            /* TODO: reinstate this block after DB migration */
-                            /* reject({code: 404, message: "Invalid username and/or password."}); */
-
-                            /* TODO: remove this block after DB migration */
-                            if (sha3password === user.password) {
-                                resolve(user);
-                            } else {
-                                /* TODO: revert this error message by removing refresh text */
-                                reject({ code: 404, message: 'Invalid username and/or password. Please refresh the page before trying again.' });
-                            }
-                        } else {
-                            // Remove extra layer of hashing. Just bcrypt.
-                            bcrypt.genSalt(10, (err, salt) => {
-                                if (err) {
-                                    return reject({ code: 500, message: 'An error occurred, please try again later.' });
-                                }
-                                bcrypt.hash(password, salt, (err, hash) => {
-                                    if (err) {
-                                        return reject({ code: 500, message: 'An error occurred, please try again later.' });
-                                    }
-                                    user.password = hash;
-                                    db.users.save(user);
-                                    resolve(user);
-                                });
-                            });
-                        }
-                    });
-                } else {
-                    resolve(user);
+                    return reject({ code: 404, message: 'Invalid username and/or password.' });
                 }
+                resolve(user);
             });
         });
     });
