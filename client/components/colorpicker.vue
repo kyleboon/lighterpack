@@ -17,7 +17,12 @@ export default {
     components: {
         Popover,
     },
-    props: ['color'],
+    props: {
+        color: {
+            type: String,
+        },
+    },
+    emits: ['colorChange'],
     data() {
         return {
             shown: false,

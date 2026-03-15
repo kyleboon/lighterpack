@@ -34,7 +34,11 @@ import dragula from 'dragula';
 export default {
     name: 'LibraryItem',
     mixins: [utilsMixin],
-    props: ['item'],
+    props: {
+        item: {
+            type: Object,
+        },
+    },
     data() {
         return {
             searchText: '',

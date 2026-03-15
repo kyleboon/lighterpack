@@ -89,7 +89,17 @@ function segmentPath(innerR, outerR, startAngle, endAngleIn) {
 
 export default {
     name: 'DonutChart',
-    props: ['categories', 'totalWeight', 'library'],
+    props: {
+        categories: {
+            type: Array,
+        },
+        totalWeight: {
+            type: Number,
+        },
+        library: {
+            type: Object,
+        },
+    },
     emits: ['category-hover'],
     data() {
         return {

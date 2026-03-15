@@ -18,7 +18,17 @@
 <script>
 export default {
     name: 'UnitSelect',
-    props: ['weight', 'unit', 'onChange'],
+    props: {
+        weight: {
+            type: Number,
+        },
+        unit: {
+            type: String,
+        },
+        onChange: {
+            type: Function,
+        },
+    },
     data() {
         return {
             units: ['oz', 'lb', 'g', 'kg'],

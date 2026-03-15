@@ -22,6 +22,7 @@ export default {
             required: true,
         },
     },
+    emits: ['hide'],
     beforeMount() {
         this.bindEscape();
     },

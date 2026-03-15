@@ -38,6 +38,7 @@ export default {
             default: false,
         },
     },
+    emits: ['hide'],
     beforeMount() {
         this.bindEscape();
     },

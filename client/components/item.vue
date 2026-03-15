@@ -103,7 +103,14 @@ export default {
         unitSelect,
     },
     mixins: [utilsMixin],
-    props: ['category', 'itemContainer'],
+    props: {
+        category: {
+            type: Object,
+        },
+        itemContainer: {
+            type: Object,
+        },
+    },
     data() {
         return {
             displayWeight: 0,

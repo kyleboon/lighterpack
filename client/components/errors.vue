@@ -9,7 +9,11 @@
 <script>
 export default {
     name: 'RegisterForm',
-    props: ['errors'],
+    props: {
+        errors: {
+            type: [Array, Object, String],
+        },
+    },
     computed: {
         sanitizedErrors() {
             let errors = this.errors;

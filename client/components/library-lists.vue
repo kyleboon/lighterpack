@@ -42,7 +42,11 @@ export default {
     components: {
         PopoverHover,
     },
-    props: ['list'],
+    props: {
+        list: {
+            type: Object,
+        },
+    },
     computed: {
         library() {
             return this.$store.library;

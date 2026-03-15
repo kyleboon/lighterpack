@@ -60,7 +60,11 @@ export default {
         item,
     },
     mixins: [utilsMixin],
-    props: ['category'],
+    props: {
+        category: {
+            type: Object,
+        },
+    },
     computed: {
         library() {
             return this.$store.library;

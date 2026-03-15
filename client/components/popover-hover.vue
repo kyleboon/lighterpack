@@ -17,6 +17,7 @@ export default {
     components: {
         Popover,
     },
+    emits: ['shown', 'hidden'],
     data() {
         return {
             shown: false,

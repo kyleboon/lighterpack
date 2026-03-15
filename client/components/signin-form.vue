@@ -47,7 +47,11 @@ export default {
         errors,
         spinner,
     },
-    props: ['message'],
+    props: {
+        message: {
+            type: String,
+        },
+    },
     data() {
         return {
             fetching: false,

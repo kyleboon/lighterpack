@@ -143,7 +143,11 @@ export default {
         donutChart,
     },
     mixins: [utilsMixin],
-    props: ['list'],
+    props: {
+        list: {
+            type: Object,
+        },
+    },
     data() {
         return {
             hoveredCategoryId: null,
