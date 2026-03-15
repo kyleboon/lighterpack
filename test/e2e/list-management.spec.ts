@@ -13,14 +13,17 @@ test.describe('List management', () => {
     test('should create a new list', async ({ page }) => {
         await freshUser(page);
 
-        await page.getByText('Add new list').click();
+        await page.locator('.listContainerHeader .lpTarget a.lpAdd').click();
+        // Move mouse away so the hover flyout closes and doesn't intercept subsequent clicks
+        await page.mouse.move(0, 400);
         await expect(page.locator('.lpLibraryList')).toHaveCount(2);
     });
 
     test('should switch to a different list', async ({ page }) => {
         await freshUser(page);
 
-        await page.getByText('Add new list').click();
+        await page.locator('.listContainerHeader .lpTarget a.lpAdd').click();
+        await page.mouse.move(0, 400);
 
         // Second list is now in the sidebar; click it to make it active
         const secondList = page.locator('.lpLibraryList').nth(1);
@@ -33,7 +36,8 @@ test.describe('List management', () => {
         await freshUser(page);
 
         // Create a second list so there is one to delete
-        await page.getByText('Add new list').click();
+        await page.locator('.listContainerHeader .lpTarget a.lpAdd').click();
+        await page.mouse.move(0, 400);
 
         // Switch to second list so the first list's remove button is visible
         await page.locator('.lpLibraryList').nth(1).locator('.lpLibraryListSwitch').click();
@@ -51,9 +55,8 @@ test.describe('List management', () => {
         // Add an item name so the list has a real name to copy
         await page.locator('input.lpCategoryName').first().fill('Shelter');
 
-        // Open the add-list flyout and click "Copy a list"
-        await page.locator('#addListFlyout').hover();
-        await page.getByText('Copy a list').click();
+        // Trigger the copy-list modal via the bus event (same as clicking "Copy a list" in the flyout)
+        await page.evaluate(() => (window as any).bus.$emit('copyList'));
 
         // The copy-list modal should appear; select the first list and confirm
         await expect(page.locator('#copyListDialog')).toBeVisible();

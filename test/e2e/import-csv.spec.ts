@@ -22,11 +22,7 @@ test.describe('CSV import', () => {
     test('should open the import validation modal with a valid CSV', async ({ page }) => {
         await freshUser(page);
 
-        // Open the add-list flyout and click "Import CSV"
-        await page.locator('#addListFlyout').hover();
-        await page.getByText('Import CSV').click();
-
-        // Playwright can set files on the hidden input directly
+        // #csv is always in the DOM; setInputFiles triggers the onchange handler directly
         await page.setInputFiles('#csv', {
             name: 'gear.csv',
             mimeType: 'text/csv',
@@ -46,9 +42,6 @@ test.describe('CSV import', () => {
     test('should import items into the list after confirming', async ({ page }) => {
         await freshUser(page);
 
-        await page.locator('#addListFlyout').hover();
-        await page.getByText('Import CSV').click();
-
         await page.setInputFiles('#csv', {
             name: 'gear.csv',
             mimeType: 'text/csv',
@@ -66,10 +59,7 @@ test.describe('CSV import', () => {
     test('should show an alert and not open the modal for a non-CSV file', async ({ page }) => {
         await freshUser(page);
 
-        await page.locator('#addListFlyout').hover();
-        await page.getByText('Import CSV').click();
-
-        // Listen for the alert dialog
+        // Listen for the alert dialog before triggering the file change
         page.once('dialog', async (dialog) => {
             expect(dialog.message()).toContain('CSV');
             await dialog.dismiss();
@@ -86,9 +76,6 @@ test.describe('CSV import', () => {
 
     test('should show an alert when no valid rows are found in the CSV', async ({ page }) => {
         await freshUser(page);
-
-        await page.locator('#addListFlyout').hover();
-        await page.getByText('Import CSV').click();
 
         page.once('dialog', async (dialog) => {
             expect(dialog.message()).toContain('Unable to load');

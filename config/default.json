@@ -10,5 +10,6 @@
     "mailgunDomain": "",
     "mailgunBaseURL": "",
     "mailgunAPIKey": "",
-    "moderators": []
+    "moderators": [],
+    "authRateLimit": 20
 }

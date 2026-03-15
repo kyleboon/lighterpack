@@ -58,7 +58,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 20,
+    max: config.get('authRateLimit'),
     standardHeaders: true,
     legacyHeaders: false,
     message: { message: 'Too many attempts, please try again later.' },

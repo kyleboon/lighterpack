@@ -33,25 +33,29 @@ test.describe('List settings', () => {
     test('should toggle worn items column on and off', async ({ page }) => {
         await freshUser(page);
 
-        await expect(page.locator('.lpWorn').first()).toBeHidden();
+        // Worn items are ON by default — verify the element exists, then disable it
+        await expect(page.locator('.lpWorn').first()).toBeAttached();
 
         await page.locator('#settings').hover();
-        await page.getByLabel('Worn items').check();
+        await page.getByLabel('Worn items').uncheck();
         await page.locator('.lpListBody').click();
 
-        await expect(page.locator('.lpWorn').first()).toBeVisible();
+        // After disabling: element is removed from the DOM via v-if
+        await expect(page.locator('.lpWorn').first()).not.toBeAttached();
     });
 
     test('should toggle consumable items column on and off', async ({ page }) => {
         await freshUser(page);
 
-        await expect(page.locator('.lpConsumable').first()).toBeHidden();
+        // Consumable items are ON by default — verify the element exists, then disable it
+        await expect(page.locator('.lpConsumable').first()).toBeAttached();
 
         await page.locator('#settings').hover();
-        await page.getByLabel('Consumable items').check();
+        await page.getByLabel('Consumable items').uncheck();
         await page.locator('.lpListBody').click();
 
-        await expect(page.locator('.lpConsumable').first()).toBeVisible();
+        // After disabling: element is removed from the DOM via v-if
+        await expect(page.locator('.lpConsumable').first()).not.toBeAttached();
     });
 
     test('should toggle list description field on and off', async ({ page }) => {
@@ -77,7 +81,8 @@ test.describe('List settings', () => {
         await page.locator('#currencySymbol').fill('€');
         await page.locator('.lpListBody').click();
 
-        // Set a price on the default item and verify the symbol in the summary
+        // The list summary only renders when total weight > 0, so set a weight and price
+        await page.locator('input.lpWeight').first().fill('100');
         await page.locator('input.lpPrice').first().fill('100');
 
         await expect(page.locator('.lpTotalsContainer')).toContainText('€');
@@ -91,7 +96,7 @@ test.describe('List settings', () => {
 
         // The unit dropdown is in the total row; click it to open
         await page.locator('.lpTotalUnit .lpUnitSelect').click();
-        await page.locator('.lpUnitDropdown li.lb').click();
+        await page.locator('.lpTotalUnit .lpUnitDropdown li.lb').click();
 
         // The unit label in the total row should now show lb
         await expect(page.locator('.lpTotalUnit .lpDisplay')).toContainText('lb');

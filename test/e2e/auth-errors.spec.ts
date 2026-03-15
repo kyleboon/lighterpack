@@ -38,6 +38,9 @@ test.describe('Authentication error handling', () => {
         await page.getByText('Signed in as').hover();
         await page.getByText('Sign out').click();
 
+        // After sign-out the page shows the sign-in form; navigate to the root to get the register form
+        await page.goto(testRoot);
+
         // Try to register again with same username
         await page.fill('.lpRegister input[name="username"]', username);
         await page.fill('.lpRegister input[name="email"]', `dup2+${now}@lighterpack.com`);

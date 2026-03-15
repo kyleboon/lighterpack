@@ -25,14 +25,22 @@ async function seedAndGetCsvUrl(page: any): Promise<string> {
     await page.locator('.lpCategory').nth(1).locator('input.lpWeight').first().fill('100');
 
     // Open the Share popover to generate an externalId
-    await page.locator('#share').hover();
+    await page.getByText('Share', { exact: true }).hover();
     const shareUrlInput = page.getByLabel('Share your list');
     await expect(shareUrlInput).toHaveValue(/\S/, { timeout: 10000 });
     const shareUrl = await shareUrlInput.inputValue();
 
-    // Derive the CSV URL from the share URL: /r/:id → /csv/:id
+    // The app autosaves with a 10-second debounce. Poll until the CSV export
+    // contains the seeded items so we know the data has been flushed to the server.
     const externalId = shareUrl.split('/r/')[1];
-    return `${testRoot}csv/${externalId}`;
+    const csvUrl = `${testRoot}csv/${externalId}`;
+    await expect(async () => {
+        const response = await page.request.get(csvUrl);
+        expect(response.status()).toBe(200);
+        expect(await response.text()).toContain('Tent');
+    }).toPass({ timeout: 30000 });
+
+    return csvUrl;
 }
 
 test.describe('Export and re-import a list', () => {
@@ -59,17 +67,12 @@ test.describe('Export and re-import a list', () => {
         expect(response.status()).toBe(200);
         const csvContent = await response.text();
 
-        // Close the Share popover by clicking elsewhere
-        await page.locator('.lpListBody').click();
-
         // Create a new blank list to import into
-        await page.getByText('Add new list').click();
+        await page.locator('.listContainerHeader .lpTarget a.lpAdd').click();
+        await page.mouse.move(0, 400);
         await page.locator('.lpLibraryList').nth(1).locator('.lpLibraryListSwitch').click();
 
-        // Open the Import CSV flow
-        await page.locator('#addListFlyout').hover();
-        await page.getByText('Import CSV').click();
-
+        // #csv is always in the DOM; setInputFiles triggers the onchange handler directly
         await page.setInputFiles('#csv', {
             name: 'export.csv',
             mimeType: 'text/csv',
@@ -97,12 +100,9 @@ test.describe('Export and re-import a list', () => {
         const response = await page.request.get(csvUrl);
         const csvContent = await response.text();
 
-        await page.locator('.lpListBody').click();
-        await page.getByText('Add new list').click();
+        await page.locator('.listContainerHeader .lpTarget a.lpAdd').click();
+        await page.mouse.move(0, 400);
         await page.locator('.lpLibraryList').nth(1).locator('.lpLibraryListSwitch').click();
-
-        await page.locator('#addListFlyout').hover();
-        await page.getByText('Import CSV').click();
 
         await page.setInputFiles('#csv', {
             name: 'export.csv',
@@ -113,8 +113,7 @@ test.describe('Export and re-import a list', () => {
         await expect(page.locator('#importValidate')).toBeVisible();
         await page.locator('#importConfirm').click();
 
-        // The Shelter category subtotal should reflect Tent at 800 oz
-        const shelterCategory = page.locator('.lpCategory').filter({ hasText: 'Shelter' });
-        await expect(shelterCategory.locator('.lpDisplaySubtotal')).toContainText('800');
+        // The first imported category (Shelter) subtotal should reflect Tent at 800 oz
+        await expect(page.locator('.lpCategory').first().locator('.lpDisplaySubtotal')).toContainText('800');
     });
 });

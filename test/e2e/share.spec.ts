@@ -19,11 +19,21 @@ async function setupSharedList(page: any): Promise<string> {
     await page.locator('.lpCategory').first().locator('input.lpWeight').first().fill('800');
 
     // Hover the Share header item to trigger externalId generation and reveal the URL
-    await page.locator('#share').hover();
+    await page.getByText('Share', { exact: true }).hover();
 
     const shareUrlInput = page.getByLabel('Share your list');
     await expect(shareUrlInput).toHaveValue(/\S/, { timeout: 10000 });
-    return shareUrlInput.inputValue();
+    const shareUrl = await shareUrlInput.inputValue();
+
+    // The app autosaves with a 10-second debounce. Poll until the share page response
+    // includes the seeded item so we know the data has been flushed to the server.
+    await expect(async () => {
+        const response = await page.request.get(shareUrl);
+        expect(response.status()).toBe(200);
+        expect(await response.text()).toContain('Tent');
+    }).toPass({ timeout: 30000 });
+
+    return shareUrl;
 }
 
 test.describe('Share page', () => {
