@@ -31,7 +31,7 @@
                 />
             </div>
 
-            <errors :errors="errors" />
+            <errors :errors="errors_" />
 
             <div class="lpButtons">
                 <button class="lpButton">
@@ -45,108 +45,94 @@
     </modal>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
+import { useLighterpackStore } from '../store/store.js';
+import { fetchJson } from '../utils/utils.js';
 import errors from './errors.vue';
 import modal from './modal.vue';
 import spinner from './spinner.vue';
-import { fetchJson } from '../utils/utils.js';
 
-export default {
-    name: 'Account',
-    components: {
-        errors,
-        modal,
-        spinner,
+defineOptions({ name: 'Account' });
+
+const store = useLighterpackStore();
+
+const saving = ref(false);
+const errors_ = ref([]);
+const currentPassword = ref('');
+const newEmail = ref('');
+const newPassword = ref('');
+const confirmNewPassword = ref('');
+
+const username = computed(() => store.loggedIn);
+const shown = computed({
+    get: () => store.activeModal === 'account',
+    set: (val) => {
+        if (!val) store.closeModal();
     },
-    data() {
-        return {
-            saving: false,
-            errors: [],
-            currentPassword: '',
-            newEmail: '',
-            newPassword: '',
-            confirmNewPassword: '',
-        };
-    },
-    computed: {
-        library() {
-            return this.$store.library;
+});
+
+function updateAccount() {
+    errors_.value = [];
+
+    if (!currentPassword.value) {
+        errors_.value.push({ field: 'currentPassword', message: 'Please enter your current password.' });
+    }
+
+    if (newPassword.value && newPassword.value !== confirmNewPassword.value) {
+        errors_.value.push({ field: 'newPassword', message: "Your passwords don't match." });
+    }
+
+    if (newPassword.value && (newPassword.value.length < 5 || newPassword.value.length > 60)) {
+        errors_.value.push({
+            field: 'newPassword',
+            message: 'Please enter a password between 5 and 60 characters.',
+        });
+    }
+
+    if (errors_.value.length) {
+        return;
+    }
+
+    const data = { username: username.value, currentPassword: currentPassword.value };
+
+    let dirty = false;
+
+    if (newPassword.value) {
+        dirty = true;
+        data.newPassword = newPassword.value;
+    }
+    if (newEmail.value) {
+        dirty = true;
+        data.newEmail = newEmail.value;
+    }
+
+    if (!dirty) return;
+
+    currentPassword.value = '';
+    saving.value = true;
+
+    fetchJson('/account', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
         },
-        username() {
-            return this.$store.loggedIn;
-        },
-        shown: {
-            get() {
-                return this.$store.activeModal === 'account';
-            },
-            set(val) {
-                if (!val) this.$store.closeModal();
-            },
-        },
-    },
-    methods: {
-        updateAccount() {
-            this.errors = [];
+        credentials: 'same-origin',
+        body: JSON.stringify(data),
+    })
+        .then((_response) => {
+            saving.value = false;
+            shown.value = false;
+        })
+        .catch((err) => {
+            errors_.value = err;
+            saving.value = false;
+        });
+}
 
-            if (!this.currentPassword) {
-                this.errors.push({ field: 'currentPassword', message: 'Please enter your current password.' });
-            }
-
-            if (this.newPassword && this.newPassword != this.confirmNewPassword) {
-                this.errors.push({ field: 'newPassword', message: "Your passwords don't match." });
-            }
-
-            if (this.newPassword && (this.newPassword.length < 5 || this.newPassword.length > 60)) {
-                this.errors.push({
-                    field: 'newPassword',
-                    message: 'Please enter a password between 5 and 60 characters.',
-                });
-            }
-
-            if (this.errors.length) {
-                return;
-            }
-
-            const data = { username: this.username, currentPassword: this.currentPassword };
-
-            let dirty = false;
-
-            if (this.newPassword) {
-                dirty = true;
-                data.newPassword = this.newPassword;
-            }
-            if (this.newEmail) {
-                dirty = true;
-                data.newEmail = this.newEmail;
-            }
-
-            if (!dirty) return;
-
-            this.currentPassword = '';
-            this.saving = true;
-
-            fetchJson('/account', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify(data),
-            })
-                .then((_response) => {
-                    this.saving = false;
-                    this.shown = false;
-                })
-                .catch((err) => {
-                    this.errors = err;
-                    this.saving = false;
-                });
-        },
-        showDeleteAccount() {
-            this.$store.showModal('deleteAccount');
-        },
-    },
-};
+function showDeleteAccount() {
+    store.showModal('deleteAccount');
+}
 </script>
 
 <style lang="scss"></style>

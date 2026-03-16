@@ -127,60 +127,56 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
+import { useLighterpackStore } from '../store/store.js';
+import weightUtils from '../utils/weight.js';
+import colorUtils from '../utils/color.js';
 import colorPicker from './colorpicker.vue';
 import unitSelect from './unit-select.vue';
 import donutChart from './donut-chart.vue';
 
-import utilsMixin from '../mixins/utils-mixin.js';
-import colorUtils from '../utils/color.js';
+defineOptions({ name: 'ListSummary' });
 
-export default {
-    name: 'ListSummary',
-    components: {
-        colorPicker,
-        unitSelect,
-        donutChart,
-    },
-    mixins: [utilsMixin],
-    props: {
-        list: {
-            type: Object,
-            default: null,
-        },
-    },
-    data() {
-        return {
-            hoveredCategoryId: null,
-        };
-    },
-    computed: {
-        library() {
-            return this.$store.library;
-        },
-        categories() {
-            return this.list.categoryIds.map((id, i) => {
-                const category = this.library.getCategoryById(id);
-                category.activeHover = this.hoveredCategoryId === category.id;
-                category.displayColor = colorUtils.rgbToString(category.color || colorUtils.getColor(i));
-                return category;
-            });
-        },
-    },
-    methods: {
-        setTotalUnit(unit) {
-            this.$store.setTotalUnit(unit);
-        },
-        updateColor(category, color) {
-            category.color = colorUtils.hexToRgb(color);
-            category.displayColor = colorUtils.rgbToString(category.color);
-            this.$store.updateCategoryColor(category);
-        },
-        colorToHex(color) {
-            return colorUtils.rgbToHex(colorUtils.stringToRgb(color));
-        },
-    },
-};
+const props = defineProps({ list: { type: Object, default: null } });
+
+const store = useLighterpackStore();
+
+const hoveredCategoryId = ref(null);
+
+const library = computed(() => store.library);
+
+const categories = computed(() =>
+    props.list.categoryIds.map((id, i) => {
+        const category = library.value.getCategoryById(id);
+        category.activeHover = hoveredCategoryId.value === category.id;
+        category.displayColor = colorUtils.rgbToString(category.color || colorUtils.getColor(i));
+        return category;
+    }),
+);
+
+function displayWeight(mg, unit) {
+    return weightUtils.MgToWeight(mg, unit) || 0;
+}
+
+function displayPrice(price, symbol) {
+    const amount = typeof price === 'number' ? price.toFixed(2) : '0.00';
+    return symbol + amount;
+}
+
+function setTotalUnit(unit) {
+    store.setTotalUnit(unit);
+}
+
+function updateColor(category, color) {
+    category.color = colorUtils.hexToRgb(color);
+    category.displayColor = colorUtils.rgbToString(category.color);
+    store.updateCategoryColor(category);
+}
+
+function colorToHex(color) {
+    return colorUtils.rgbToHex(colorUtils.stringToRgb(color));
+}
 </script>
 
 <style lang="scss">

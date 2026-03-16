@@ -6,7 +6,7 @@
             <input v-model="password" type="password" placeholder="Password" name="password" />
             <input v-model="passwordConfirm" type="password" placeholder="Confirm password" name="passwordConfirm" />
         </div>
-        <errors :errors="errors" />
+        <errors :errors="errors_" />
         <div class="lpButtons">
             <button class="lpButton">
                 Register
@@ -17,124 +17,117 @@
     </form>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useLighterpackStore } from '../store/store.js';
+import { fetchJson } from '../utils/utils.js';
+import dataTypes from '../dataTypes.js';
 import errors from './errors.vue';
 import spinner from './spinner.vue';
-import { fetchJson } from '../utils/utils.js';
 
-import dataTypes from '../dataTypes.js';
+defineOptions({ name: 'RegisterForm' });
 
 const Library = dataTypes.Library;
 
-export default {
-    name: 'RegisterForm',
-    components: {
-        errors,
-        spinner,
-    },
-    data() {
-        return {
-            username: '',
-            email: '',
-            password: '',
-            passwordConfirm: '',
-            saving: false,
-            errors: [],
-        };
-    },
-    computed: {
-        isLocalSaving() {
-            return this.$store.saveType === 'local';
+const store = useLighterpackStore();
+const router = useRouter();
+
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const passwordConfirm = ref('');
+const saving = ref(false);
+const errors_ = ref([]);
+
+const isLocalSaving = computed(() => store.saveType === 'local');
+
+function loadLocal() {
+    if (isLocalSaving.value) {
+        router.push('/');
+        return;
+    }
+    const library = new Library();
+    store.loadLibraryData(JSON.stringify(library.save()));
+    store.setSaveType('local');
+    store.setLoggedIn(false);
+    router.push('/');
+}
+
+function submit() {
+    errors_.value = [];
+
+    if (!username.value) {
+        errors_.value.push({ field: 'username', message: 'Please enter a username.' });
+    }
+
+    if (username.value && (username.value.length < 3 || username.value.length > 32)) {
+        errors_.value.push({
+            field: 'username',
+            message: 'Please enter a username between 3 and 32 characters.',
+        });
+    }
+
+    if (!email.value) {
+        errors_.value.push({ field: 'email', message: 'Please enter an email.' });
+    }
+
+    if (!password.value) {
+        errors_.value.push({ field: 'password', message: 'Please enter a password.' });
+    }
+
+    if (!passwordConfirm.value) {
+        errors_.value.push({ field: 'passwordConfirm', message: 'Please enter a password confirmation.' });
+    }
+
+    if (password.value && passwordConfirm.value && password.value !== passwordConfirm.value) {
+        errors_.value.push({ field: 'password', message: "Your passwords don't match." });
+    }
+
+    if (password.value && (password.value.length < 5 || password.value.length > 60)) {
+        errors_.value.push({
+            field: 'password',
+            message: 'Please enter a password between 5 and 60 characters.',
+        });
+    }
+
+    if (errors_.value.length) {
+        return;
+    }
+
+    const registerData = { username: username.value, email: email.value, password: password.value };
+
+    if (localStorage.library) {
+        registerData.library = localStorage.library;
+    }
+
+    saving.value = true;
+    fetchJson('/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
         },
-    },
-    methods: {
-        loadLocal() {
-            if (this.isLocalSaving) {
-                this.$router.push('/');
-                return;
+        credentials: 'same-origin',
+        body: JSON.stringify(registerData),
+    })
+        .then((response) => {
+            store.setSyncToken(response.syncToken);
+            store.loadLibraryData(response.library);
+            store.setSaveType('remote');
+            store.setLoggedIn(response.username);
+
+            if (registerData.library) {
+                localStorage.registeredLibrary = localStorage.library;
+                delete localStorage.library;
             }
-            const library = new Library();
-            this.$store.loadLibraryData(JSON.stringify(library.save()));
-            this.$store.setSaveType('local');
-            this.$store.setLoggedIn(false);
-            this.$router.push('/');
-        },
-        submit() {
-            this.errors = [];
-
-            if (!this.username) {
-                this.errors.push({ field: 'username', message: 'Please enter a username.' });
-            }
-
-            if (this.username && (this.username.length < 3 || this.username.length > 32)) {
-                this.errors.push({
-                    field: 'username',
-                    message: 'Please enter a username between 3 and 32 characters.',
-                });
-            }
-
-            if (!this.email) {
-                this.errors.push({ field: 'email', message: 'Please enter an email.' });
-            }
-
-            if (!this.password) {
-                this.errors.push({ field: 'password', message: 'Please enter a password.' });
-            }
-
-            if (!this.passwordConfirm) {
-                this.errors.push({ field: 'passwordConfirm', message: 'Please enter a password confirmation.' });
-            }
-
-            if (this.password && this.passwordConfirm && this.password !== this.passwordConfirm) {
-                this.errors.push({ field: 'password', message: "Your passwords don't match." });
-            }
-
-            if (this.password && (this.password.length < 5 || this.password.length > 60)) {
-                this.errors.push({
-                    field: 'password',
-                    message: 'Please enter a password between 5 and 60 characters.',
-                });
-            }
-
-            if (this.errors.length) {
-                return;
-            }
-
-            const registerData = { username: this.username, email: this.email, password: this.password };
-
-            if (localStorage.library) {
-                registerData.library = localStorage.library;
-            }
-
-            this.saving = true;
-            fetchJson('/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify(registerData),
-            })
-                .then((response) => {
-                    this.$store.setSyncToken(response.syncToken);
-                    this.$store.loadLibraryData(response.library);
-                    this.$store.setSaveType('remote');
-                    this.$store.setLoggedIn(response.username);
-
-                    if (registerData.library) {
-                        localStorage.registeredLibrary = localStorage.library;
-                        delete localStorage.library;
-                    }
-                    this.saving = false;
-                    this.$router.push('/');
-                })
-                .catch((err) => {
-                    this.saving = false;
-                    this.errors = err;
-                });
-        },
-    },
-};
+            saving.value = false;
+            router.push('/');
+        })
+        .catch((err) => {
+            saving.value = false;
+            errors_.value = err;
+        });
+}
 </script>
 
 <style lang="scss"></style>

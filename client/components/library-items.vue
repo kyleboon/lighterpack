@@ -27,13 +27,11 @@
 
 <script>
 import { nextTick } from 'vue';
-import utilsMixin from '../mixins/utils-mixin.js';
-
 import dragula from 'dragula';
+import weightUtils from '../utils/weight.js';
 
 export default {
     name: 'LibraryItem',
-    mixins: [utilsMixin],
     props: {
         item: {
             type: Object,
@@ -140,6 +138,9 @@ export default {
                 drake.cancel(true);
             });
             this.drake = drake;
+        },
+        displayWeight(mg, unit) {
+            return weightUtils.MgToWeight(mg, unit) || 0;
         },
         removeItem(item) {
             const callback = () => {

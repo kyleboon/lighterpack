@@ -93,8 +93,6 @@
 
 <script>
 import unitSelect from './unit-select.vue';
-
-import utilsMixin from '../mixins/utils-mixin.js';
 import weightUtils from '../utils/weight.js';
 
 export default {
@@ -102,7 +100,6 @@ export default {
     components: {
         unitSelect,
     },
-    mixins: [utilsMixin],
     props: {
         category: {
             type: Object,
