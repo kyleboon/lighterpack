@@ -9,39 +9,36 @@
     </Popover>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import Popover from './popover.vue';
 
-export default {
-    name: 'PopoverHover',
-    components: {
-        Popover,
-    },
-    emits: ['shown', 'hidden'],
-    data() {
-        return {
-            shown: false,
-            hideTimeout: null,
-        };
-    },
-    methods: {
-        show() {
-            if (this.hideTimeout) {
-                clearTimeout(this.hideTimeout);
-                this.hideTimeout = null;
-            }
-            this.shown = true;
-            this.$emit('shown');
-        },
-        startHideTimeout() {
-            this.hideTimeout = setTimeout(this.hide, 50);
-        },
-        hide() {
-            this.shown = false;
-            this.$emit('hidden');
-        },
-    },
-};
+defineOptions({ name: 'PopoverHover' });
+
+const emit = defineEmits(['shown', 'hidden']);
+
+const shown = ref(false);
+let hideTimeout = null;
+
+function show() {
+    if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = null;
+    }
+    shown.value = true;
+    emit('shown');
+}
+
+function hide() {
+    shown.value = false;
+    emit('hidden');
+}
+
+function startHideTimeout() {
+    hideTimeout = setTimeout(hide, 50);
+}
+
+defineExpose({ shown, show, hide, startHideTimeout });
 </script>
 
 <style lang="scss">

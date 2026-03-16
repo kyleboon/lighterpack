@@ -15,53 +15,44 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'Modal',
-    props: {
-        id: {
-            type: String,
-            default: null,
-        },
-        shown: {
-            type: Boolean,
-            required: true,
-        },
-        blackout: {
-            type: Boolean,
-            required: false,
-            default: false,
-        },
-        transparentOverlay: {
-            type: Boolean,
-            required: false,
-            default: false,
-        },
+<script setup>
+import { onBeforeMount, onBeforeUnmount } from 'vue';
+
+defineOptions({ name: 'Modal' });
+
+const props = defineProps({
+    id: {
+        type: String,
+        default: null,
     },
-    emits: ['hide'],
-    beforeMount() {
-        this.bindEscape();
+    shown: {
+        type: Boolean,
+        required: true,
     },
-    beforeUnmount() {
-        this.unbindEscape();
+    blackout: {
+        type: Boolean,
+        default: false,
     },
-    methods: {
-        hide() {
-            this.$emit('hide');
-        },
-        bindEscape() {
-            window.addEventListener('keyup', this.closeOnEscape);
-        },
-        unbindEscape() {
-            window.removeEventListener('keyup', this.closeOnEscape);
-        },
-        closeOnEscape(evt) {
-            if (this.shown && evt.keyCode === 27) {
-                this.hide();
-            }
-        },
+    transparentOverlay: {
+        type: Boolean,
+        default: false,
     },
-};
+});
+
+const emit = defineEmits(['hide']);
+
+function hide() {
+    emit('hide');
+}
+
+function closeOnEscape(evt) {
+    if (props.shown && evt.keyCode === 27) {
+        hide();
+    }
+}
+
+onBeforeMount(() => window.addEventListener('keyup', closeOnEscape));
+onBeforeUnmount(() => window.removeEventListener('keyup', closeOnEscape));
 </script>
 
 <style lang="scss">

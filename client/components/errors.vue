@@ -6,61 +6,61 @@
     </ul>
 </template>
 
-<script>
-export default {
-    name: 'RegisterForm',
-    props: {
-        errors: {
-            type: [Array, Object, String],
-            default: null,
-        },
+<script setup>
+import { computed } from 'vue';
+
+defineOptions({ name: 'Errors' });
+
+const props = defineProps({
+    errors: {
+        type: [Array, Object, String],
+        default: null,
     },
-    computed: {
-        sanitizedErrors() {
-            let errors = this.errors;
-            if (!errors) {
-                return [];
-            }
+});
 
-            if (typeof errors === 'string') {
-                return [{ message: errors }];
-            }
+const sanitizedErrors = computed(() => {
+    let errors = props.errors;
+    if (!errors) {
+        return [];
+    }
 
-            if (typeof errors === 'object' && !(errors instanceof Array) && errors.message) {
-                return [errors];
-            }
+    if (typeof errors === 'string') {
+        return [{ message: errors }];
+    }
 
-            if (typeof errors === 'object' && errors.errors && errors.errors instanceof Array) {
-                errors = errors.errors;
-            }
+    if (typeof errors === 'object' && !(errors instanceof Array) && errors.message) {
+        return [errors];
+    }
 
-            if (typeof errors === 'object' && errors instanceof Array) {
-                if (errors.length === 0) {
-                    return errors;
+    if (typeof errors === 'object' && errors.errors && errors.errors instanceof Array) {
+        errors = errors.errors;
+    }
+
+    if (typeof errors === 'object' && errors instanceof Array) {
+        if (errors.length === 0) {
+            return errors;
+        }
+
+        const massagedErrors = errors
+            .map((error) => {
+                if (typeof error === 'string') {
+                    return { message: error };
                 }
 
-                const massagedErrors = errors
-                    .map((error) => {
-                        if (typeof error === 'string') {
-                            return { message: error };
-                        }
-
-                        if (typeof error === 'object' && error.message) {
-                            return error;
-                        }
-                        return false;
-                    })
-                    .filter((error) => !!error.message);
-
-                if (massagedErrors.length) {
-                    return massagedErrors;
+                if (typeof error === 'object' && error.message) {
+                    return error;
                 }
-            }
+                return false;
+            })
+            .filter((error) => !!error.message);
 
-            return [{ message: 'An unknown error occurred.' }];
-        },
-    },
-};
+        if (massagedErrors.length) {
+            return massagedErrors;
+        }
+    }
+
+    return [{ message: 'An unknown error occurred.' }];
+});
 </script>
 
 <style lang="scss"></style>

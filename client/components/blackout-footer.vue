@@ -22,10 +22,8 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'BlackoutFooter',
-};
+<script setup>
+defineOptions({ name: 'BlackoutFooter' });
 </script>
 
 <style lang="scss"></style>

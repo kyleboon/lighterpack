@@ -53,9 +53,29 @@
     </svg>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch } from 'vue';
 import colorUtils from '../utils/color.js';
 import weightUtils from '../utils/weight.js';
+
+defineOptions({ name: 'DonutChart' });
+
+const props = defineProps({
+    categories: {
+        type: Array,
+        default: null,
+    },
+    totalWeight: {
+        type: Number,
+        default: 0,
+    },
+    library: {
+        type: Object,
+        default: null,
+    },
+});
+
+const emit = defineEmits(['category-hover']);
 
 const CX = 130;
 const CY = 130;
@@ -87,95 +107,77 @@ function segmentPath(innerR, outerR, startAngle, endAngleIn) {
     return `M ${x1} ${y1} A ${outerR} ${outerR} 0 ${largeArc} 1 ${x2} ${y2} L ${x3} ${y3} A ${innerR} ${innerR} 0 ${largeArc} 0 ${x4} ${y4} Z`;
 }
 
-export default {
-    name: 'DonutChart',
-    props: {
-        categories: {
-            type: Array,
-            default: null,
-        },
-        totalWeight: {
-            type: Number,
-            default: 0,
-        },
-        library: {
-            type: Object,
-            default: null,
-        },
+const expandedId = ref(null);
+const hovered = ref(null);
+
+const categorySlices = computed(() => {
+    if (!props.totalWeight) return [];
+    const innerR = expandedId.value ? CAT_EXPANDED_INNER : CAT_INNER;
+    const outerR = expandedId.value ? CAT_EXPANDED_OUTER : CAT_OUTER;
+    let angle = -Math.PI / 2;
+    return props.categories
+        .filter((cat) => cat.subtotalWeight > 0)
+        .map((cat, i) => {
+            const catColor = cat.color || colorUtils.getColor(i);
+            const fill = colorUtils.rgbToString(catColor);
+            const span = (cat.subtotalWeight / props.totalWeight) * 2 * Math.PI;
+            const path = segmentPath(innerR, outerR, angle, angle + span);
+            const weight = `${weightUtils.MgToWeight(cat.subtotalWeight, props.library.totalUnit)} ${props.library.totalUnit}`;
+            const slice = { id: cat.id, fill, path, name: cat.name, weight, catColor };
+            angle += span;
+            return slice;
+        });
+});
+
+const itemSlices = computed(() => {
+    if (!expandedId.value) return [];
+    const catIndex = props.categories.findIndex((c) => c.id === expandedId.value);
+    const category = props.library.getCategoryById(expandedId.value);
+    if (!category || !category.subtotalWeight) return [];
+    const catColor = category.color || colorUtils.getColor(catIndex);
+    let angle = -Math.PI / 2;
+    return category.categoryItems
+        .map((ci, i) => {
+            const item = props.library.getItemById(ci.itemId);
+            if (!item || !item.weight) return null;
+            const weight = item.weight * ci.qty;
+            const span = (weight / category.subtotalWeight) * 2 * Math.PI;
+            const fill = colorUtils.rgbToString(colorUtils.getColor(i, catColor));
+            const path = segmentPath(ITEM_INNER, ITEM_OUTER, angle, angle + span);
+            const name = ci.qty > 1 ? `${item.name} ×${ci.qty}` : item.name;
+            const weightStr = `${weightUtils.MgToWeight(weight, props.library.totalUnit)} ${props.library.totalUnit}`;
+            angle += span;
+            return { fill, path, name, weight: weightStr };
+        })
+        .filter(Boolean);
+});
+
+watch(
+    () => props.categories,
+    (newCategories) => {
+        if (expandedId.value && !newCategories.find((c) => c.id === expandedId.value)) {
+            expandedId.value = null;
+        }
     },
-    emits: ['category-hover'],
-    data() {
-        return {
-            expandedId: null,
-            hovered: null,
-        };
-    },
-    computed: {
-        categorySlices() {
-            if (!this.totalWeight) return [];
-            const innerR = this.expandedId ? CAT_EXPANDED_INNER : CAT_INNER;
-            const outerR = this.expandedId ? CAT_EXPANDED_OUTER : CAT_OUTER;
-            let angle = -Math.PI / 2;
-            return this.categories
-                .filter((cat) => cat.subtotalWeight > 0)
-                .map((cat, i) => {
-                    const catColor = cat.color || colorUtils.getColor(i);
-                    const fill = colorUtils.rgbToString(catColor);
-                    const span = (cat.subtotalWeight / this.totalWeight) * 2 * Math.PI;
-                    const path = segmentPath(innerR, outerR, angle, angle + span);
-                    const weight = `${weightUtils.MgToWeight(cat.subtotalWeight, this.library.totalUnit)} ${this.library.totalUnit}`;
-                    const slice = { id: cat.id, fill, path, name: cat.name, weight, catColor };
-                    angle += span;
-                    return slice;
-                });
-        },
-        itemSlices() {
-            if (!this.expandedId) return [];
-            const catIndex = this.categories.findIndex((c) => c.id === this.expandedId);
-            const category = this.library.getCategoryById(this.expandedId);
-            if (!category || !category.subtotalWeight) return [];
-            const catColor = category.color || colorUtils.getColor(catIndex);
-            let angle = -Math.PI / 2;
-            return category.categoryItems
-                .map((ci, i) => {
-                    const item = this.library.getItemById(ci.itemId);
-                    if (!item || !item.weight) return null;
-                    const weight = item.weight * ci.qty;
-                    const span = (weight / category.subtotalWeight) * 2 * Math.PI;
-                    const fill = colorUtils.rgbToString(colorUtils.getColor(i, catColor));
-                    const path = segmentPath(ITEM_INNER, ITEM_OUTER, angle, angle + span);
-                    const name = ci.qty > 1 ? `${item.name} ×${ci.qty}` : item.name;
-                    const weightStr = `${weightUtils.MgToWeight(weight, this.library.totalUnit)} ${this.library.totalUnit}`;
-                    angle += span;
-                    return { fill, path, name, weight: weightStr };
-                })
-                .filter(Boolean);
-        },
-    },
-    watch: {
-        categories(newCategories) {
-            if (this.expandedId && !newCategories.find((c) => c.id === this.expandedId)) {
-                this.expandedId = null;
-            }
-        },
-    },
-    methods: {
-        onSliceEnter(slice) {
-            this.hovered = slice;
-            this.$emit('category-hover', slice.id ?? null);
-        },
-        onLeave() {
-            this.hovered = null;
-            this.$emit('category-hover', null);
-        },
-        onCategoryClick(slice) {
-            this.expandedId = this.expandedId === slice.id ? null : slice.id;
-        },
-        truncate(str, max = 18) {
-            return str.length > max ? `${str.slice(0, max - 1)}…` : str;
-        },
-    },
-};
+);
+
+function onSliceEnter(slice) {
+    hovered.value = slice;
+    emit('category-hover', slice.id ?? null);
+}
+
+function onLeave() {
+    hovered.value = null;
+    emit('category-hover', null);
+}
+
+function onCategoryClick(slice) {
+    expandedId.value = expandedId.value === slice.id ? null : slice.id;
+}
+
+function truncate(str, max = 18) {
+    return str.length > max ? `${str.slice(0, max - 1)}…` : str;
+}
 </script>
 
 <style lang="scss">

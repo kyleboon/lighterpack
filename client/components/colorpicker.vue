@@ -9,32 +9,28 @@
     </Popover>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import Popover from './popover.vue';
 
-export default {
-    name: 'ColorPicker',
-    components: {
-        Popover,
+defineOptions({ name: 'ColorPicker' });
+
+defineProps({
+    color: {
+        type: String,
+        default: null,
     },
-    props: {
-        color: {
-            type: String,
-            default: null,
-        },
-    },
-    emits: ['colorChange'],
-    data() {
-        return {
-            shown: false,
-        };
-    },
-    methods: {
-        onColorChange(evt) {
-            this.$emit('colorChange', evt.target.value);
-        },
-    },
-};
+});
+
+const emit = defineEmits(['colorChange']);
+
+const shown = ref(false);
+
+function onColorChange(evt) {
+    emit('colorChange', evt.target.value);
+}
+
+defineExpose({ shown, onColorChange });
 </script>
 
 <style lang="scss"></style>

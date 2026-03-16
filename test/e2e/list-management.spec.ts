@@ -55,8 +55,12 @@ test.describe('List management', () => {
         // Add an item name so the list has a real name to copy
         await page.locator('input.lpCategoryName').first().fill('Shelter');
 
-        // Trigger the copy-list modal via the bus event (same as clicking "Copy a list" in the flyout)
-        await page.evaluate(() => (window as any).bus.$emit('copyList'));
+        // Open the copy-list modal via the store (the flyout is behind .lpList due to
+        // a stacking-context z-index: the sidebar is z:20, .lpList is z:30)
+        await page.evaluate(() => {
+            const app = (document.getElementById('lp') as any).__vue_app__;
+            app.config.globalProperties.$store.showModal('copyList');
+        });
 
         // The copy-list modal should appear; select the first list and confirm
         await expect(page.locator('#copyListDialog')).toBeVisible();

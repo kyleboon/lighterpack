@@ -15,81 +15,90 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'UnitSelect',
-    props: {
-        weight: {
-            type: Number,
-            default: 0,
-        },
-        unit: {
-            type: String,
-            default: null,
-        },
-        onChange: {
-            type: Function,
-            default: null,
-        },
+<script setup>
+import { ref } from 'vue';
+
+defineOptions({ name: 'UnitSelect' });
+
+const props = defineProps({
+    weight: {
+        type: Number,
+        default: 0,
     },
-    data() {
-        return {
-            units: ['oz', 'lb', 'g', 'kg'],
-            isOpen: false,
-            isFocused: false,
-        };
+    unit: {
+        type: String,
+        default: null,
     },
-    methods: {
-        toggle(evt) {
-            evt.stopPropagation();
-            if (!this.isOpen) {
-                this.open();
-            } else {
-                this.close();
-            }
-        },
-        open() {
-            this.isOpen = true;
-            this.bindCloseListeners();
-        },
-        close() {
-            this.isOpen = false;
-            this.unbindCloseListeners();
-        },
-        select(unit) {
-            if (typeof this.onChange === 'function') {
-                this.onChange(unit);
-            }
-        },
-        keyup(evt) {
-            if (typeof this.onChange === 'function') {
-                this.onChange(evt.target.value);
-            }
-        },
-        bindCloseListeners() {
-            window.addEventListener('keyup', this.closeOnEscape);
-            window.addEventListener('click', this.closeOnClick);
-        },
-        unbindCloseListeners() {
-            window.removeEventListener('keyup', this.closeOnEscape);
-            window.removeEventListener('click', this.closeOnClick);
-        },
-        closeOnEscape(evt) {
-            if (evt.keyCode === 27) {
-                this.close();
-            }
-        },
-        closeOnClick(_evt) {
-            this.close();
-        },
-        focusSelect() {
-            this.isFocused = true;
-        },
-        blurSelect() {
-            this.isFocused = false;
-        },
+    onChange: {
+        type: Function,
+        default: null,
     },
-};
+});
+
+const units = ['oz', 'lb', 'g', 'kg'];
+const isOpen = ref(false);
+const isFocused = ref(false);
+
+function closeOnEscape(evt) {
+    if (evt.keyCode === 27) {
+        close();
+    }
+}
+
+function closeOnClick() {
+    close();
+}
+
+function bindCloseListeners() {
+    window.addEventListener('keyup', closeOnEscape);
+    window.addEventListener('click', closeOnClick);
+}
+
+function unbindCloseListeners() {
+    window.removeEventListener('keyup', closeOnEscape);
+    window.removeEventListener('click', closeOnClick);
+}
+
+function open() {
+    isOpen.value = true;
+    bindCloseListeners();
+}
+
+function close() {
+    isOpen.value = false;
+    unbindCloseListeners();
+}
+
+function toggle(evt) {
+    evt.stopPropagation();
+    if (!isOpen.value) {
+        open();
+    } else {
+        close();
+    }
+}
+
+function select(unit) {
+    if (typeof props.onChange === 'function') {
+        props.onChange(unit);
+    }
+}
+
+function keyup(evt) {
+    if (typeof props.onChange === 'function') {
+        props.onChange(evt.target.value);
+    }
+}
+
+function focusSelect() {
+    isFocused.value = true;
+}
+
+function blurSelect() {
+    isFocused.value = false;
+}
+
+defineExpose({ isOpen, isFocused, select, close, open });
 </script>
 
 <style lang="scss">

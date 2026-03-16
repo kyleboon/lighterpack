@@ -1,20 +1,17 @@
 <template>
-    <ul v-if="alerts && alerts.length" class="lpGlobalAlerts">
-        <li v-for="alert in alerts" :key="alert.message" class="lpGlobalAlert">
+    <ul v-if="store.globalAlerts && store.globalAlerts.length" class="lpGlobalAlerts">
+        <li v-for="alert in store.globalAlerts" :key="alert.message" class="lpGlobalAlert">
             {{ alert.message }}
         </li>
     </ul>
 </template>
 
-<script>
-export default {
-    name: 'GlobalAlerts',
-    computed: {
-        alerts() {
-            return this.$store.globalAlerts;
-        },
-    },
-};
+<script setup>
+import { useLighterpackStore } from '../store/store.js';
+
+defineOptions({ name: 'GlobalAlerts' });
+
+const store = useLighterpackStore();
 </script>
 
 <style lang="scss">
