@@ -8,7 +8,7 @@
                 </span>
                 <input
                     id="lpListName"
-                    :value="list.name"
+                    :value="activeList.name"
                     type="text"
                     class="lpListName lpSilent headerItem"
                     placeholder="List Name"
@@ -71,7 +71,10 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onBeforeMount } from 'vue';
+import { useRouter } from 'vue-router';
+import { useLighterpackStore } from '../store/store.js';
 import globalAlerts from '../components/global-alerts.vue';
 import sidebar from '../components/sidebar.vue';
 import share from '../components/share.vue';
@@ -81,7 +84,6 @@ import account from '../components/account.vue';
 import accountDelete from '../components/account-delete.vue';
 import help from '../components/help.vue';
 import list from '../components/list.vue';
-
 import itemImage from '../components/item-image.vue';
 import itemViewImage from '../components/item-view-image.vue';
 import itemLink from '../components/item-link.vue';
@@ -89,57 +91,32 @@ import importCSV from '../components/import-csv.vue';
 import copyList from '../components/copy-list.vue';
 import speedbump from '../components/speedbump.vue';
 
-export default {
-    name: 'Dashboard',
-    components: {
-        sidebar,
-        share,
-        listSettings,
-        accountDropdown,
-        account,
-        accountDelete,
-        help,
-        list,
-        itemLink,
-        copyList,
-        importCSV,
-        itemImage,
-        itemViewImage,
-        speedbump,
-        globalAlerts,
-    },
-    data() {
-        return {
-            isLoaded: false,
-        };
-    },
-    computed: {
-        library() {
-            return this.$store.library;
-        },
-        list() {
-            return this.library.getListById(this.library.defaultListId);
-        },
-        isSignedIn() {
-            return this.$store.loggedIn;
-        },
-    },
-    beforeMount() {
-        if (!this.$store.library) {
-            this.$router.push('/welcome');
-        } else {
-            this.isLoaded = true;
-        }
-    },
-    methods: {
-        toggleSidebar() {
-            this.$store.toggleSidebar();
-        },
-        updateListName(evt) {
-            this.$store.updateListName({ id: this.list.id, name: evt.target.value });
-        },
-    },
-};
+defineOptions({ name: 'Dashboard' });
+
+const store = useLighterpackStore();
+const router = useRouter();
+
+const isLoaded = ref(false);
+
+const library = computed(() => store.library);
+const activeList = computed(() => library.value.getListById(library.value.defaultListId));
+const isSignedIn = computed(() => store.loggedIn);
+
+onBeforeMount(() => {
+    if (!store.library) {
+        router.push('/welcome');
+    } else {
+        isLoaded.value = true;
+    }
+});
+
+function toggleSidebar() {
+    store.toggleSidebar();
+}
+
+function updateListName(evt) {
+    store.updateListName({ id: activeList.value.id, name: evt.target.value });
+}
 </script>
 
 <style lang="scss">

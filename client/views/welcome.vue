@@ -45,26 +45,25 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { onBeforeMount } from 'vue';
+import { useRouter } from 'vue-router';
+import { useLighterpackStore } from '../store/store.js';
 import blackoutFooter from '../components/blackout-footer.vue';
 import globalAlerts from '../components/global-alerts.vue';
 import registerForm from '../components/register-form.vue';
 import SigninForm from '../components/signin-form.vue';
 
-export default {
-    name: 'Welcome',
-    components: {
-        blackoutFooter,
-        globalAlerts,
-        registerForm,
-        SigninForm,
-    },
-    beforeMount() {
-        if (this.$store.library) {
-            this.$router.push('/');
-        }
-    },
-};
+defineOptions({ name: 'Welcome' });
+
+const store = useLighterpackStore();
+const router = useRouter();
+
+onBeforeMount(() => {
+    if (store.library) {
+        router.push('/');
+    }
+});
 </script>
 
 <style lang="scss">

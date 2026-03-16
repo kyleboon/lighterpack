@@ -47,74 +47,68 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { fetchJson } from '../utils/utils.js';
 import blackoutFooter from '../components/blackout-footer.vue';
 import errors from '../components/errors.vue';
 import modal from '../components/modal.vue';
-import { fetchJson } from '../utils/utils.js';
 
-export default {
-    name: 'ForgotPassword',
-    components: {
-        blackoutFooter,
-        errors,
-        modal,
-    },
-    data() {
-        return {
-            forgotPasswordUsername: '',
-            forgotPasswordErrors: [],
-            forgotUsernameEmail: '',
-            forgotUsernameErrors: [],
-        };
-    },
-    methods: {
-        resetPassword() {
-            this.forgotPasswordErrors = [];
+defineOptions({ name: 'ForgotPassword' });
 
-            return fetchJson('/forgotPassword', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify({ username: this.forgotPasswordUsername }),
-            })
-                .then((_response) => {
-                    this.$router.push('/signin/reset-password');
-                })
-                .catch((response) => {
-                    let localErrors = [{ message: 'An error occurred, please try again later.' }];
-                    if (response.json && response.json.errors) {
-                        localErrors = response.json.errors;
-                    }
-                    this.forgotPasswordErrors = localErrors;
-                });
+const router = useRouter();
+
+const forgotPasswordUsername = ref('');
+const forgotPasswordErrors = ref([]);
+const forgotUsernameEmail = ref('');
+const forgotUsernameErrors = ref([]);
+
+function resetPassword() {
+    forgotPasswordErrors.value = [];
+
+    return fetchJson('/forgotPassword', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
         },
-        forgotUsername() {
-            this.forgotUsernameErrors = [];
+        credentials: 'same-origin',
+        body: JSON.stringify({ username: forgotPasswordUsername.value }),
+    })
+        .then((_response) => {
+            router.push('/signin/reset-password');
+        })
+        .catch((response) => {
+            let localErrors = [{ message: 'An error occurred, please try again later.' }];
+            if (response.json && response.json.errors) {
+                localErrors = response.json.errors;
+            }
+            forgotPasswordErrors.value = localErrors;
+        });
+}
 
-            return fetchJson('/forgotUsername', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify({ email: this.forgotUsernameEmail }),
-            })
-                .then((_response) => {
-                    this.$router.push('/signin/forgot-username');
-                })
-                .catch((response) => {
-                    let localErrors = [{ message: 'An error occurred, please try again later.' }];
-                    if (response.json && response.json.errors) {
-                        localErrors = response.json.errors;
-                    }
-                    this.forgotUsernameErrors = localErrors;
-                });
+function forgotUsername() {
+    forgotUsernameErrors.value = [];
+
+    return fetchJson('/forgotUsername', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
         },
-    },
-};
+        credentials: 'same-origin',
+        body: JSON.stringify({ email: forgotUsernameEmail.value }),
+    })
+        .then((_response) => {
+            router.push('/signin/forgot-username');
+        })
+        .catch((response) => {
+            let localErrors = [{ message: 'An error occurred, please try again later.' }];
+            if (response.json && response.json.errors) {
+                localErrors = response.json.errors;
+            }
+            forgotUsernameErrors.value = localErrors;
+        });
+}
 </script>
 
 <style lang="scss">

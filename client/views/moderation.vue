@@ -26,78 +26,72 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
 import { fetchJson } from '../utils/utils.js';
 
-export default {
-    name: 'Admin',
-    components: {},
-    data() {
-        return {
-            searchQuery: '',
-            searchResults: null,
-            userToInspect: null,
-            editableLibrary: null,
-            newPassword: null,
-        };
-    },
-    computed: {
-        resultsLoaded() {
-            return !!this.searchResults;
+defineOptions({ name: 'Admin' });
+
+const searchQuery = ref('');
+const searchResults = ref(null);
+const userToInspect = ref(null);
+const editableLibrary = ref(null);
+const newPassword = ref(null);
+
+const resultsLoaded = computed(() => !!searchResults.value);
+
+function searchUsers() {
+    fetchJson(`/moderation/search?q=${searchQuery.value}`, {
+        method: 'GET',
+        credentials: 'same-origin',
+    })
+        .then((response) => {
+            searchResults.value = response.results;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}
+
+function setUser(user) {
+    userToInspect.value = user;
+    editableLibrary.value = JSON.stringify(userToInspect.value.library);
+    newPassword.value = null;
+}
+
+function clearSession(user) {
+    fetchJson(`/moderation/clear-session`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
         },
-    },
-    methods: {
-        searchUsers() {
-            fetchJson(`/moderation/search?q=${this.searchQuery}`, {
-                method: 'GET',
-                credentials: 'same-origin',
-            })
-                .then((response) => {
-                    this.searchResults = response.results;
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+        body: JSON.stringify({ username: user.username }),
+    })
+        .then((_response) => {
+            console.log('clear session success');
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}
+
+function resetPassword(user) {
+    fetchJson(`/moderation/reset-password`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
         },
-        setUser(user) {
-            this.userToInspect = user;
-            this.editableLibrary = JSON.stringify(this.userToInspect.library);
-            this.newPassword = null;
-        },
-        clearSession(user) {
-            fetchJson(`/moderation/clear-session`, {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: user.username }),
-            })
-                .then((_response) => {
-                    console.log('clear session success');
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        },
-        resetPassword(user) {
-            fetchJson(`/moderation/reset-password`, {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: user.username }),
-            })
-                .then((response) => {
-                    this.newPassword = response.newPassword;
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        },
-    },
-};
+        body: JSON.stringify({ username: user.username }),
+    })
+        .then((response) => {
+            newPassword.value = response.newPassword;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}
 </script>
 
 <style lang="scss">

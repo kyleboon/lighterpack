@@ -91,252 +91,302 @@
     </li>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onBeforeMount } from 'vue';
+import { useLighterpackStore } from '../store/store.js';
 import unitSelect from './unit-select.vue';
 import weightUtils from '../utils/weight.js';
 
-export default {
-    name: 'Item',
-    components: {
-        unitSelect,
+defineOptions({ name: 'Item' });
+
+const props = defineProps({
+    category: {
+        type: Object,
+        default: null,
     },
-    props: {
-        category: {
-            type: Object,
-            default: null,
-        },
-        itemContainer: {
-            type: Object,
-            default: null,
-        },
+    itemContainer: {
+        type: Object,
+        default: null,
     },
-    data() {
-        return {
-            displayWeight: 0,
-            displayPrice: 0,
-            displayQty: 0,
-            weightError: false,
-            priceError: false,
-            qtyError: false,
-            numStars: 4,
-        };
-    },
-    computed: {
-        library() {
-            return this.$store.library;
-        },
-        item() {
-            return Object.assign({}, this.itemContainer.item);
-        },
-        categoryItem() {
-            return Object.assign({}, this.itemContainer.categoryItem);
-        },
-        thumbnailImage() {
-            if (this.item.image) {
-                return `https://i.imgur.com/${this.item.image}s.jpg`;
-            }
-            if (this.item.imageUrl) {
-                return this.item.imageUrl;
-            }
-            return '';
-        },
-        fullImage() {
-            if (this.item.image) {
-                return `https://i.imgur.com/${this.item.image}l.jpg`;
-            }
-            if (this.item.imageUrl) {
-                return this.item.imageUrl;
-            }
-            return '';
-        },
-    },
-    watch: {
-        item() {
-            this.setDisplayWeight();
-        },
-        categoryItem() {
-            this.setDisplayQty();
-        },
-    },
-    beforeMount() {
-        this.setDisplayWeight();
-        this.setDisplayPrice();
-        this.setDisplayQty();
-    },
-    methods: {
-        saveItem() {
-            this.$store.updateItem(this.item);
-        },
-        saveCategoryItem() {
-            this.$store.updateCategoryItem({ category: this.category, categoryItem: this.categoryItem });
-        },
-        setUnit(unit) {
-            this.item.authorUnit = unit;
-            this.$store.updateItemUnit(unit);
-            this.saveWeight(); // calling saveWeight preserves the text in the weight box instead of converting units.
-        },
-        savePrice() {
-            const priceFloat = parseFloat(this.displayPrice, 10);
+});
 
-            if (!isNaN(priceFloat)) {
-                this.item.price = Math.round(priceFloat * 100) / 100;
-                this.saveItem();
-                this.priceError = false;
-            } else {
-                this.priceError = true;
-            }
-        },
-        saveQty() {
-            const qtyFloat = parseFloat(this.displayQty, 10);
+const store = useLighterpackStore();
 
-            if (!isNaN(qtyFloat)) {
-                this.categoryItem.qty = qtyFloat;
-                this.saveCategoryItem();
-                this.qtyError = false;
-            } else {
-                this.qtyError = true;
-            }
-        },
-        saveWeight() {
-            const weightFloat = parseFloat(this.displayWeight, 10);
+const displayWeight = ref(0);
+const displayPrice = ref(0);
+const displayQty = ref(0);
+const weightError = ref(false);
+const priceError = ref(false);
+const qtyError = ref(false);
+const numStars = ref(4);
 
-            if (!isNaN(weightFloat)) {
-                this.item.weight = weightUtils.WeightToMg(weightFloat, this.item.authorUnit);
-                this.saveItem();
-                this.weightError = false;
-            } else {
-                this.weightError = true;
-            }
-        },
-        setDisplayPrice() {
-            if (!this.priceError) {
-                this.displayPrice = this.item.price.toFixed(2);
-            }
-        },
-        setDisplayQty() {
-            if (!this.qtyError) {
-                this.displayQty = this.categoryItem.qty;
-            }
-        },
-        setDisplayWeight() {
-            this.displayWeight = weightUtils.MgToWeight(this.item.weight, this.item.authorUnit);
-        },
-        updateItemLink() {
-            this.$store.openItemLinkDialog(this.item);
-        },
-        updateItemImage() {
-            this.$store.openItemImageDialog(this.item);
-        },
-        viewItemImage() {
-            this.$store.openViewImageDialog(this.fullImage);
-        },
-        toggleWorn() {
-            if (this.categoryItem.consumable) {
-                return;
-            }
-            this.categoryItem.worn = !this.categoryItem.worn;
-            this.saveCategoryItem();
-        },
-        toggleConsumable() {
-            if (this.categoryItem.worn) {
-                return;
-            }
-            this.categoryItem.consumable = !this.categoryItem.consumable;
-            this.saveCategoryItem();
-        },
-        cycleStar() {
-            if (!this.categoryItem.star) {
-                this.categoryItem.star = 0;
-            }
-            this.categoryItem.star = (this.categoryItem.star + 1) % this.numStars;
-            this.saveCategoryItem();
-        },
-        incrementPrice(evt) {
-            evt.stopImmediatePropagation();
+const library = computed(() => store.library);
+const item = computed(() => Object.assign({}, props.itemContainer.item));
+const categoryItem = computed(() => Object.assign({}, props.itemContainer.categoryItem));
 
-            if (this.priceError) {
-                return;
-            }
+const thumbnailImage = computed(() => {
+    if (item.value.image) {
+        return `https://i.imgur.com/${item.value.image}s.jpg`;
+    }
+    if (item.value.imageUrl) {
+        return item.value.imageUrl;
+    }
+    return '';
+});
 
-            this.item.price = this.item.price + 1;
+const fullImage = computed(() => {
+    if (item.value.image) {
+        return `https://i.imgur.com/${item.value.image}l.jpg`;
+    }
+    if (item.value.imageUrl) {
+        return item.value.imageUrl;
+    }
+    return '';
+});
 
-            this.saveItem();
-            this.setDisplayPrice();
-        },
-        decrementPrice(evt) {
-            evt.stopImmediatePropagation();
+watch(item, () => {
+    setDisplayWeight();
+});
 
-            if (this.priceError) {
-                return;
-            }
+watch(categoryItem, () => {
+    setDisplayQty();
+});
 
-            this.item.price = this.item.price - 1;
+onBeforeMount(() => {
+    setDisplayWeight();
+    setDisplayPrice();
+    setDisplayQty();
+});
 
-            if (this.item.price < 0) {
-                this.item.price = 0;
-            }
+function saveItem() {
+    store.updateItem(item.value);
+}
 
-            this.saveItem();
-            this.setDisplayPrice();
-        },
-        incrementQty(evt) {
-            evt.stopImmediatePropagation();
+function saveCategoryItem() {
+    store.updateCategoryItem({ category: props.category, categoryItem: categoryItem.value });
+}
 
-            if (this.qtyError) {
-                return;
-            }
+function setUnit(unit) {
+    item.value.authorUnit = unit;
+    store.updateItemUnit(unit);
+    saveWeight(); // calling saveWeight preserves the text in the weight box instead of converting units.
+}
 
-            this.categoryItem.qty = this.categoryItem.qty + 1;
-            this.saveCategoryItem();
-        },
-        decrementQty(evt) {
-            evt.stopImmediatePropagation();
+function savePrice() {
+    const priceFloat = parseFloat(displayPrice.value, 10);
 
-            if (this.qtyError) {
-                return;
-            }
+    if (!isNaN(priceFloat)) {
+        item.value.price = Math.round(priceFloat * 100) / 100;
+        saveItem();
+        priceError.value = false;
+    } else {
+        priceError.value = true;
+    }
+}
 
-            this.categoryItem.qty = this.categoryItem.qty - 1;
+function saveQty() {
+    const qtyFloat = parseFloat(displayQty.value, 10);
 
-            if (this.categoryItem.qty < 0) {
-                this.categoryItem.qty = 0;
-            }
+    if (!isNaN(qtyFloat)) {
+        categoryItem.value.qty = qtyFloat;
+        saveCategoryItem();
+        qtyError.value = false;
+    } else {
+        qtyError.value = true;
+    }
+}
 
-            this.saveCategoryItem();
-        },
-        incrementWeight(evt) {
-            evt.stopImmediatePropagation();
+function saveWeight() {
+    const weightFloat = parseFloat(displayWeight.value, 10);
 
-            if (this.weightError) {
-                return;
-            }
+    if (!isNaN(weightFloat)) {
+        item.value.weight = weightUtils.WeightToMg(weightFloat, item.value.authorUnit);
+        saveItem();
+        weightError.value = false;
+    } else {
+        weightError.value = true;
+    }
+}
 
-            const newWeight = weightUtils.MgToWeight(this.item.weight, this.item.authorUnit) + 1;
-            this.item.weight = weightUtils.WeightToMg(newWeight, this.item.authorUnit);
+function setDisplayPrice() {
+    if (!priceError.value) {
+        displayPrice.value = item.value.price.toFixed(2);
+    }
+}
 
-            this.saveItem();
-        },
-        decrementWeight(evt) {
-            evt.stopImmediatePropagation();
+function setDisplayQty() {
+    if (!qtyError.value) {
+        displayQty.value = categoryItem.value.qty;
+    }
+}
 
-            if (this.weightError) {
-                return;
-            }
+function setDisplayWeight() {
+    displayWeight.value = weightUtils.MgToWeight(item.value.weight, item.value.authorUnit);
+}
 
-            const newWeight = weightUtils.MgToWeight(this.item.weight, this.item.authorUnit) - 1;
-            this.item.weight = weightUtils.WeightToMg(newWeight, this.item.authorUnit);
+function updateItemLink() {
+    store.openItemLinkDialog(item.value);
+}
 
-            if (this.item.weight < 0) {
-                this.item.weight = 0;
-            }
+function updateItemImage() {
+    store.openItemImageDialog(item.value);
+}
 
-            this.saveItem();
-        },
-        removeItem() {
-            this.$store.removeItemFromCategory({ itemId: this.item.id, category: this.category });
-        },
-    },
-};
+function viewItemImage() {
+    store.openViewImageDialog(fullImage.value);
+}
+
+function toggleWorn() {
+    if (categoryItem.value.consumable) {
+        return;
+    }
+    categoryItem.value.worn = !categoryItem.value.worn;
+    saveCategoryItem();
+}
+
+function toggleConsumable() {
+    if (categoryItem.value.worn) {
+        return;
+    }
+    categoryItem.value.consumable = !categoryItem.value.consumable;
+    saveCategoryItem();
+}
+
+function cycleStar() {
+    if (!categoryItem.value.star) {
+        categoryItem.value.star = 0;
+    }
+    categoryItem.value.star = (categoryItem.value.star + 1) % numStars.value;
+    saveCategoryItem();
+}
+
+function incrementPrice(evt) {
+    evt.stopImmediatePropagation();
+
+    if (priceError.value) {
+        return;
+    }
+
+    item.value.price = item.value.price + 1;
+
+    saveItem();
+    setDisplayPrice();
+}
+
+function decrementPrice(evt) {
+    evt.stopImmediatePropagation();
+
+    if (priceError.value) {
+        return;
+    }
+
+    item.value.price = item.value.price - 1;
+
+    if (item.value.price < 0) {
+        item.value.price = 0;
+    }
+
+    saveItem();
+    setDisplayPrice();
+}
+
+function incrementQty(evt) {
+    evt.stopImmediatePropagation();
+
+    if (qtyError.value) {
+        return;
+    }
+
+    categoryItem.value.qty = categoryItem.value.qty + 1;
+    saveCategoryItem();
+}
+
+function decrementQty(evt) {
+    evt.stopImmediatePropagation();
+
+    if (qtyError.value) {
+        return;
+    }
+
+    categoryItem.value.qty = categoryItem.value.qty - 1;
+
+    if (categoryItem.value.qty < 0) {
+        categoryItem.value.qty = 0;
+    }
+
+    saveCategoryItem();
+}
+
+function incrementWeight(evt) {
+    evt.stopImmediatePropagation();
+
+    if (weightError.value) {
+        return;
+    }
+
+    const newWeight = weightUtils.MgToWeight(item.value.weight, item.value.authorUnit) + 1;
+    item.value.weight = weightUtils.WeightToMg(newWeight, item.value.authorUnit);
+
+    saveItem();
+}
+
+function decrementWeight(evt) {
+    evt.stopImmediatePropagation();
+
+    if (weightError.value) {
+        return;
+    }
+
+    const newWeight = weightUtils.MgToWeight(item.value.weight, item.value.authorUnit) - 1;
+    item.value.weight = weightUtils.WeightToMg(newWeight, item.value.authorUnit);
+
+    if (item.value.weight < 0) {
+        item.value.weight = 0;
+    }
+
+    saveItem();
+}
+
+function removeItem() {
+    store.removeItemFromCategory({ itemId: item.value.id, category: props.category });
+}
+
+defineExpose({
+    displayWeight,
+    displayPrice,
+    displayQty,
+    weightError,
+    priceError,
+    qtyError,
+    numStars,
+    library,
+    item,
+    categoryItem,
+    thumbnailImage,
+    fullImage,
+    saveItem,
+    saveCategoryItem,
+    setUnit,
+    savePrice,
+    saveQty,
+    saveWeight,
+    setDisplayPrice,
+    setDisplayQty,
+    setDisplayWeight,
+    updateItemLink,
+    updateItemImage,
+    viewItemImage,
+    toggleWorn,
+    toggleConsumable,
+    cycleStar,
+    incrementPrice,
+    decrementPrice,
+    incrementQty,
+    decrementQty,
+    incrementWeight,
+    decrementWeight,
+    removeItem,
+});
 </script>
 
 <style lang="scss">

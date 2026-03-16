@@ -19,27 +19,19 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue';
+import { useLighterpackStore } from '../store/store.js';
 import blackoutFooter from '../components/blackout-footer.vue';
 import globalAlerts from '../components/global-alerts.vue';
 import modal from '../components/modal.vue';
 import registerForm from '../components/register-form.vue';
 
-export default {
-    name: 'Register',
-    components: {
-        blackoutFooter,
-        globalAlerts,
-        modal,
-        registerForm,
-    },
+defineOptions({ name: 'Register' });
 
-    computed: {
-        isLocalSaving() {
-            return this.$store.saveType === 'local';
-        },
-    },
-};
+const store = useLighterpackStore();
+
+const isLocalSaving = computed(() => store.saveType === 'local');
 </script>
 
 <style lang="scss"></style>

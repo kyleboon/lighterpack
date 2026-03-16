@@ -32,72 +32,76 @@
     </section>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useLighterpackStore } from '../store/store.js';
 import PopoverHover from './popover-hover.vue';
-
 import dragula from 'dragula';
 
-export default {
-    name: 'LibraryList',
-    components: {
-        PopoverHover,
+defineOptions({ name: 'LibraryList' });
+
+defineProps({
+    list: {
+        type: Object,
+        default: null,
     },
-    props: {
-        list: {
-            type: Object,
-            default: null,
+});
+
+const store = useLighterpackStore();
+
+const dragStartIndex = ref(null);
+
+const library = computed(() => store.library);
+
+onMounted(() => {
+    handleListReorder();
+});
+
+function listName(list) {
+    return list.name || 'New list';
+}
+
+function setDefaultList(list) {
+    store.setDefaultList(list);
+}
+
+function newList() {
+    store.newList();
+}
+
+function copyList() {
+    store.showModal('copyList');
+}
+
+function importCSV() {
+    store.triggerImportCSV();
+}
+
+function handleListReorder() {
+    const $lists = document.getElementById('lists');
+    const drake = dragula([$lists], {
+        moves($el, $source, $handle, _sibling) {
+            return $handle.classList.contains('lpHandle');
         },
-    },
-    computed: {
-        library() {
-            return this.$store.library;
-        },
-    },
-    mounted() {
-        this.handleListReorder();
-    },
-    methods: {
-        listName(list) {
-            return list.name || 'New list';
-        },
-        setDefaultList(list) {
-            this.$store.setDefaultList(list);
-        },
-        newList() {
-            this.$store.newList();
-        },
-        copyList() {
-            this.$store.showModal('copyList');
-        },
-        importCSV() {
-            this.$store.triggerImportCSV();
-        },
-        handleListReorder() {
-            const $lists = document.getElementById('lists');
-            const drake = dragula([$lists], {
-                moves($el, $source, $handle, _sibling) {
-                    return $handle.classList.contains('lpHandle');
-                },
-            });
-            drake.on('drag', ($el, _target, _source, _sibling) => {
-                this.dragStartIndex = getElementIndex($el);
-            });
-            drake.on('drop', ($el, _target, _source, _sibling) => {
-                this.$store.reorderList({ before: this.dragStartIndex, after: getElementIndex($el) });
-                drake.cancel(true);
-            });
-        },
-        removeList(list) {
-            const callback = () => {
-                this.$store.removeList(list);
-            };
-            const speedbumpOptions = {
-                body: 'Are you sure you want to delete this list? This cannot be undone.',
-            };
-            this.$store.initSpeedbump(callback, speedbumpOptions);
-        },
-    },
-};
+    });
+    drake.on('drag', ($el, _target, _source, _sibling) => {
+        dragStartIndex.value = getElementIndex($el);
+    });
+    drake.on('drop', ($el, _target, _source, _sibling) => {
+        store.reorderList({ before: dragStartIndex.value, after: getElementIndex($el) });
+        drake.cancel(true);
+    });
+}
+
+function removeList(list) {
+    const callback = () => {
+        store.removeList(list);
+    };
+    const speedbumpOptions = {
+        body: 'Are you sure you want to delete this list? This cannot be undone.',
+    };
+    store.initSpeedbump(callback, speedbumpOptions);
+}
 </script>
 
 <style lang="scss">
