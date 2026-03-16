@@ -44,7 +44,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
             this.isSaving = isSaving;
         },
         signout() {
-            createCookie('lp', '', -1);
+            fetch('/signout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
             this.library = false;
             this.loggedIn = false;
         },
@@ -283,16 +283,33 @@ export const useLighterpackStore = defineStore('lighterpack', {
 
         // Async actions
         init() {
-            if (readCookie('lp')) {
-                return this.loadRemote();
-            } else if (localStorage.library) {
+            // Local-only users are detected via localStorage; server users rely on
+            // the httpOnly session cookie which JS cannot read but the browser sends
+            // automatically with every request.
+            //
+            // Use raw fetch (not fetchJson) to avoid fetchJson's automatic
+            // router.push('/signin') on 401 — on initial load we want to show
+            // the welcome page instead of redirecting to sign-in.
+            if (localStorage.library) {
                 return this.loadLocal();
             }
-            return new Promise((resolve) => {
-                this.setLoggedIn(false);
-                this.clearLibraryData();
-                resolve();
-            });
+            return fetch('/signin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+            })
+                .then((res) => (res.ok ? res.json() : null))
+                .then((data) => {
+                    if (data) {
+                        this.setSyncToken(data.syncToken);
+                        this.loadLibraryData(data.library);
+                        this.setSaveType('remote');
+                        this.setLoggedIn(data.username);
+                    }
+                })
+                .catch(() => {
+                    // Network error — app will show the welcome page
+                });
         },
         loadLocal() {
             const libraryData = localStorage.library;

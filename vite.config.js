@@ -3,6 +3,26 @@ import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import { writeFileSync } from 'fs';
 
+// Transforms CJS source files (module.exports / require) to ESM for the Vite dev server.
+// The production build already handles these via build.commonjsOptions / @rollup/plugin-commonjs.
+function legacyCjsPlugin() {
+    const cjsFiles = ['client/utils/weight.js', 'client/utils/color.js', 'client/dataTypes.js'];
+    return {
+        name: 'legacy-cjs',
+        apply: (_, { command }) => command === 'serve' && !process.env.VITEST,
+        transform(code, id) {
+            const normalized = id.replace(/\\/g, '/');
+            if (!cjsFiles.some((f) => normalized.endsWith(f))) return null;
+            let result = code;
+            // top-level: const x = require('y') → import x from 'y'
+            result = result.replace(/^const (\w+) = require\((['"][^'"]+['"])\);/gm, 'import $1 from $2;');
+            // module.exports = → export default
+            result = result.replace(/^module\.exports\s*=\s*/m, 'export default ');
+            return { code: result, map: null };
+        },
+    };
+}
+
 function assetsJsonPlugin() {
     return {
         name: 'assets-json',
@@ -36,7 +56,7 @@ function assetsJsonPlugin() {
 }
 
 export default defineConfig({
-    plugins: [vue(), assetsJsonPlugin()],
+    plugins: [vue(), legacyCjsPlugin(), assetsJsonPlugin()],
     root: '.',
     define: {
         global: 'globalThis',
@@ -71,6 +91,7 @@ export default defineConfig({
         port: 5173,
         proxy: {
             '/signin': { target: 'http://localhost:3000', changeOrigin: true },
+            '/signout': { target: 'http://localhost:3000', changeOrigin: true },
             '/register': { target: 'http://localhost:3000', changeOrigin: true },
             '/saveLibrary': { target: 'http://localhost:3000', changeOrigin: true },
             '/account': { target: 'http://localhost:3000', changeOrigin: true },

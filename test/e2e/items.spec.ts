@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 import { testRoot } from './utils';
 
-import { registerUser } from './auth-utils';
+import { registerUser, loginUser, logoutUser } from './auth-utils';
 
 async function freshUser(page: any) {
     const now = Date.now();
@@ -185,6 +185,35 @@ test.describe('Item and category management', () => {
         await expect(page.locator('.lpConsumableWeight')).toBeVisible();
         await expect(page.locator('.lpConsumableWeight .lpDisplaySubtotal')).toContainText('26');
         await expect(page.locator('.lpConsumableWeight .lpCell.lpNumber.lpSubtotal').first()).toContainText('$44.00');
+    });
+
+    test('should display existing categories and items after logout and login', async ({ page }) => {
+        const ts = Date.now();
+        const username = `rt${ts}`;
+        const password = 'testtest';
+        const email = `rt+${ts}@lighterpack.com`;
+        await registerUser(page, username, password, email);
+
+        // Add a category and two items via the UX
+        await page.locator('input.lpCategoryName').first().fill('Shelter');
+        await page.locator('.lpCategory').first().locator('input.lpName').first().fill('Tent');
+        await page.locator('.lpCategory').first().locator('input.lpWeight').first().fill('800');
+        await page.locator('.lpCategory').first().getByText('Add new item').click();
+        await page.locator('.lpCategory').first().locator('input.lpName').nth(1).fill('Sleeping Bag');
+        await page.locator('.lpCategory').first().locator('input.lpWeight').nth(1).fill('600');
+
+        // Wait for autosave (10s debounce + buffer)
+        await page.waitForTimeout(12000);
+
+        await logoutUser(page);
+        await loginUser(page, username, password);
+
+        // Previously saved category and items must render from DB
+        await expect(page.locator('.lpCategory')).toHaveCount(1);
+        await expect(page.locator('input.lpCategoryName').first()).toHaveValue('Shelter');
+        await expect(page.locator('.lpItem')).toHaveCount(2);
+        await expect(page.locator('.lpCategory').first().locator('input.lpName').first()).toHaveValue('Tent');
+        await expect(page.locator('.lpCategory').first().locator('input.lpName').nth(1)).toHaveValue('Sleeping Bag');
     });
 
     test('should show worn weight for clothing items in the list summary', async ({ page }) => {

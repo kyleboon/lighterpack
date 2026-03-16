@@ -29,7 +29,7 @@
         </div>
 
         <ul class="lpCategories">
-            <category v-for="category in categories" :key="category.id" :category="category" />
+            <category v-for="cat in categories" :key="cat.id" :category="cat" />
         </ul>
 
         <hr />
@@ -52,7 +52,11 @@ const store = useLighterpackStore();
 
 const library = computed(() => store.library);
 const list = computed(() => store.activeList);
-const categories = computed(() => list.value.categoryIds.map((id) => library.value.getCategoryById(id)));
+const categories = computed(() => {
+    const l = list.value;
+    if (!l) return [];
+    return l.categoryIds.map((id) => library.value.getCategoryById(id));
+});
 const isListNew = computed(() => list.value.totalWeight === 0);
 const isLocalSaving = computed(() => store.saveType === 'local');
 

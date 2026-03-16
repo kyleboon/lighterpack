@@ -122,6 +122,20 @@ router.post('/register', async (req, res) => {
     return res.status(200).json(out);
 });
 
+router.post('/signout', async (req, res) => {
+    if (req.cookies.lp) {
+        try {
+            await getDb()
+                .collection('users')
+                .updateOne({ token: req.cookies.lp }, { $unset: { token: '' } });
+        } catch (_err) {
+            // Best-effort token invalidation
+        }
+    }
+    res.clearCookie('lp', { path: '/', httpOnly: true, sameSite: 'lax' });
+    return res.json({ ok: true });
+});
+
 router.post('/signin', authenticateUser, (req, res) => {
     const user = req.user;
     logWithRequest(req, { message: 'signed in', username: user.username });

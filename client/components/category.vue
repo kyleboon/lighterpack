@@ -65,12 +65,12 @@ const store = useLighterpackStore();
 
 const library = computed(() => store.library);
 
-const itemContainers = computed(() =>
-    props.category.categoryItems.map((categoryItem) => ({
+const itemContainers = computed(() => {
+    return props.category.categoryItems.map((categoryItem) => ({
         categoryItem,
         item: library.value.getItemById(categoryItem.itemId),
-    })),
-);
+    }));
+});
 
 function displayWeight(mg, unit) {
     return weightUtils.MgToWeight(mg, unit) || 0;
