@@ -20,6 +20,7 @@
 <script>
 import errors from './errors.vue';
 import spinner from './spinner.vue';
+import { fetchJson } from '../utils/utils.js';
 
 import dataTypes from '../dataTypes.js';
 

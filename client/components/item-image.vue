@@ -32,6 +32,7 @@
 
 <script>
 import modal from './modal.vue';
+import { fetchJson } from '../utils/utils.js';
 
 export default {
     name: 'ItemImage',

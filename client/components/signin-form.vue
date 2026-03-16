@@ -40,6 +40,7 @@
 <script>
 import errors from './errors.vue';
 import spinner from './spinner.vue';
+import { fetchJson } from '../utils/utils.js';
 
 export default {
     name: 'SigninForm',

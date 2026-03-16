@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import debounce from 'lodash/debounce';
 import weightUtils from '../utils/weight.js';
 import dataTypes from '../dataTypes.js';
+import router from '../routes.js';
+import { fetchJson } from '../utils/utils.js';
 
 const Library = dataTypes.Library;
 
@@ -315,7 +317,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 })
                 .catch((response) => {
                     if (response.status == 401) {
-                        window.router.push('/signin');
+                        router.push('/signin');
                         return undefined;
                     }
                     return new Promise((resolve, reject) => {
@@ -369,7 +371,7 @@ export function setupAutoSave(store) {
                             error = response.json.status;
                         }
                         if (response.status == 401) {
-                            window.router.push('/signin');
+                            router.push('/signin');
                         } else {
                             alert(error); // TODO
                         }

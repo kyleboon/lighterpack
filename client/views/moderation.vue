@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { fetchJson } from '../utils/utils.js';
+
 export default {
     name: 'Admin',
     components: {},

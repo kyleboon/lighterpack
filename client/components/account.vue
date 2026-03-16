@@ -49,6 +49,7 @@
 import errors from './errors.vue';
 import modal from './modal.vue';
 import spinner from './spinner.vue';
+import { fetchJson } from '../utils/utils.js';
 
 export default {
     name: 'Account',

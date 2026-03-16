@@ -1,5 +1,6 @@
 import assignIn from 'lodash/assignIn';
 import weightUtils from './weight.js';
+import router from '../routes.js';
 
 class lpError extends Error {
     constructor(response, statusCode = null) {
@@ -28,7 +29,7 @@ class lpError extends Error {
     }
 }
 
-window.fetchJson = (url, options) => {
+export const fetchJson = (url, options) => {
     const fetchOptions = {
         method: 'GET',
         headers: {},
@@ -73,7 +74,7 @@ window.fetchJson = (url, options) => {
                     return resolve(response.json);
                 }
                 if (response.status && (response.status === 401 || response.status === 403)) {
-                    window.router.push('/signin');
+                    router.push('/signin');
                     return undefined;
                 }
 

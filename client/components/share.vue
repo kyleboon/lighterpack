@@ -23,6 +23,7 @@
 
 <script>
 import PopoverHover from './popover-hover.vue';
+import { fetchJson } from '../utils/utils.js';
 
 export default {
     name: 'Share',
