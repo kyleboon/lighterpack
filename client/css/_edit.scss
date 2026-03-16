@@ -49,25 +49,13 @@
     margin-left: 10px;
 }
 
-.gu-mirror {
-    filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=80)';
-    filter: alpha(opacity=80);
+.sortable-drag {
     margin: 0 !important;
     opacity: 0.8;
     position: fixed !important;
     z-index: 9999 !important;
 }
 
-.gu-hide {
-    display: none !important;
-}
-
-.gu-unselectable {
-    user-select: none !important;
-}
-
-.gu-transit {
-    filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=20)';
-    filter: alpha(opacity=20);
+.sortable-ghost {
     opacity: 0.2;
 }

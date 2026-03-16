@@ -39,20 +39,16 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from 'vue';
+import { computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { useLighterpackStore } from '../store/store.js';
+import Sortable from 'sortablejs';
+import { useItemDrag } from '../composables/useItemDrag.js';
 import category from './category.vue';
 import listSummary from './list-summary.vue';
-import dragula from 'dragula';
 
 defineOptions({ name: 'List' });
 
 const store = useLighterpackStore();
-
-const onboardingCompleted = ref(false);
-const itemDrake = ref(null);
-const categoryDragStartIndex = ref(false);
-const itemDragId = ref(false);
 
 const library = computed(() => store.library);
 const list = computed(() => store.activeList);
@@ -60,15 +56,24 @@ const categories = computed(() => list.value.categoryIds.map((id) => library.val
 const isListNew = computed(() => list.value.totalWeight === 0);
 const isLocalSaving = computed(() => store.saveType === 'local');
 
+const itemDrag = useItemDrag();
+/** @type {Sortable | null} */
+let categorySortable = null;
+
 watch(categories, () => {
     nextTick(() => {
-        handleItemReorder();
+        itemDrag.setup(list);
     });
 });
 
 onMounted(() => {
-    handleCategoryReorder();
-    handleItemReorder();
+    categorySortable = handleCategoryReorder();
+    itemDrag.setup(list);
+});
+
+onUnmounted(() => {
+    itemDrag.destroy();
+    if (categorySortable) categorySortable.destroy();
 });
 
 function newCategory() {
@@ -79,55 +84,24 @@ function updateListDescription() {
     store.updateListDescription(list.value);
 }
 
-function handleItemReorder() {
-    if (itemDrake.value) {
-        itemDrake.value.destroy();
-    }
-    const $categoryItems = Array.prototype.slice.call(document.getElementsByClassName('lpItems'));
-    const drake = dragula($categoryItems, {
-        moves($el, $source, $handle, _sibling) {
-            return $handle.classList.contains('lpItemHandle');
-        },
-        accepts($el, $target, $source, $sibling) {
-            if (!$sibling || $sibling.classList.contains('lpItemsHeader')) {
-                return false; // header and footer are technically part of this list - exclude them both.
-            }
-            return true;
-        },
-    });
-    drake.on('drag', ($el, _target, _source, _sibling) => {
-        itemDragId.value = parseInt($el.id); // fragile
-    });
-    drake.on('drop', ($el, $target, _source, _sibling) => {
-        const categoryId = parseInt($target.parentElement.id); // fragile
-        store.reorderItem({
-            list: list.value,
-            itemId: itemDragId.value,
-            categoryId,
-            dropIndex: getElementIndex($el) - 1,
-        });
-        drake.cancel(true);
-    });
-    itemDrake.value = drake;
-}
-
 function handleCategoryReorder() {
-    const $categories = document.getElementsByClassName('lpCategories')[0];
-    const drake = dragula([$categories], {
-        moves(el, $source, $handle, _sibling) {
-            return $handle.classList.contains('lpCategoryHandle');
+    const $categories = /** @type {HTMLElement} */ (document.getElementsByClassName('lpCategories')[0]);
+    return Sortable.create($categories, {
+        handle: '.lpCategoryHandle',
+        animation: 150,
+        onEnd(evt) {
+            const { item, from, oldIndex, newIndex } = evt;
+            if (newIndex < oldIndex) {
+                from.insertBefore(item, from.children[oldIndex + 1] ?? null);
+            } else {
+                from.insertBefore(item, from.children[oldIndex] ?? null);
+            }
+            store.reorderCategory({
+                list: list.value,
+                before: oldIndex,
+                after: newIndex,
+            });
         },
-    });
-    drake.on('drag', ($el, _target, _source, _sibling) => {
-        categoryDragStartIndex.value = getElementIndex($el);
-    });
-    drake.on('drop', ($el, _target, _source, _sibling) => {
-        store.reorderCategory({
-            list: list.value,
-            before: categoryDragStartIndex.value,
-            after: getElementIndex($el),
-        });
-        drake.cancel(true);
     });
 }
 </script>

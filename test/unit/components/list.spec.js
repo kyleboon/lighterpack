@@ -1,4 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+vi.mock('sortablejs', () => ({ default: { create: vi.fn(() => ({ destroy: vi.fn() })) } }));
+vi.mock('../../../client/composables/useItemDrag.js', () => ({
+    useItemDrag: () => ({ setup: vi.fn(), destroy: vi.fn() }),
+}));
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { useLighterpackStore } from '../../../client/store/store.js';

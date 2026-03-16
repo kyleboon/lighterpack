@@ -2,7 +2,6 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 
 import './css/lighterpack.scss';
-import 'dragula/dist/dragula.css';
 import App from './App.vue';
 import router from './routes';
 import { useLighterpackStore, setupAutoSave } from './store/store';

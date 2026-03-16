@@ -26,9 +26,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useLighterpackStore } from '../store/store.js';
-import dragula from 'dragula';
+import Sortable from 'sortablejs';
 import weightUtils from '../utils/weight.js';
 
 defineOptions({ name: 'LibraryItem' });
@@ -43,96 +43,61 @@ defineProps({
 const store = useLighterpackStore();
 
 const searchText = ref('');
-const itemDragId = ref(false);
-const drake = ref(null);
 
 const library = computed(() => store.library);
 
 const filteredItems = computed(() => {
-    let i;
-    let item;
     let filteredItemsList = [];
     if (!searchText.value) {
         filteredItemsList = library.value.items.map((libItem) => Object.assign({}, libItem));
     } else {
         const lowerCaseSearchText = searchText.value.toLowerCase();
-
-        for (i = 0; i < library.value.items.length; i++) {
-            item = library.value.items[i];
+        for (let i = 0; i < library.value.items.length; i++) {
+            const libItem = library.value.items[i];
             if (
-                item.name.toLowerCase().indexOf(lowerCaseSearchText) > -1 ||
-                item.description.toLowerCase().indexOf(lowerCaseSearchText) > -1
+                libItem.name.toLowerCase().indexOf(lowerCaseSearchText) > -1 ||
+                libItem.description.toLowerCase().indexOf(lowerCaseSearchText) > -1
             ) {
-                filteredItemsList.push(Object.assign({}, item));
+                filteredItemsList.push(Object.assign({}, libItem));
             }
         }
     }
 
     const currentListItems = library.value.getItemsInCurrentList();
-
-    for (i = 0; i < filteredItemsList.length; i++) {
-        item = filteredItemsList[i];
-        if (currentListItems.indexOf(item.id) > -1) {
-            item.inCurrentList = true;
+    for (let i = 0; i < filteredItemsList.length; i++) {
+        if (currentListItems.indexOf(filteredItemsList[i].id) > -1) {
+            filteredItemsList[i].inCurrentList = true;
         }
     }
 
     return filteredItemsList;
 });
 
-const list = computed(() => library.value.getListById(library.value.defaultListId));
-const categories = computed(() => list.value.categoryIds.map((id) => library.value.getCategoryById(id)));
-
-watch(categories, () => {
-    nextTick(() => {
-        handleItemDrag();
-    });
-});
+/** @type {import('vue').Ref<Sortable | null>} */
+const librarySortable = ref(null);
 
 onMounted(() => {
-    handleItemDrag();
+    const $library = document.getElementById('library');
+    librarySortable.value = Sortable.create($library, {
+        group: {
+            name: 'items',
+            pull: 'clone',
+            put: false,
+        },
+        handle: '.lpLibraryItemHandle',
+        filter(_evt, el) {
+            // Prevent dragging items already in the current list
+            const items = store.library.getItemsInCurrentList();
+            return items.indexOf(parseInt(el.dataset.itemId)) > -1;
+        },
+        preventOnFilter: false,
+        animation: 150,
+    });
 });
 
-function handleItemDrag() {
-    if (drake.value) {
-        drake.value.destroy();
-    }
-
-    const $library = document.getElementById('library');
-    const $categoryItems = Array.prototype.slice.call(document.getElementsByClassName('lpItems')); // list.vue
-    const newDrake = dragula([$library].concat($categoryItems), {
-        copy: true,
-        moves($el, $source, $handle, _sibling) {
-            const items = library.value.getItemsInCurrentList();
-            if (items.indexOf(parseInt($el.dataset.itemId)) > -1) {
-                return false;
-            }
-            return $handle.classList.contains('lpLibraryItemHandle');
-        },
-        accepts($el, $target, $source, $sibling) {
-            if ($target.id === 'library' || !$sibling || $sibling.classList.contains('lpItemsHeader')) {
-                return false; // header and footer are technically part of this list - exclude them both.
-            }
-            return true;
-        },
-    });
-    newDrake.on('drag', ($el, _target, _source, _sibling) => {
-        itemDragId.value = parseInt($el.dataset.itemId); // fragile
-    });
-    newDrake.on('drop', ($el, $target, _source, _sibling) => {
-        if (!$target || $target.id === 'library') {
-            return;
-        }
-        const categoryId = parseInt($target.parentElement.id); // fragile
-        store.addItemToCategory({
-            itemId: itemDragId.value,
-            categoryId,
-            dropIndex: getElementIndex($el) - 1,
-        });
-        newDrake.cancel(true);
-    });
-    drake.value = newDrake;
-}
+onUnmounted(() => {
+    if (librarySortable.value) librarySortable.value.destroy();
+});
 
 function displayWeight(mg, unit) {
     return weightUtils.MgToWeight(mg, unit) || 0;
@@ -187,7 +152,7 @@ function removeItem(item) {
         border-bottom: none;
     }
 
-    &.gu-mirror {
+    &.sortable-drag {
         background: #606060;
         border: 1px solid #999;
         color: #fff;

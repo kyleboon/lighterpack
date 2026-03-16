@@ -41,7 +41,7 @@
         background: $green2;
     }
 
-    &.gu-mirror {
+    &.sortable-drag {
         background: #f7f7f7;
         border: 1px solid #999;
     }
@@ -95,7 +95,7 @@ input.lpCategoryName {
     flex-direction: row;
     justify-content: stretch;
 
-    &.gu-mirror {
+    &.sortable-drag {
         background: #f7f7f7;
         border: 1px solid #999;
     }

@@ -33,10 +33,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { useLighterpackStore } from '../store/store.js';
+import Sortable from 'sortablejs';
 import PopoverHover from './popover-hover.vue';
-import dragula from 'dragula';
 
 defineOptions({ name: 'LibraryList' });
 
@@ -49,12 +49,30 @@ defineProps({
 
 const store = useLighterpackStore();
 
-const dragStartIndex = ref(null);
-
 const library = computed(() => store.library);
 
+/** @type {Sortable | null} */
+let listSortable = null;
+
 onMounted(() => {
-    handleListReorder();
+    const $lists = document.getElementById('lists');
+    listSortable = Sortable.create($lists, {
+        handle: '.lpHandle',
+        animation: 150,
+        onEnd(evt) {
+            const { item, from, oldIndex, newIndex } = evt;
+            if (newIndex < oldIndex) {
+                from.insertBefore(item, from.children[oldIndex + 1] ?? null);
+            } else {
+                from.insertBefore(item, from.children[oldIndex] ?? null);
+            }
+            store.reorderList({ before: oldIndex, after: newIndex });
+        },
+    });
+});
+
+onUnmounted(() => {
+    if (listSortable) listSortable.destroy();
 });
 
 function listName(list) {
@@ -75,22 +93,6 @@ function copyList() {
 
 function importCSV() {
     store.triggerImportCSV();
-}
-
-function handleListReorder() {
-    const $lists = document.getElementById('lists');
-    const drake = dragula([$lists], {
-        moves($el, $source, $handle, _sibling) {
-            return $handle.classList.contains('lpHandle');
-        },
-    });
-    drake.on('drag', ($el, _target, _source, _sibling) => {
-        dragStartIndex.value = getElementIndex($el);
-    });
-    drake.on('drop', ($el, _target, _source, _sibling) => {
-        store.reorderList({ before: dragStartIndex.value, after: getElementIndex($el) });
-        drake.cancel(true);
-    });
 }
 
 function removeList(list) {
@@ -142,7 +144,7 @@ function removeList(list) {
         }
     }
 
-    &.gu-mirror {
+    &.sortable-drag {
         background: #606060;
         border: 1px solid #999;
         color: #fff;
