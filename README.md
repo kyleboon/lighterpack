@@ -4,10 +4,9 @@ LighterPack helps you track the gear you bring on adventures.
 
 ## Tech Stack
 
-- **Frontend**: Vue 3 SPA with Pinia and Vue Router
-- **Backend**: Node.js / Express
+- **Framework**: Nuxt 4 (Vue 3, Nitro server, Vite)
+- **State**: Pinia
 - **Database**: MongoDB (via Docker Compose)
-- **Build**: Vite
 
 ## Prerequisites
 
@@ -41,20 +40,19 @@ LighterPack helps you track the gear you bring on adventures.
     npm run dev
     ```
 
-5. Open http://localhost:8080
+5. Open http://localhost:3000
 
 ## Available Scripts
 
 ```bash
-npm run dev              # Start dev server with hot reload (Vite on :5173)
+npm run dev              # Start dev server with hot reload (Nuxt on :3000)
 npm run start            # Production build + start server
-npm run build            # Vite production build only
+npm run build            # Nuxt production build only
 npm run lint:js          # ESLint with auto-fix (.js and .vue files)
 npm run lint:css         # Stylelint with auto-fix (.scss and .vue files)
 npm run test:unit        # Run Vitest unit tests
 npm run test:unit:watch  # Run Vitest in watch mode
-npm run test:unit:coverage  # Run Vitest with V8 coverage report
-npm run typecheck            # TypeScript type check (no emit)
+npm run typecheck        # TypeScript type check (no emit)
 ```
 
 ## Testing
@@ -131,10 +129,8 @@ Playwright automatically starts the app server before running tests (via `npm ru
 - Bundle analysis with `rollup-plugin-visualizer`
 - Fix disabled WebKit Playwright tests
 
-### Phase 5 — Modernize share/embed pages
+### Phase 5 — Nuxt 4 migration ✅ / embed widget (ongoing)
 
-The share and embed pages are currently rendered server-side using Mustache templates and a parallel set of render functions in `server/views.js`. This duplicates logic already in Vue components (weight formatting, unit select widget, etc.).
+The Express + webpack stack has been replaced with Nuxt 4 (Nitro server, Vite, Vue SSR for share pages). The share page at `/r/:id` is now rendered server-side from the same Vue component tree as the main app.
 
-- **Vue SSR for share page**: Replace Mustache templates and `server/views.js` render functions with `@vue/server-renderer`. Render the existing `share.vue` component server-side so the share page is generated from the same component tree as the main app. Eliminates `t_itemShare.mustache`, `t_categoryShare.mustache`, `t_totals.mustache`, `t_CategorySummary.mustache`, `t_unitSelect.mustache`, and the parallel render functions in `server/views.js`.
-- **Replace embed widget with iframe**: Replace the current `embed.jmustache` / `embed.mustache` two-template system (which injects escaped HTML inside a JS file) with a simple `<iframe src="/r:id?embed=true">` pointing at the SSR share page. Zero script injection on the host page, no CSS conflicts, impossible to break.
-- **Delete `server/chart-svg.js`**: Once the share page uses the Vue `donut-chart.vue` component via SSR, the standalone SVG renderer used only by the share page can be removed.
+- **Replace embed widget with iframe**: Replace the current embed endpoint with a simple `<iframe src="/r/:id?embed=true">` pointing at the SSR share page. Zero script injection on the host page, no CSS conflicts, impossible to break.
