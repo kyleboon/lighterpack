@@ -118,9 +118,9 @@ Playwright automatically starts the app server before running tests (via `npm ru
 - ✅ Remove `lodash` dependency — replaced with native equivalents
 - ✅ Remove jQuery — replaced with vanilla JS in share page and embed widget
 - ✅ Remove `mixins/utils-mixin.js` — inlined into consuming components
-- ✅ Add unit tests for all converted components and views (41 test files, 226 tests)
-- Replace `dragula` with `SortableJS` or `vue-draggable-next` (TypeScript support, actively maintained)
-- Convert `client/dataTypes.js` from `.prototype` function constructors to ES6 `class` syntax; replace `var` and loose equality
+- ✅ Replace `dragula` with `SortableJS`; extract `useItemDrag` composable (TypeScript support, actively maintained)
+- ✅ Convert `client/dataTypes.js` from `.prototype` function constructors to ES6 `class` syntax; replace `var` and loose equality
+- ✅ Add unit tests for all converted components, views, and data types (43 test files, 315 tests)
 
 ### Phase 4 — Full TypeScript + performance + accessibility (ongoing)
 
