@@ -13,3 +13,4 @@ app.sublime-workspace
 *.pyc
 *__pycache__*
 coverage/
+.worktrees/
