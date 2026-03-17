@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import weightUtils from '../../../client/utils/weight.js';
+import weightUtils from '../../../shared/utils/weight.js';
 
 const { WeightToMg, MgToWeight } = weightUtils;
 

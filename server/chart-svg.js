@@ -1,7 +1,7 @@
 'use strict';
 
-const colorUtils = require('../client/utils/color.js');
-const weightUtils = require('../client/utils/weight.js');
+const colorUtils = require('../shared/utils/color.js');
+const weightUtils = require('../shared/utils/weight.js');
 
 const CX = 130;
 const CY = 130;

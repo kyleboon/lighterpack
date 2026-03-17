@@ -52,7 +52,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useLighterpackStore } from '../store/store.js';
-import weightUtils from '../utils/weight.js';
+import weightUtils from '../../shared/utils/weight.js';
 import item from './item.vue';
 
 defineOptions({ name: 'Category' });

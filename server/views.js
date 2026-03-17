@@ -10,8 +10,8 @@ const config = require('config');
 const { logWithRequest, logger } = require('./log.js');
 const { getDb } = require('./db.js');
 
-const weightUtils = require('../client/utils/weight.js');
-const dataTypes = require('../client/dataTypes.js');
+const weightUtils = require('../shared/utils/weight.js');
+const dataTypes = require('../shared/dataTypes.js');
 const { renderChartSvg } = require('./chart-svg.js');
 
 const Item = dataTypes.Item;

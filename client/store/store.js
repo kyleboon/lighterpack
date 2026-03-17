@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import weightUtils from '../utils/weight.js';
-import dataTypes from '../dataTypes.js';
+import weightUtils from '../../shared/utils/weight.js';
+import dataTypes from '../../shared/dataTypes.js';
 import router from '../routes.js';
 import { fetchJson } from '../utils/utils.js';
 

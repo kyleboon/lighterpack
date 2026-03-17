@@ -29,7 +29,7 @@ if (config.get('mailgunAPIKey')) {
     mg = mailgunClient.client({ username: 'api', key: config.get('mailgunAPIKey') });
 }
 
-const dataTypes = require('../client/dataTypes.js');
+const dataTypes = require('../shared/dataTypes.js');
 
 const Library = dataTypes.Library;
 

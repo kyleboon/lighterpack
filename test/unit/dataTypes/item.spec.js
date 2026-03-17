@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Item } from '../../../client/dataTypes.js';
+import { Item } from '../../../shared/dataTypes.js';
 
 describe('Item constructor', () => {
     it('sets default values', () => {

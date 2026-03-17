@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Library } from '../../../client/dataTypes.js';
+import { Library } from '../../../shared/dataTypes.js';
 
 // Use a real Library so List has a proper wired-up context.
 // After new Library(), sequence=3, defaultListId=1, one list/category/item exist.

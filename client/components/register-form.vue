@@ -22,7 +22,7 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useLighterpackStore } from '../store/store.js';
 import { fetchJson } from '../utils/utils.js';
-import dataTypes from '../dataTypes.js';
+import dataTypes from '../../shared/dataTypes.js';
 import errors from './errors.vue';
 import spinner from './spinner.vue';
 

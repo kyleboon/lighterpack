@@ -29,7 +29,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useLighterpackStore } from '../store/store.js';
 import Sortable from 'sortablejs';
-import weightUtils from '../utils/weight.js';
+import weightUtils from '../../shared/utils/weight.js';
 
 defineOptions({ name: 'LibraryItem' });
 

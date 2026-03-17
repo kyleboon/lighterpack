@@ -130,8 +130,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useLighterpackStore } from '../store/store.js';
-import weightUtils from '../utils/weight.js';
-import colorUtils from '../utils/color.js';
+import weightUtils from '../../shared/utils/weight.js';
+import colorUtils from '../../shared/utils/color.js';
 import colorPicker from './colorpicker.vue';
 import unitSelect from './unit-select.vue';
 import donutChart from './donut-chart.vue';

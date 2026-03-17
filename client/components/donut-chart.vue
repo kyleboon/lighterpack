@@ -55,8 +55,8 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import colorUtils from '../utils/color.js';
-import weightUtils from '../utils/weight.js';
+import colorUtils from '../../shared/utils/color.js';
+import weightUtils from '../../shared/utils/weight.js';
 
 defineOptions({ name: 'DonutChart' });
 

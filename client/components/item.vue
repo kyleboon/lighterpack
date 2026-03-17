@@ -95,7 +95,7 @@
 import { ref, computed, watch, onBeforeMount } from 'vue';
 import { useLighterpackStore } from '../store/store.js';
 import unitSelect from './unit-select.vue';
-import weightUtils from '../utils/weight.js';
+import weightUtils from '../../shared/utils/weight.js';
 
 defineOptions({ name: 'Item' });
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Category, Item, Library } from '../../../client/dataTypes.js';
+import { Category, Item, Library } from '../../../shared/dataTypes.js';
 
 function makeLibrary(items = []) {
     const idMap = {};

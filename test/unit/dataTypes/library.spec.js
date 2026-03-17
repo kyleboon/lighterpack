@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { Library } from '../../../client/dataTypes.js';
+import { Library } from '../../../shared/dataTypes.js';
 
 describe('Library constructor', () => {
     it('sets default values', () => {

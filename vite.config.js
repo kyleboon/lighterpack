@@ -6,7 +6,7 @@ import { writeFileSync } from 'fs';
 // Transforms CJS source files (module.exports / require) to ESM for the Vite dev server.
 // The production build already handles these via build.commonjsOptions / @rollup/plugin-commonjs.
 function legacyCjsPlugin() {
-    const cjsFiles = ['client/utils/weight.js', 'client/utils/color.js', 'client/dataTypes.js'];
+    const cjsFiles = ['shared/utils/weight.js', 'shared/utils/color.js', 'shared/dataTypes.js'];
     return {
         name: 'legacy-cjs',
         apply: (_, { command }) => command === 'serve' && !process.env.VITEST,
@@ -72,7 +72,7 @@ export default defineConfig({
         outDir: 'public/dist',
         emptyOutDir: true,
         commonjsOptions: {
-            include: [/node_modules/, /client\//],
+            include: [/node_modules/, /client\//, /shared\//],
             transformMixedEsModules: true,
         },
         rollupOptions: {

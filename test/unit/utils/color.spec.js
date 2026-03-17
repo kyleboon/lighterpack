@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import colorUtils from '../../../client/utils/color.js';
+import colorUtils from '../../../shared/utils/color.js';
 
 const { getColor, rgbToString, stringToRgb, hexToRgb, rgbToHex, rgbToHsv, hsvToRgb } = colorUtils;
 
