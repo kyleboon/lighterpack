@@ -74,22 +74,22 @@
 <script setup>
 import { ref, computed, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '../store/store.js';
-import globalAlerts from '../components/global-alerts.vue';
-import sidebar from '../components/sidebar.vue';
-import share from '../components/share.vue';
-import listSettings from '../components/list-settings.vue';
-import accountDropdown from '../components/account-dropdown.vue';
-import account from '../components/account.vue';
-import accountDelete from '../components/account-delete.vue';
-import help from '../components/help.vue';
-import list from '../components/list.vue';
-import itemImage from '../components/item-image.vue';
-import itemViewImage from '../components/item-view-image.vue';
-import itemLink from '../components/item-link.vue';
-import importCSV from '../components/import-csv.vue';
-import copyList from '../components/copy-list.vue';
-import speedbump from '../components/speedbump.vue';
+import { useLighterpackStore } from '../../app/store/store.js';
+import globalAlerts from '../../app/components/global-alerts.vue';
+import sidebar from '../../app/components/sidebar.vue';
+import share from '../../app/components/share.vue';
+import listSettings from '../../app/components/list-settings.vue';
+import accountDropdown from '../../app/components/account-dropdown.vue';
+import account from '../../app/components/account.vue';
+import accountDelete from '../../app/components/account-delete.vue';
+import help from '../../app/components/help.vue';
+import list from '../../app/components/list.vue';
+import itemImage from '../../app/components/item-image.vue';
+import itemViewImage from '../../app/components/item-view-image.vue';
+import itemLink from '../../app/components/item-link.vue';
+import importCSV from '../../app/components/import-csv.vue';
+import copyList from '../../app/components/copy-list.vue';
+import speedbump from '../../app/components/speedbump.vue';
 
 defineOptions({ name: 'Dashboard' });
 

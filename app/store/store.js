@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import weightUtils from '../../shared/utils/weight.js';
 import dataTypes from '../../shared/dataTypes.js';
-import router from '../routes.js';
+import router from '../../client/routes.js';
 import { fetchJson } from '../utils/utils.js';
 
 const Library = dataTypes.Library;

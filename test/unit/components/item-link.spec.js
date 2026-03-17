@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../client/store/store.js';
-import ItemLink from '../../../client/components/item-link.vue';
+import { useLighterpackStore } from '../../../app/store/store.js';
+import ItemLink from '../../../app/components/item-link.vue';
 
 describe('ItemLink component', () => {
     beforeEach(() => setActivePinia(createPinia()));

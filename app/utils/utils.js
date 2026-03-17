@@ -1,5 +1,5 @@
 import weightUtils from '../../shared/utils/weight.js';
-import router from '../routes.js';
+import router from '../../client/routes.js';
 
 class lpError extends Error {
     constructor(response, statusCode = null) {

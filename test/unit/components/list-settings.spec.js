@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../client/store/store.js';
-import ListSettings from '../../../client/components/list-settings.vue';
+import { useLighterpackStore } from '../../../app/store/store.js';
+import ListSettings from '../../../app/components/list-settings.vue';
 
 describe('ListSettings component', () => {
     beforeEach(() => setActivePinia(createPinia()));

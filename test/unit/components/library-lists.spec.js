@@ -3,8 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('sortablejs', () => ({ default: { create: vi.fn(() => ({ destroy: vi.fn() })) } }));
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../client/store/store.js';
-import LibraryLists from '../../../client/components/library-lists.vue';
+import { useLighterpackStore } from '../../../app/store/store.js';
+import LibraryLists from '../../../app/components/library-lists.vue';
 
 const PopoverHoverStub = { template: '<div><slot name="target" /><slot name="content" /></div>' };
 

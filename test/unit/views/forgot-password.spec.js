@@ -14,7 +14,7 @@ vi.mock('vue-router', async (importOriginal) => {
     };
 });
 
-vi.mock('../../../client/utils/utils.js', async (importOriginal) => {
+vi.mock('../../../app/utils/utils.js', async (importOriginal) => {
     const actual = await importOriginal();
     return { ...actual, fetchJson: vi.fn() };
 });
@@ -39,7 +39,7 @@ describe('ForgotPassword view', () => {
     });
 
     it('resetPassword clears forgotPasswordErrors before submitting', async () => {
-        const { fetchJson } = await import('../../../client/utils/utils.js');
+        const { fetchJson } = await import('../../../app/utils/utils.js');
         fetchJson.mockResolvedValue({});
 
         const wrapper = mount(ForgotPassword, { global: { stubs } });
@@ -49,7 +49,7 @@ describe('ForgotPassword view', () => {
     });
 
     it('forgotUsername clears forgotUsernameErrors before submitting', async () => {
-        const { fetchJson } = await import('../../../client/utils/utils.js');
+        const { fetchJson } = await import('../../../app/utils/utils.js');
         fetchJson.mockResolvedValue({});
 
         const wrapper = mount(ForgotPassword, { global: { stubs } });
@@ -59,7 +59,7 @@ describe('ForgotPassword view', () => {
     });
 
     it('resetPassword sets errors on failure', async () => {
-        const { fetchJson } = await import('../../../client/utils/utils.js');
+        const { fetchJson } = await import('../../../app/utils/utils.js');
         fetchJson.mockRejectedValue({ json: { errors: [{ message: 'Invalid username' }] } });
 
         const wrapper = mount(ForgotPassword, { global: { stubs } });
@@ -68,7 +68,7 @@ describe('ForgotPassword view', () => {
     });
 
     it('forgotUsername sets errors on failure', async () => {
-        const { fetchJson } = await import('../../../client/utils/utils.js');
+        const { fetchJson } = await import('../../../app/utils/utils.js');
         fetchJson.mockRejectedValue({ json: { errors: [{ message: 'Invalid email' }] } });
 
         const wrapper = mount(ForgotPassword, { global: { stubs } });

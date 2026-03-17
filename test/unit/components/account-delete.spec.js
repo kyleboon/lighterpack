@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../client/store/store.js';
-import AccountDelete from '../../../client/components/account-delete.vue';
+import { useLighterpackStore } from '../../../app/store/store.js';
+import AccountDelete from '../../../app/components/account-delete.vue';
 
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();

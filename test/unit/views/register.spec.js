@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../client/store/store.js';
+import { useLighterpackStore } from '../../../app/store/store.js';
 import Register from '../../../client/views/register.vue';
 
 vi.mock('vue-router', async (importOriginal) => {

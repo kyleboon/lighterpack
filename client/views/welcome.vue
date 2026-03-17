@@ -48,11 +48,11 @@
 <script setup>
 import { onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '../store/store.js';
-import blackoutFooter from '../components/blackout-footer.vue';
-import globalAlerts from '../components/global-alerts.vue';
-import registerForm from '../components/register-form.vue';
-import SigninForm from '../components/signin-form.vue';
+import { useLighterpackStore } from '../../app/store/store.js';
+import blackoutFooter from '../../app/components/blackout-footer.vue';
+import globalAlerts from '../../app/components/global-alerts.vue';
+import registerForm from '../../app/components/register-form.vue';
+import SigninForm from '../../app/components/signin-form.vue';
 
 defineOptions({ name: 'Welcome' });
 

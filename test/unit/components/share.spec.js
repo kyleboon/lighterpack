@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../client/store/store.js';
-import Share from '../../../client/components/share.vue';
+import { useLighterpackStore } from '../../../app/store/store.js';
+import Share from '../../../app/components/share.vue';
 
 vi.mock('../../../client/utils/utils.js', async (importOriginal) => {
     const actual = await importOriginal();

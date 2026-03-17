@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import BlackoutFooter from '../../../client/components/blackout-footer.vue';
+import BlackoutFooter from '../../../app/components/blackout-footer.vue';
 
 describe('BlackoutFooter component', () => {
     it('renders the footer container', () => {

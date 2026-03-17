@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import UnitSelect from '../../../client/components/unit-select.vue';
+import UnitSelect from '../../../app/components/unit-select.vue';
 
 describe('UnitSelect component', () => {
     it('renders the current unit', () => {

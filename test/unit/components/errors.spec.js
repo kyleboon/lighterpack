@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import Errors from '../../../client/components/errors.vue';
+import Errors from '../../../app/components/errors.vue';
 
 describe('Errors component', () => {
     it('renders nothing when errors is null', () => {

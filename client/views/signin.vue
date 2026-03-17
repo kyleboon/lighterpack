@@ -16,10 +16,10 @@
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import blackoutFooter from '../components/blackout-footer.vue';
-import globalAlerts from '../components/global-alerts.vue';
-import modal from '../components/modal.vue';
-import SigninForm from '../components/signin-form.vue';
+import blackoutFooter from '../../app/components/blackout-footer.vue';
+import globalAlerts from '../../app/components/global-alerts.vue';
+import modal from '../../app/components/modal.vue';
+import SigninForm from '../../app/components/signin-form.vue';
 
 defineOptions({ name: 'Signin' });
 

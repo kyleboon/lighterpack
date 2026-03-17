@@ -6,8 +6,8 @@ vi.mock('../../../client/composables/useItemDrag.js', () => ({
 }));
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../client/store/store.js';
-import List from '../../../client/components/list.vue';
+import { useLighterpackStore } from '../../../app/store/store.js';
+import List from '../../../app/components/list.vue';
 
 describe('List component', () => {
     beforeEach(() => setActivePinia(createPinia()));

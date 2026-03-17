@@ -50,10 +50,10 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { fetchJson } from '../utils/utils.js';
-import blackoutFooter from '../components/blackout-footer.vue';
-import errors from '../components/errors.vue';
-import modal from '../components/modal.vue';
+import { fetchJson } from '../../app/utils/utils.js';
+import blackoutFooter from '../../app/components/blackout-footer.vue';
+import errors from '../../app/components/errors.vue';
+import modal from '../../app/components/modal.vue';
 
 defineOptions({ name: 'ForgotPassword' });
 

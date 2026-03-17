@@ -28,7 +28,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { fetchJson } from '../utils/utils.js';
+import { fetchJson } from '../../app/utils/utils.js';
 
 defineOptions({ name: 'Admin' });
 

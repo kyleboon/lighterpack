@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import Popover from '../../../client/components/popover.vue';
+import Popover from '../../../app/components/popover.vue';
 
 describe('Popover component', () => {
     it('adds lpPopoverShown class when shown is true', () => {

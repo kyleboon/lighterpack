@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import ColorPicker from '../../../client/components/colorpicker.vue';
+import ColorPicker from '../../../app/components/colorpicker.vue';
 
 describe('ColorPicker component', () => {
     it('renders without errors', () => {

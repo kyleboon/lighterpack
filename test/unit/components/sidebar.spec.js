@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import Sidebar from '../../../client/components/sidebar.vue';
+import Sidebar from '../../../app/components/sidebar.vue';
 
 describe('Sidebar component', () => {
     const stubs = { libraryItems: true, libraryLists: true };

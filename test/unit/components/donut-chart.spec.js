@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import DonutChart from '../../../client/components/donut-chart.vue';
+import DonutChart from '../../../app/components/donut-chart.vue';
 
 function makeLibrary(categories = []) {
     return {

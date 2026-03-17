@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import GlobalAlerts from '../../../client/components/global-alerts.vue';
-import { useLighterpackStore } from '../../../client/store/store.js';
+import GlobalAlerts from '../../../app/components/global-alerts.vue';
+import { useLighterpackStore } from '../../../app/store/store.js';
 
 describe('GlobalAlerts component', () => {
     beforeEach(() => {

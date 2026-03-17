@@ -21,11 +21,11 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useLighterpackStore } from '../store/store.js';
-import blackoutFooter from '../components/blackout-footer.vue';
-import globalAlerts from '../components/global-alerts.vue';
-import modal from '../components/modal.vue';
-import registerForm from '../components/register-form.vue';
+import { useLighterpackStore } from '../../app/store/store.js';
+import blackoutFooter from '../../app/components/blackout-footer.vue';
+import globalAlerts from '../../app/components/global-alerts.vue';
+import modal from '../../app/components/modal.vue';
+import registerForm from '../../app/components/register-form.vue';
 
 defineOptions({ name: 'Register' });
 

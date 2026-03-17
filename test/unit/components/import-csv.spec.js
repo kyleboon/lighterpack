@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../client/store/store.js';
-import ImportCsv from '../../../client/components/import-csv.vue';
+import { useLighterpackStore } from '../../../app/store/store.js';
+import ImportCsv from '../../../app/components/import-csv.vue';
 
 describe('ImportCsv component', () => {
     beforeEach(() => setActivePinia(createPinia()));

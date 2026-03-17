@@ -12,7 +12,7 @@ vi.mock('vue-router', async (importOriginal) => {
     };
 });
 
-vi.mock('../../../client/utils/utils.js', async (importOriginal) => {
+vi.mock('../../../app/utils/utils.js', async (importOriginal) => {
     const actual = await importOriginal();
     return { ...actual, fetchJson: vi.fn() };
 });
@@ -49,7 +49,7 @@ describe('Moderation view', () => {
     });
 
     it('resultsLoaded is true when searchResults is set', async () => {
-        const { fetchJson } = await import('../../../client/utils/utils.js');
+        const { fetchJson } = await import('../../../app/utils/utils.js');
         fetchJson.mockResolvedValue({ results: [{ username: 'alice' }] });
 
         const wrapper = mount(Moderation);

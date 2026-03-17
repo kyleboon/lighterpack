@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import PopoverHover from '../../../client/components/popover-hover.vue';
+import PopoverHover from '../../../app/components/popover-hover.vue';
 
 describe('PopoverHover component', () => {
     it('starts with shown false', () => {
