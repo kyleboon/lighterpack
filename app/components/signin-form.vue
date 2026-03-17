@@ -77,7 +77,7 @@ function signin() {
 
     fetching.value = true;
 
-    fetchJson('/signin/', {
+    fetchJson('/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',

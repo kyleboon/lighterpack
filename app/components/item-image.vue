@@ -96,7 +96,7 @@ function uploadImage(evt) {
     const formData = new FormData(imageUploadForm.value);
     uploading.value = true;
 
-    fetchJson('/imageUpload', {
+    fetchJson('/api/image-upload', {
         method: 'POST',
         body: formData,
         credentials: 'same-origin',

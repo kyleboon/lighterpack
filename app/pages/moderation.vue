@@ -42,7 +42,7 @@ const newPassword = ref(null);
 const resultsLoaded = computed(() => !!searchResults.value);
 
 function searchUsers() {
-    fetchJson(`/moderation/search?q=${searchQuery.value}`, {
+    fetchJson(`/api/moderation/search?q=${searchQuery.value}`, {
         method: 'GET',
         credentials: 'same-origin',
     })
@@ -61,7 +61,7 @@ function setUser(user) {
 }
 
 function clearSession(user) {
-    fetchJson(`/moderation/clear-session`, {
+    fetchJson(`/api/moderation/clear-session`, {
         method: 'POST',
         credentials: 'same-origin',
         headers: {
@@ -78,7 +78,7 @@ function clearSession(user) {
 }
 
 function resetPassword(user) {
-    fetchJson(`/moderation/reset-password`, {
+    fetchJson(`/api/moderation/reset-password`, {
         method: 'POST',
         credentials: 'same-origin',
         headers: {

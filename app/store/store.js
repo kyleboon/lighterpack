@@ -44,7 +44,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
             this.isSaving = isSaving;
         },
         signout() {
-            fetch('/signout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
+            fetch('/api/auth/signout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
             this.library = false;
             this.loggedIn = false;
         },
@@ -293,7 +293,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
             if (localStorage.library) {
                 return this.loadLocal();
             }
-            return fetch('/signin', {
+            return fetch('/api/auth/signin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'same-origin',
@@ -318,7 +318,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
             this.setLoggedIn(false);
         },
         loadRemote() {
-            return fetchJson('/signin', {
+            return fetchJson('/api/auth/signin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -385,7 +385,7 @@ export function setupAutoSave(store) {
                 store.setIsSaving(true);
                 store.setLastSaveData(currentSaveData);
 
-                fetchJson('/saveLibrary/', {
+                fetchJson('/api/library/save', {
                     method: 'POST',
                     body: JSON.stringify({
                         syncToken: state.syncToken,

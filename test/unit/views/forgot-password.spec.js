@@ -45,7 +45,10 @@ describe('ForgotPassword view', () => {
         const wrapper = mount(ForgotPassword, { global: { stubs } });
         wrapper.vm.forgotPasswordErrors = [{ message: 'old error' }];
         await wrapper.vm.resetPassword();
-        expect(fetchJson).toHaveBeenCalledWith('/forgotPassword', expect.objectContaining({ method: 'POST' }));
+        expect(fetchJson).toHaveBeenCalledWith(
+            '/api/auth/forgot-password',
+            expect.objectContaining({ method: 'POST' }),
+        );
     });
 
     it('forgotUsername clears forgotUsernameErrors before submitting', async () => {
@@ -55,7 +58,10 @@ describe('ForgotPassword view', () => {
         const wrapper = mount(ForgotPassword, { global: { stubs } });
         wrapper.vm.forgotUsernameErrors = [{ message: 'old error' }];
         await wrapper.vm.forgotUsername();
-        expect(fetchJson).toHaveBeenCalledWith('/forgotUsername', expect.objectContaining({ method: 'POST' }));
+        expect(fetchJson).toHaveBeenCalledWith(
+            '/api/auth/forgot-username',
+            expect.objectContaining({ method: 'POST' }),
+        );
     });
 
     it('resetPassword sets errors on failure', async () => {

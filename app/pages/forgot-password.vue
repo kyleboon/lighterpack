@@ -63,7 +63,7 @@ const forgotUsernameErrors = ref([]);
 function resetPassword() {
     forgotPasswordErrors.value = [];
 
-    return fetchJson('/forgotPassword', {
+    return fetchJson('/api/auth/forgot-password', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ function resetPassword() {
 function forgotUsername() {
     forgotUsernameErrors.value = [];
 
-    return fetchJson('/forgotUsername', {
+    return fetchJson('/api/auth/forgot-username', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

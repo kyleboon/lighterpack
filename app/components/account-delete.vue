@@ -78,7 +78,7 @@ function deleteAccount() {
         return;
     }
 
-    fetchJson('/delete-account', {
+    fetchJson('/api/account/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',

@@ -49,7 +49,7 @@ const embedCode = computed(
 
 function focusShare(_evt) {
     if (!list.value.externalId) {
-        fetchJson('/externalId', {
+        fetchJson('/api/external-id', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'same-origin',

@@ -112,7 +112,7 @@ function updateAccount() {
     currentPassword.value = '';
     saving.value = true;
 
-    fetchJson('/account', {
+    fetchJson('/api/account', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

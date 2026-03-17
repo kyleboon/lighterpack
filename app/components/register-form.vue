@@ -102,7 +102,7 @@ function submit() {
     }
 
     saving.value = true;
-    fetchJson('/register', {
+    fetchJson('/api/auth/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
