@@ -40,7 +40,7 @@
                         <errors :errors="forgotUsernameErrors" />
                     </form>
                 </div>
-                <router-link to="/signin" class="lpHref"> &larr; Return to sign in </router-link>
+                <NuxtLink to="/signin" class="lpHref"> &larr; Return to sign in </NuxtLink>
             </div>
         </modal>
         <blackoutFooter />
@@ -49,11 +49,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { fetchJson } from '../../app/utils/utils.js';
-import blackoutFooter from '../../app/components/blackout-footer.vue';
-import errors from '../../app/components/errors.vue';
-import modal from '../../app/components/modal.vue';
+import { fetchJson } from '../utils/utils.js';
 
 defineOptions({ name: 'ForgotPassword' });
 

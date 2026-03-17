@@ -3,7 +3,7 @@
         <modal id="signin" :shown="true" :blackout="true">
             <div class="lpModalHeader">
                 <h2>Sign in</h2>
-                <router-link to="/register" class="lpHref"> Need to register? </router-link>
+                <NuxtLink to="/register" class="lpHref"> Need to register? </NuxtLink>
             </div>
             <SigninForm :message="message" />
         </modal>
@@ -16,10 +16,6 @@
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import blackoutFooter from '../../app/components/blackout-footer.vue';
-import globalAlerts from '../../app/components/global-alerts.vue';
-import modal from '../../app/components/modal.vue';
-import SigninForm from '../../app/components/signin-form.vue';
 
 defineOptions({ name: 'Signin' });
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import ForgotPassword from '../../../client/views/forgot-password.vue';
+import ForgotPassword from '../../../app/pages/forgot-password.vue';
 
 const mockPush = vi.fn();
 

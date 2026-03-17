@@ -20,9 +20,9 @@
                 <listSettings />
                 <accountDropdown v-if="isSignedIn" />
                 <span v-else class="headerItem signInRegisterButtons">
-                    <router-link to="/register" class="lpButton lpSmall">Register</router-link>
+                    <NuxtLink to="/register" class="lpButton lpSmall">Register</NuxtLink>
                     or
-                    <router-link to="/signin" class="lpButton lpSmall">Sign In</router-link>
+                    <NuxtLink to="/signin" class="lpButton lpSmall">Sign In</NuxtLink>
                 </span>
                 <span class="clearfix" />
             </div>
@@ -74,22 +74,7 @@
 <script setup>
 import { ref, computed, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '../../app/store/store.js';
-import globalAlerts from '../../app/components/global-alerts.vue';
-import sidebar from '../../app/components/sidebar.vue';
-import share from '../../app/components/share.vue';
-import listSettings from '../../app/components/list-settings.vue';
-import accountDropdown from '../../app/components/account-dropdown.vue';
-import account from '../../app/components/account.vue';
-import accountDelete from '../../app/components/account-delete.vue';
-import help from '../../app/components/help.vue';
-import list from '../../app/components/list.vue';
-import itemImage from '../../app/components/item-image.vue';
-import itemViewImage from '../../app/components/item-view-image.vue';
-import itemLink from '../../app/components/item-link.vue';
-import importCSV from '../../app/components/import-csv.vue';
-import copyList from '../../app/components/copy-list.vue';
-import speedbump from '../../app/components/speedbump.vue';
+import { useLighterpackStore } from '~/store/store.js';
 
 defineOptions({ name: 'Dashboard' });
 
@@ -120,7 +105,7 @@ function updateListName(evt) {
 </script>
 
 <style lang="scss">
-@use '../css/globals' as *;
+@use '../assets/css/globals' as *;
 
 #header {
     align-items: baseline;

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import Signin from '../../../client/views/signin.vue';
+import Signin from '../../../app/pages/signin.vue';
 
 let mockPath = '/signin';
 

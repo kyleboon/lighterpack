@@ -48,11 +48,7 @@
 <script setup>
 import { onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '../../app/store/store.js';
-import blackoutFooter from '../../app/components/blackout-footer.vue';
-import globalAlerts from '../../app/components/global-alerts.vue';
-import registerForm from '../../app/components/register-form.vue';
-import SigninForm from '../../app/components/signin-form.vue';
+import { useLighterpackStore } from '~/store/store.js';
 
 defineOptions({ name: 'Welcome' });
 
@@ -67,7 +63,7 @@ onBeforeMount(() => {
 </script>
 
 <style lang="scss">
-@use '../css/globals' as *;
+@use '../assets/css/globals' as *;
 
 $welcomeVerticalSpacing: 80px;
 

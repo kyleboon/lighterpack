@@ -3,7 +3,7 @@
         <modal id="register" :shown="true" :blackout="true">
             <div class="lpModalHeader">
                 <h2>Register an account</h2>
-                <router-link to="/signin" class="lpHref"> Already registered? </router-link>
+                <NuxtLink to="/signin" class="lpHref"> Already registered? </NuxtLink>
             </div>
 
             <p v-if="isLocalSaving" class="lpWarning">
@@ -21,11 +21,7 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useLighterpackStore } from '../../app/store/store.js';
-import blackoutFooter from '../../app/components/blackout-footer.vue';
-import globalAlerts from '../../app/components/global-alerts.vue';
-import modal from '../../app/components/modal.vue';
-import registerForm from '../../app/components/register-form.vue';
+import { useLighterpackStore } from '~/store/store.js';
 
 defineOptions({ name: 'Register' });
 

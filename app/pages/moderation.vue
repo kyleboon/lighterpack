@@ -28,9 +28,10 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { fetchJson } from '../../app/utils/utils.js';
+import { fetchJson } from '../utils/utils.js';
 
 defineOptions({ name: 'Admin' });
+definePageMeta({ middleware: 'auth' });
 
 const searchQuery = ref('');
 const searchResults = ref(null);
@@ -95,7 +96,7 @@ function resetPassword(user) {
 </script>
 
 <style lang="scss">
-@use '../css/globals' as *;
+@use '../assets/css/globals' as *;
 
 #lp-moderation {
     display: grid;

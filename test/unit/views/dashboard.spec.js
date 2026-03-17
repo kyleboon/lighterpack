@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { useLighterpackStore } from '../../../app/store/store.js';
-import Dashboard from '../../../client/views/dashboard.vue';
+import Dashboard from '../../../app/pages/index.vue';
 
 const mockPush = vi.fn();
 

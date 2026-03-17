@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import dashboard from './views/dashboard.vue';
-import welcome from './views/welcome.vue';
-import signin from './views/signin.vue';
-import register from './views/register.vue';
-import forgotPassword from './views/forgot-password.vue';
-import moderation from './views/moderation.vue';
+import dashboard from '../app/pages/index.vue';
+import welcome from '../app/pages/welcome.vue';
+import signin from '../app/pages/signin.vue';
+import register from '../app/pages/register.vue';
+import forgotPassword from '../app/pages/forgot-password.vue';
+import moderation from '../app/pages/moderation.vue';
 
 const routes = [
     { path: '/', component: dashboard },

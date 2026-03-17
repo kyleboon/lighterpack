@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import Moderation from '../../../client/views/moderation.vue';
+import Moderation from '../../../app/pages/moderation.vue';
 
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
