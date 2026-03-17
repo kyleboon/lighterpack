@@ -121,8 +121,8 @@ const qtyError = ref(false);
 const numStars = ref(4);
 
 const library = computed(() => store.library);
-const item = computed(() => Object.assign({}, props.itemContainer.item));
-const categoryItem = computed(() => Object.assign({}, props.itemContainer.categoryItem));
+const item = ref({ ...props.itemContainer.item });
+const categoryItem = ref({ ...props.itemContainer.categoryItem });
 
 const thumbnailImage = computed(() => {
     if (item.value.image) {
@@ -144,13 +144,23 @@ const fullImage = computed(() => {
     return '';
 });
 
-watch(item, () => {
-    setDisplayWeight();
-});
+watch(
+    () => props.itemContainer.item,
+    (newItem) => {
+        item.value = { ...newItem };
+        setDisplayWeight();
+    },
+    { deep: true },
+);
 
-watch(categoryItem, () => {
-    setDisplayQty();
-});
+watch(
+    () => props.itemContainer.categoryItem,
+    (newCategoryItem) => {
+        categoryItem.value = { ...newCategoryItem };
+        setDisplayQty();
+    },
+    { deep: true },
+);
 
 onBeforeMount(() => {
     setDisplayWeight();

@@ -149,9 +149,11 @@ const library = computed(() => store.library);
 const categories = computed(() =>
     props.list.categoryIds.map((id, i) => {
         const category = library.value.getCategoryById(id);
-        category.activeHover = hoveredCategoryId.value === category.id;
-        category.displayColor = colorUtils.rgbToString(category.color || colorUtils.getColor(i));
-        return category;
+        return {
+            ...category,
+            activeHover: hoveredCategoryId.value === category.id,
+            displayColor: colorUtils.rgbToString(category.color || colorUtils.getColor(i)),
+        };
     }),
 );
 
@@ -169,9 +171,7 @@ function setTotalUnit(unit) {
 }
 
 function updateColor(category, color) {
-    category.color = colorUtils.hexToRgb(color);
-    category.displayColor = colorUtils.rgbToString(category.color);
-    store.updateCategoryColor(category);
+    store.updateCategoryColor({ id: category.id, color: colorUtils.hexToRgb(color) });
 }
 
 function colorToHex(color) {
