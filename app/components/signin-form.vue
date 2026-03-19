@@ -1,99 +1,66 @@
 <template>
-    <form class="signin" @submit.prevent="signin">
-        <p v-if="message" class="lpSuccess">
-            {{ message }}
-        </p>
-        <div class="lpFields">
-            <input
-                v-model="username"
-                v-focus-on-create
-                type="text"
-                placeholder="Username"
-                name="username"
-                class="username"
-            />
-            <input
-                ref="passwordInput"
-                v-model="password"
-                type="password"
-                placeholder="Password"
-                name="password"
-                class="password"
-            />
+    <div>
+        <div v-if="emailSent" class="lpSuccess">
+            <p>Check your email for a sign-in link. It expires in 5 minutes.</p>
         </div>
+        <form v-else class="signin" @submit.prevent="sendMagicLink">
+            <div class="lpFields">
+                <input
+                    v-model="email"
+                    v-focus-on-create
+                    type="email"
+                    placeholder="Email address"
+                    name="email"
+                    class="email"
+                    autocomplete="email"
+                />
+            </div>
 
-        <errors :errors="errors_" />
+            <errors :errors="errors_" />
 
-        <div class="lpButtons">
-            <button class="lpButton">
-                Sign in
-                <spinner v-if="fetching" />
-            </button>
-
-            <router-link to="/forgot-password" class="lpHref signin-forgot-password">
-                Forgot username/password?
-            </router-link>
-        </div>
-    </form>
+            <div class="lpButtons">
+                <button class="lpButton">
+                    Send sign-in link
+                    <spinner v-if="fetching" />
+                </button>
+            </div>
+        </form>
+    </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '../store/store.js';
-import { fetchJson } from '../utils/utils.js';
 import errors from './errors.vue';
 import spinner from './spinner.vue';
 
 defineOptions({ name: 'SigninForm' });
 
-defineProps({
-    message: { type: String, default: null },
-});
-
-const store = useLighterpackStore();
-const router = useRouter();
-
 const fetching = ref(false);
 const errors_ = ref([]);
-const username = ref('');
-const password = ref('');
-const passwordInput = ref(null);
+const email = ref('');
+const emailSent = ref(false);
 
-function signin() {
+defineExpose({ email, errors_, emailSent, sendMagicLink });
+
+async function sendMagicLink() {
     errors_.value = [];
 
-    if (!username.value) {
-        errors_.value.push({ field: 'username', message: 'Please enter a username.' });
-    }
-
-    if (!password.value) {
-        errors_.value.push({ field: 'password', message: 'Please enter a password.' });
-    }
-
-    if (errors_.value.length) {
+    if (!email.value) {
+        errors_.value.push({ field: 'email', message: 'Please enter your email address.' });
         return;
     }
 
     fetching.value = true;
-
-    fetchJson('/api/auth/signin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({ username: username.value, password: password.value }),
-    })
-        .then((response) => {
-            store.loadLibraryData(response.library);
-            store.setLoggedIn(response.username);
-            router.push('/');
-            fetching.value = false;
-        })
-        .catch((err) => {
-            errors_.value = err;
-            passwordInput.value.focus();
-            password.value = '';
-            fetching.value = false;
+    try {
+        await $fetch('/api/auth/sign-in/magic-link', {
+            method: 'POST',
+            body: { email: email.value, callbackURL: '/' },
         });
+        emailSent.value = true;
+    } catch (err) {
+        errors_.value = [{ message: err?.data?.message || 'An error occurred. Please try again.' }];
+    } finally {
+        fetching.value = false;
+    }
 }
 </script>

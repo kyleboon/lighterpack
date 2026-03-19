@@ -7,19 +7,12 @@
                 <strong>This action is permanent and cannot be undone.</strong>
             </p>
             <p>
-                If you want to delete your account, please enter your current password and the text
-                <strong>delete my account</strong>:
+                To confirm, please enter your email address
+                <strong>{{ currentEmail }}</strong
+                >:
             </p>
             <div class="lpFields">
-                <input
-                    v-model="currentPassword"
-                    type="password"
-                    placeholder="Current password"
-                    name="currentPassword"
-                    class="currentPassword"
-                />
-
-                <input v-model="confirmationText" type="text" name="confirmationText" placeholder="Confirmation text" />
+                <input v-model="confirmEmail" type="email" name="confirmEmail" placeholder="Your email address" />
             </div>
 
             <errors :errors="errors_" />
@@ -49,12 +42,13 @@ defineOptions({ name: 'AccountDelete' });
 const store = useLighterpackStore();
 const router = useRouter();
 
-const deleting = ref(false);
 const errors_ = ref([]);
-const confirmationText = ref('');
-const currentPassword = ref('');
+const confirmEmail = ref('');
 
-const isConfirmationComplete = computed(() => confirmationText.value.toLocaleLowerCase() === 'delete my account');
+const currentEmail = computed(() => store.loggedIn);
+const isConfirmationComplete = computed(
+    () => confirmEmail.value.trim().toLowerCase() === (currentEmail.value || '').toLowerCase(),
+);
 
 const shown = computed({
     get: () => store.activeModal === 'deleteAccount',
@@ -63,18 +57,13 @@ const shown = computed({
     },
 });
 
+defineExpose({ shown, currentEmail, isConfirmationComplete, confirmEmail, errors_, deleteAccount });
+
 function deleteAccount() {
     errors_.value = [];
 
-    if (!currentPassword.value) {
-        errors_.value.push({ field: 'currentPassword', message: 'Please enter your current password.' });
-    }
-
     if (!isConfirmationComplete.value) {
-        errors_.value.push({ field: 'confirmationText', message: 'Please enter the confirmation text.' });
-    }
-
-    if (errors_.value.length) {
+        errors_.value.push({ field: 'confirmEmail', message: 'Email does not match your account.' });
         return;
     }
 
@@ -82,16 +71,14 @@ function deleteAccount() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
-        body: JSON.stringify({ username: store.loggedIn, password: currentPassword.value }),
+        body: JSON.stringify({ email: currentEmail.value }),
     })
         .then((_response) => {
-            deleting.value = false;
             store.signout();
             router.push('/signin');
         })
         .catch((err) => {
             errors_.value = err;
-            deleting.value = false;
         });
 }
 </script>

@@ -32,7 +32,7 @@ export async function generateUniqueExternalId(): Promise<string> {
 // New-user library initialisation
 // ---------------------------------------------------------------------------
 
-export async function initNewUserLibrary(userId: number) {
+export async function initNewUserLibrary(userId: string) {
     const db = getDb();
     const now = Math.floor(Date.now() / 1000);
 
@@ -68,7 +68,7 @@ export async function initNewUserLibrary(userId: number) {
 // Library blob serialisation
 // ---------------------------------------------------------------------------
 
-export async function buildLibraryBlob(userId: number) {
+export async function buildLibraryBlob(userId: string) {
     const db = getDb();
 
     // Settings

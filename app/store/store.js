@@ -80,7 +80,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
     actions: {
         // ── session ──────────────────────────────────────────────────────────
         signout() {
-            fetch('/api/auth/signout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
+            fetch('/api/auth/sign-out', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
             this.library = false;
             this.loggedIn = false;
         },

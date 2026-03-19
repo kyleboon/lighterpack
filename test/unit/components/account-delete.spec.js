@@ -9,6 +9,11 @@ vi.mock('vue-router', async (importOriginal) => {
     return { ...actual, useRouter: () => ({ push: vi.fn() }) };
 });
 
+vi.mock('../../../app/utils/utils.js', async (importOriginal) => {
+    const actual = await importOriginal();
+    return { ...actual, fetchJson: vi.fn() };
+});
+
 describe('AccountDelete component', () => {
     beforeEach(() => setActivePinia(createPinia()));
 
@@ -37,39 +42,38 @@ describe('AccountDelete component', () => {
         expect(store.closeModal).toHaveBeenCalled();
     });
 
-    it('isConfirmationComplete is false when text does not match', () => {
+    it('isConfirmationComplete is false when email does not match', () => {
+        const store = useLighterpackStore();
+        store.loggedIn = 'user@example.com';
         const wrapper = mount(AccountDelete, { global: { stubs } });
-        wrapper.vm.confirmationText = 'nope';
+        wrapper.vm.confirmEmail = 'wrong@example.com';
         expect(wrapper.vm.isConfirmationComplete).toBe(false);
     });
 
-    it('isConfirmationComplete is true when text matches exactly', () => {
+    it('isConfirmationComplete is true when email matches', () => {
+        const store = useLighterpackStore();
+        store.loggedIn = 'user@example.com';
         const wrapper = mount(AccountDelete, { global: { stubs } });
-        wrapper.vm.confirmationText = 'delete my account';
+        wrapper.vm.confirmEmail = 'user@example.com';
         expect(wrapper.vm.isConfirmationComplete).toBe(true);
     });
 
     it('isConfirmationComplete is case-insensitive', () => {
+        const store = useLighterpackStore();
+        store.loggedIn = 'user@example.com';
         const wrapper = mount(AccountDelete, { global: { stubs } });
-        wrapper.vm.confirmationText = 'DELETE MY ACCOUNT';
+        wrapper.vm.confirmEmail = 'USER@EXAMPLE.COM';
         expect(wrapper.vm.isConfirmationComplete).toBe(true);
     });
 
-    it('deleteAccount() adds error when password is empty', () => {
+    it('deleteAccount() adds error when email does not match', () => {
+        const store = useLighterpackStore();
+        store.loggedIn = 'user@example.com';
         const wrapper = mount(AccountDelete, { global: { stubs } });
-        wrapper.vm.confirmationText = 'delete my account';
+        wrapper.vm.confirmEmail = 'wrong@example.com';
         wrapper.vm.deleteAccount();
         expect(wrapper.vm.errors_).toEqual(
-            expect.arrayContaining([expect.objectContaining({ field: 'currentPassword' })]),
-        );
-    });
-
-    it('deleteAccount() adds error when confirmation text is wrong', () => {
-        const wrapper = mount(AccountDelete, { global: { stubs } });
-        wrapper.vm.currentPassword = 'secret';
-        wrapper.vm.deleteAccount();
-        expect(wrapper.vm.errors_).toEqual(
-            expect.arrayContaining([expect.objectContaining({ field: 'confirmationText' })]),
+            expect.arrayContaining([expect.objectContaining({ field: 'confirmEmail' })]),
         );
     });
 });

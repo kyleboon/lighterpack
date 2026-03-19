@@ -6,5 +6,5 @@ export default defineEventHandler(async (event) => {
     }
 
     const library = await buildLibraryBlob(user.id);
-    return { username: user.username, library: JSON.stringify(library) };
+    return { username: user.email, library: JSON.stringify(library) };
 });

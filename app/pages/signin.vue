@@ -3,9 +3,8 @@
         <modal id="signin" :shown="true" :blackout="true">
             <div class="lpModalHeader">
                 <h2>Sign in</h2>
-                <NuxtLink to="/register" class="lpHref"> Need to register? </NuxtLink>
             </div>
-            <SigninForm :message="message" />
+            <SigninForm />
         </modal>
 
         <blackoutFooter />
@@ -14,19 +13,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-
 defineOptions({ name: 'Signin' });
-
-const route = useRoute();
-
-const message = computed(() => {
-    if (route.path.indexOf('/reset-password') > -1 || route.path.indexOf('/forgot-username') > -1) {
-        return 'An email has been sent to the address associated with your account. Note: emails to yahoo.com addresses are currently being blocked. Please reach out to info@lighterpack.com for assistance if you do not receive your email.';
-    }
-    return '';
-});
 </script>
 
 <style lang="scss"></style>

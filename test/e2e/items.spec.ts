@@ -206,7 +206,7 @@ test.describe('Item and category management', () => {
         await page.waitForTimeout(12000);
 
         await logoutUser(page);
-        await loginUser(page, username, password);
+        await loginUser(page, email);
 
         // Previously saved category and items must render from DB
         await expect(page.locator('.lpCategory')).toHaveCount(1);

@@ -1,3 +1,7 @@
+import { eq } from 'drizzle-orm';
+import { getDb } from '../../db.js';
+import * as schema from '../../schema.js';
+
 export default defineEventHandler(async (event) => {
     const user = event.context.user;
     if (!user) {
@@ -6,22 +10,15 @@ export default defineEventHandler(async (event) => {
     }
 
     const body = await readBody(event);
-    console.log({ message: 'Starting account delete', username: user.username });
 
-    let verified: any;
-    try {
-        verified = await verifyPassword(user.username, String(body.password ?? ''));
-    } catch {
+    if (body.email !== user.email) {
         setResponseStatus(event, 400);
-        return { errors: [{ field: 'currentPassword', message: 'Your current password is incorrect.' }] };
+        return { errors: [{ field: 'email', message: 'Email does not match your account.' }] };
     }
 
-    if (body.username !== verified.username) {
-        setResponseStatus(event, 400);
-        return { errors: [{ message: 'An error occurred, please try logging out and in again.' }] };
-    }
+    const db = getDb();
+    await db.delete(schema.user).where(eq(schema.user.id, user.id));
 
-    await deleteUser(verified.id);
-    console.log({ message: 'Completed account delete', username: user.username });
+    console.log({ message: 'Completed account delete', email: user.email });
     return { message: 'success' };
 });

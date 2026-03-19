@@ -4,15 +4,10 @@ import { createPinia, setActivePinia } from 'pinia';
 import { useLighterpackStore } from '../../../app/store/store.js';
 import Account from '../../../app/components/account.vue';
 
-vi.mock('../../../client/utils/utils.js', async (importOriginal) => {
-    const actual = await importOriginal();
-    return { ...actual, fetchJson: vi.fn() };
-});
-
 describe('Account component', () => {
     beforeEach(() => setActivePinia(createPinia()));
 
-    const stubs = { modal: true, errors: true, spinner: true };
+    const stubs = { modal: true };
 
     it('shown is false when activeModal is not account', () => {
         const store = useLighterpackStore();
@@ -37,28 +32,11 @@ describe('Account component', () => {
         expect(store.closeModal).toHaveBeenCalled();
     });
 
-    it('username reflects store.loggedIn', () => {
+    it('currentEmail reflects store.loggedIn', () => {
         const store = useLighterpackStore();
-        store.loggedIn = 'alice';
+        store.loggedIn = 'alice@example.com';
         const wrapper = mount(Account, { global: { stubs } });
-        expect(wrapper.vm.username).toBe('alice');
-    });
-
-    it('updateAccount adds error when currentPassword is empty', () => {
-        const wrapper = mount(Account, { global: { stubs } });
-        wrapper.vm.updateAccount();
-        expect(wrapper.vm.errors_).toEqual(
-            expect.arrayContaining([expect.objectContaining({ field: 'currentPassword' })]),
-        );
-    });
-
-    it('updateAccount adds error when new passwords do not match', () => {
-        const wrapper = mount(Account, { global: { stubs } });
-        wrapper.vm.currentPassword = 'oldpass';
-        wrapper.vm.newPassword = 'newpass1';
-        wrapper.vm.confirmNewPassword = 'newpass2';
-        wrapper.vm.updateAccount();
-        expect(wrapper.vm.errors_).toEqual(expect.arrayContaining([expect.objectContaining({ field: 'newPassword' })]));
+        expect(wrapper.vm.currentEmail).toBe('alice@example.com');
     });
 
     it('showDeleteAccount calls store.showModal with deleteAccount', () => {
