@@ -72,7 +72,7 @@ export const fetchJson = (url, options) => {
                     return resolve(response.json);
                 }
                 if (response.status && (response.status === 401 || response.status === 403)) {
-                    navigateTo('/signin');
+                    navigateTo('/welcome');
                     return undefined;
                 }
 

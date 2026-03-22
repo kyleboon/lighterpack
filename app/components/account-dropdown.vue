@@ -1,13 +1,26 @@
 <template>
     <span class="headerItem hasPopover">
         <PopoverHover id="headerPopover">
-            <template #target
-                >Signed in as <span class="username">{{ username }}</span> <i class="lpSprite lpExpand"
-            /></template>
+            <template #target>
+                Signed in as <span class="lp-username">{{ username }}</span>
+                <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                >
+                    <path d="M1 1l4 4 4-4" />
+                </svg>
+            </template>
             <template #content>
-                <a class="lpHref accountSettings" @click="showAccount">Account Settings</a><br />
-                <a class="lpHref" @click="showHelp">Help</a><br />
-                <a class="lpHref signout" @click="signout">Sign Out</a>
+                <nav class="lp-account-nav">
+                    <a class="lp-account-link" @click="showAccount">Account Settings</a>
+                    <a class="lp-account-link" @click="showHelp">Help</a>
+                    <a class="lp-account-link lp-account-link--signout" @click="signout">Sign Out</a>
+                </nav>
             </template>
         </PopoverHover>
     </span>
@@ -36,12 +49,52 @@ function showHelp() {
 
 function signout() {
     store.signout();
-    router.push('/signin');
+    router.push('/welcome');
 }
 </script>
 
 <style lang="scss">
+#headerPopover .lp-popover-content,
 #headerPopover .lpContent {
     min-width: 9em;
+}
+
+.lp-username {
+    font-weight: 600;
+}
+
+.lp-account-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lp-account-link {
+    border-radius: 6px;
+    color: #5a5954;
+    cursor: pointer;
+    display: block;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 13px;
+    padding: 5px 8px;
+    text-decoration: none;
+    transition:
+        background 120ms ease,
+        color 120ms ease;
+    white-space: nowrap;
+
+    &:hover {
+        background: #f3f2ee;
+        color: #1e1e1c;
+    }
+
+    &.lp-account-link--signout {
+        margin-top: 4px;
+
+        &:hover {
+            background: #fef2f0;
+            color: #c05848;
+        }
+    }
 }
 </style>

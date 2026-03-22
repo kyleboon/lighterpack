@@ -47,6 +47,27 @@ const shown = computed({
 
 <style lang="scss">
 #help {
-    width: 800px;
+    max-width: 700px;
+    width: 90vw;
+
+    ol {
+        line-height: 1.8;
+        padding-left: 20px;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid #e8e7e1;
+        margin: 16px 0;
+    }
+
+    strong {
+        color: #1e1e1c;
+        font-weight: 600;
+    }
+
+    p {
+        margin: 8px 0 0;
+    }
 }
 </style>

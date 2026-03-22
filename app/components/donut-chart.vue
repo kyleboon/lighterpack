@@ -13,8 +13,6 @@
             :key="slice.id"
             :d="slice.path"
             :fill="slice.fill"
-            stroke="#f5f5f5"
-            stroke-width="2"
             class="lp-donut-slice"
             :class="{ 'is-expanded': expandedId === slice.id }"
             @mouseenter="onSliceEnter(slice)"
@@ -31,9 +29,7 @@
                     :key="`item-${i}`"
                     :d="slice.path"
                     :fill="slice.fill"
-                    stroke="#f5f5f5"
-                    stroke-width="1"
-                    class="lp-donut-slice"
+                    class="lp-donut-slice lp-donut-slice--inner"
                     @mouseenter="onSliceEnter(slice)"
                 >
                     <title>{{ slice.name }}: {{ slice.weight }}</title>
@@ -188,15 +184,21 @@ function truncate(str, max = 18) {
 
 .lp-donut-slice {
     cursor: pointer;
-    transition: opacity 0.12s;
+    stroke: #fafaf7;
+    stroke-width: 2;
+    transition: opacity 120ms ease;
 
     &:hover {
-        opacity: 0.8;
+        opacity: 0.82;
     }
 
     &.is-expanded {
-        stroke: #555 !important;
-        stroke-width: 3 !important;
+        stroke: #3b3b37;
+        stroke-width: 3;
+    }
+
+    &.lp-donut-slice--inner {
+        stroke-width: 1;
     }
 }
 
@@ -206,19 +208,26 @@ function truncate(str, max = 18) {
 }
 
 .lp-center-name {
-    fill: #333;
+    fill: #1e1e1c;
+    font-family: 'Figtree', system-ui, sans-serif;
     font-size: 12px;
     font-weight: 600;
 }
 
 .lp-center-weight {
-    fill: #666;
+    fill: #5a5954;
+    font-family: 'DM Mono', monospace;
     font-size: 11px;
+    font-variant-numeric: tabular-nums;
 }
 
 .lp-ring-enter-active,
 .lp-ring-leave-active {
-    transition: opacity 0.2s;
+    transition: opacity 200ms ease;
+
+    @media (prefers-reduced-motion: reduce) {
+        transition-duration: 0.01ms !important;
+    }
 }
 
 .lp-ring-enter-from,

@@ -41,4 +41,31 @@ function addLink() {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+#itemLinkDialog {
+    width: 380px;
+}
+
+#itemLinkForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+
+    input[type='text'] {
+        background: #f3f2ee;
+        border: 1px solid #d0cfc9;
+        border-radius: 6px;
+        color: #1e1e1c;
+        font-family: 'Figtree', system-ui, sans-serif;
+        font-size: 13px;
+        padding: 7px 10px;
+        width: 100%;
+
+        &:focus {
+            border-color: #e8a220;
+            outline: none;
+        }
+    }
+}
+</style>

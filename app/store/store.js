@@ -748,7 +748,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 })
                 .catch((err) => {
                     if (err.status === 401) {
-                        navigateTo('/signin');
+                        navigateTo('/welcome');
                         return undefined;
                     }
                     return Promise.reject('An error occurred while fetching your data, please try again later.');

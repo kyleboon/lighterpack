@@ -21,7 +21,7 @@ describe('Modal component', () => {
 
     it('emits hide when overlay is clicked', async () => {
         const wrapper = mount(Modal, { props: { shown: true } });
-        await wrapper.find('.lpModalOverlay').trigger('click');
+        await wrapper.find('.lp-modal-overlay').trigger('click');
         expect(wrapper.emitted('hide')).toBeTruthy();
     });
 
@@ -32,13 +32,8 @@ describe('Modal component', () => {
         expect(wrapper.emitted('hide')).toBeTruthy();
     });
 
-    it('applies blackout class when blackout prop is true', () => {
-        const wrapper = mount(Modal, { props: { shown: true, blackout: true } });
-        expect(wrapper.find('.lpBlackout').exists()).toBe(true);
-    });
-
     it('applies transparent overlay class when transparentOverlay is true', () => {
         const wrapper = mount(Modal, { props: { shown: true, transparentOverlay: true } });
-        expect(wrapper.find('.lpTransparent').exists()).toBe(true);
+        expect(wrapper.find('.lp-modal-overlay.is-transparent').exists()).toBe(true);
     });
 });

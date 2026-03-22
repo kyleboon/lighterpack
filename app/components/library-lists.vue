@@ -1,34 +1,50 @@
 <template>
-    <section id="listContainer">
-        <div class="listContainerHeader">
-            <h2>Lists</h2>
-            <PopoverHover id="addListFlyout">
-                <template #target>
-                    <a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />Add new list</a>
-                </template>
-                <template #content>
-                    <a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />Add new list</a>
-                    <a class="lpAdd" @click="importCSV"><i class="lpSprite lpSpriteUpload" />Import CSV</a>
-                    <a class="lpCopy" @click="copyList"><i class="lpSprite lpSpriteCopy" />Copy a list</a>
-                </template>
-            </PopoverHover>
+    <section class="lp-lists-section" id="listContainer">
+        <div class="lp-sidebar-section-header">
+            <span class="lp-label-xs">Lists</span>
         </div>
-        <ul id="lists">
+
+        <ul id="lists" class="lp-nav-list">
             <li
                 v-for="libList in library.lists"
                 :key="libList.id"
-                class="lpLibraryList"
-                :class="{ lpActive: library.defaultListId == libList.id }"
+                class="lp-nav-list-item"
+                :class="{ 'is-active': library.defaultListId == libList.id }"
             >
-                <div class="lpHandle" title="Reorder this item" />
-                <span class="lpLibraryListSwitch lpListName" @click="setDefaultList(libList)">
-                    {{ listName(libList) }}
+                <span class="lpHandle lp-drag-handle" title="Reorder">
+                    <svg width="10" height="14" viewBox="0 0 10 14" fill="none" aria-hidden="true">
+                        <circle cx="3" cy="2.5" r="1.2" fill="currentColor" />
+                        <circle cx="7" cy="2.5" r="1.2" fill="currentColor" />
+                        <circle cx="3" cy="7" r="1.2" fill="currentColor" />
+                        <circle cx="7" cy="7" r="1.2" fill="currentColor" />
+                        <circle cx="3" cy="11.5" r="1.2" fill="currentColor" />
+                        <circle cx="7" cy="11.5" r="1.2" fill="currentColor" />
+                    </svg>
                 </span>
-                <a class="lpRemove" title="Remove this list" @click="removeList(libList)"
-                    ><i class="lpSprite lpSpriteRemove"
-                /></a>
+                <button
+                    class="lp-nav-link"
+                    :class="{ active: library.defaultListId == libList.id }"
+                    @click="setDefaultList(libList)"
+                >
+                    {{ listName(libList) }}
+                </button>
+                <button
+                    v-if="library.defaultListId !== libList.id"
+                    class="lp-nav-remove"
+                    title="Remove this list"
+                    aria-label="Remove list"
+                    @click="removeList(libList)"
+                >
+                    ×
+                </button>
             </li>
         </ul>
+
+        <div class="lp-lists-actions">
+            <button class="lp-action-link" @click="newList">+ Add new list</button>
+            <button class="lp-action-link" @click="importCSV">+ Import CSV</button>
+            <button class="lp-action-link" @click="copyList">+ Copy a list</button>
+        </div>
     </section>
 </template>
 
@@ -36,7 +52,6 @@
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useLighterpackStore } from '../store/store.js';
 import Sortable from 'sortablejs';
-import PopoverHover from './popover-hover.vue';
 
 defineOptions({ name: 'LibraryList' });
 
@@ -107,90 +122,177 @@ function removeList(list) {
 </script>
 
 <style lang="scss">
-@use '../assets/css/globals' as *;
-
-#listContainer {
-    flex: 0 0 auto;
-
-    #lists {
-        max-height: 25vh;
-    }
-}
-
-.lpLibraryList {
-    border-top: 1px dotted #999;
-    display: flex;
-    list-style: none;
-    margin: 0 10px;
-    overflow-y: auto;
-    padding: 6px 0;
-    position: relative;
-
-    &:first-child {
-        border-top: none;
-        padding-top: 10px;
-    }
-
-    &:last-child {
-        border-bottom: none;
-    }
-
-    &.lpActive {
-        color: $yellow1;
-        font-weight: bold;
-
-        .lpRemove {
-            display: none;
-        }
-    }
-
-    &.sortable-drag {
-        background: #606060;
-        border: 1px solid #999;
-        color: #fff;
-    }
-
-    .lpHandle {
-        flex: 0 0 12px;
-        height: 18px;
-        margin-right: 5px;
-    }
-
-    &:hover .lpHandle {
-        visibility: visible;
-    }
-
-    .lpListName {
-        flex: 1 1 auto;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-
-        &:hover {
-            cursor: pointer;
-            text-decoration: underline;
-        }
-    }
-
-    .lpRemove {
-        flex: 0 0 8px;
-        margin-bottom: 0;
-    }
-}
-
-.listContainerHeader {
+/* ── Section header ─────────────────────────────────────────── */
+.lp-sidebar-section-header {
+    align-items: center;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 8px;
+    padding: 0 8px;
 }
 
-#addListFlyout {
-    .lpContent a {
-        display: block;
-        margin-bottom: 5px;
+.lp-label-xs {
+    color: #5a5954;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    user-select: none;
+}
 
-        &:last-child {
-            margin-bottom: 0;
+/* ── Nav list ───────────────────────────────────────────────── */
+.lp-nav-list {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 0;
+}
+
+.lp-nav-list-item {
+    align-items: center;
+    display: flex;
+    gap: 2px;
+
+    &:hover .lp-drag-handle {
+        opacity: 1;
+    }
+    &:hover .lp-nav-remove {
+        opacity: 1;
+    }
+}
+
+.lp-drag-handle {
+    align-items: center;
+    color: #3b3b37;
+    cursor: grab;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    opacity: 0;
+    padding: 4px 2px;
+    transition:
+        opacity 120ms ease,
+        color 120ms ease;
+    width: 16px;
+
+    &:active {
+        cursor: grabbing;
+    }
+    &:hover {
+        color: #5a5954;
+    }
+}
+
+/* Nav link — replicates .lp-nav-link from style guide */
+.lp-nav-link {
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: #8a8880;
+    cursor: pointer;
+    display: flex;
+    flex: 1;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    min-width: 0;
+    overflow: hidden;
+    padding: 5px 8px;
+    text-align: left;
+    text-overflow: ellipsis;
+    transition:
+        background-color 120ms ease,
+        color 120ms ease;
+    white-space: nowrap;
+
+    &:hover {
+        background-color: #2f2f2c;
+        color: #c8c6bc;
+    }
+
+    &.active {
+        color: #e8a220;
+        font-weight: 500;
+
+        &:hover {
+            background-color: rgba(232, 162, 32, 0.08);
         }
     }
+
+    &:focus-visible {
+        outline: 2px solid #e8a220;
+        outline-offset: 2px;
+    }
+}
+
+.lp-nav-remove {
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: #3b3b37;
+    cursor: pointer;
+    display: flex;
+    flex-shrink: 0;
+    font-size: 14px;
+    height: 22px;
+    justify-content: center;
+    line-height: 1;
+    opacity: 0;
+    padding: 0;
+    transition:
+        color 120ms ease,
+        opacity 120ms ease;
+    width: 22px;
+
+    &:hover {
+        color: #c87171;
+    }
+    &:focus-visible {
+        outline: 2px solid #e8a220;
+        outline-offset: 2px;
+    }
+}
+
+/* ── Add / import / copy actions ────────────────────────────── */
+.lp-lists-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 8px;
+}
+
+.lp-action-link {
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: #e8a220;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    gap: 4px;
+    padding: 4px 4px;
+    text-align: left;
+    text-decoration: none;
+    transition: color 120ms ease;
+
+    &:hover {
+        color: #c07a0a;
+    }
+    &:focus-visible {
+        outline: 2px solid #e8a220;
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+}
+
+/* ── Sortable drag state ─────────────────────────────────────── */
+.lp-nav-list-item.sortable-drag {
+    background: #2f2f2c;
+    border-radius: 6px;
+    opacity: 0.9;
 }
 </style>

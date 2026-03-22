@@ -1,25 +1,68 @@
 <template>
-    <section id="libraryContainer">
-        <h2>Gear</h2>
-        <input id="librarySearch" v-model="searchText" type="text" placeholder="search items" />
-        <ul id="library">
-            <li v-for="libItem in filteredItems" :key="libItem.id" class="lpLibraryItem" :data-item-id="libItem.id">
-                <a v-if="libItem.url" :href="libItem.url" target="_blank" class="lpName lpHref">{{ libItem.name }}</a>
-                <span v-if="!libItem.url" class="lpName">{{ libItem.name }}</span>
-                <span class="lpWeight">
+    <section class="lp-gear-section" id="libraryContainer">
+        <div class="lp-sidebar-section-header">
+            <span class="lp-label-xs">Gear</span>
+        </div>
+
+        <input
+            id="librarySearch"
+            v-model="searchText"
+            class="lp-sidebar-search"
+            type="search"
+            placeholder="Search gear…"
+            aria-label="Search gear library"
+        />
+
+        <ul id="library" class="lp-gear-list">
+            <li
+                v-for="libItem in filteredItems"
+                :key="libItem.id"
+                class="lp-gear-list-item"
+                :class="{ 'is-in-list': libItem.inCurrentList }"
+                :data-item-id="libItem.id"
+            >
+                <div
+                    v-if="!libItem.inCurrentList"
+                    class="lpHandle lpLibraryItemHandle lp-gear-drag-handle"
+                    title="Drag to add to list"
+                >
+                    <svg width="8" height="12" viewBox="0 0 8 12" fill="none" aria-hidden="true">
+                        <circle cx="2" cy="2" r="1.1" fill="currentColor" />
+                        <circle cx="6" cy="2" r="1.1" fill="currentColor" />
+                        <circle cx="2" cy="6" r="1.1" fill="currentColor" />
+                        <circle cx="6" cy="6" r="1.1" fill="currentColor" />
+                        <circle cx="2" cy="10" r="1.1" fill="currentColor" />
+                        <circle cx="6" cy="10" r="1.1" fill="currentColor" />
+                    </svg>
+                </div>
+                <div v-else class="lp-gear-in-list-indicator" aria-hidden="true" />
+
+                <div class="lp-gear-item-info">
+                    <a
+                        v-if="libItem.url"
+                        :href="libItem.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="lp-gear-item-name lp-gear-item-link"
+                        >{{ libItem.name }}</a
+                    >
+                    <span v-else class="lp-gear-item-name">{{ libItem.name }}</span>
+                    <span v-if="libItem.description" class="lp-gear-item-desc">{{ libItem.description }}</span>
+                </div>
+
+                <span class="lp-gear-item-weight">
                     {{ displayWeight(libItem.weight, libItem.authorUnit) }}
-                    {{ libItem.authorUnit }}
+                    <span class="lp-gear-item-unit">{{ libItem.authorUnit }}</span>
                 </span>
-                <span class="lpDescription">
-                    {{ libItem.description }}
-                </span>
-                <a
-                    class="lpRemove lpRemoveLibraryItem speedbump"
+
+                <button
+                    class="lp-gear-remove"
                     title="Delete this item permanently"
+                    aria-label="Delete item"
                     @click="removeItem(libItem)"
-                    ><i class="lpSprite lpSpriteRemove"
-                /></a>
-                <div v-if="!libItem.inCurrentList" class="lpHandle lpLibraryItemHandle" title="Reorder this item" />
+                >
+                    ×
+                </button>
             </li>
         </ul>
     </section>
@@ -115,97 +158,205 @@ function removeItem(item) {
 </script>
 
 <style lang="scss">
-#libraryContainer {
+/* ── Gear section ───────────────────────────────────────────── */
+.lp-gear-section {
     display: flex;
-    flex: 2 0 30vh;
+    flex: 1;
     flex-direction: column;
+    min-height: 0;
 }
 
-#library {
-    flex: 1 0 25vh;
-    overflow-y: scroll;
+/* ── Search input ───────────────────────────────────────────── */
+.lp-sidebar-search {
+    background: #2f2f2c;
+    border: 0.5px solid #3b3b37;
+    border-radius: 6px;
+    color: #c8c6bc;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 12px;
+    margin-bottom: 8px;
+    outline: none;
+    padding: 6px 10px;
+    transition: border-color 120ms ease;
+    width: 100%;
+
+    &::placeholder {
+        color: #5a5954;
+    }
+
+    &:focus {
+        background: #2f2f2c;
+        border-color: #e8a220;
+    }
+
+    /* Remove native search clear button */
+    &::-webkit-search-cancel-button {
+        display: none;
+    }
 }
 
-#librarySearch {
-    background: #666;
-    border: 1px solid #888;
-    color: #fff;
-    margin-bottom: 15px;
-    padding: 3px 6px;
-}
-
-.lpLibraryItem {
-    border-top: 1px dotted #999;
+/* ── Gear list ──────────────────────────────────────────────── */
+.lp-gear-list {
+    flex: 1;
     list-style: none;
-    margin: 0 10px 5px;
-    min-height: 43px;
-    overflow: hidden;
-    padding: 5px 5px 0 15px;
+    margin: 0;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0;
+    scrollbar-color: #3b3b37 transparent;
+    scrollbar-width: thin;
+}
+
+.lp-gear-list-item {
+    align-items: flex-start;
+    border-bottom: 0.5px solid #2f2f2c;
+    display: flex;
+    gap: 4px;
+    padding: 6px 4px 6px 0;
     position: relative;
 
     &:first-child {
         border-top: none;
-        padding-top: 10px;
     }
-
     &:last-child {
         border-bottom: none;
     }
 
+    &:hover {
+        .lp-gear-drag-handle {
+            opacity: 1;
+        }
+        .lp-gear-remove {
+            opacity: 1;
+        }
+    }
+
+    &.is-in-list {
+        opacity: 0.45;
+    }
+
+    /* Ghost during drag */
     &.sortable-drag {
-        background: #606060;
-        border: 1px solid #999;
-        color: #fff;
+        background: #3b3b37;
+        border-radius: 6px;
+        opacity: 0.85;
     }
+}
 
-    .lpName {
-        float: left;
-        margin: 0;
-        max-width: 190px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+/* ── Drag handle ────────────────────────────────────────────── */
+.lp-gear-drag-handle {
+    align-items: center;
+    color: #3b3b37;
+    cursor: grab;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    margin-top: 3px;
+    opacity: 0;
+    padding: 2px;
+    transition:
+        opacity 120ms ease,
+        color 120ms ease;
+    width: 14px;
+
+    &:active {
+        cursor: grabbing;
     }
-
-    .lpWeight {
-        float: right;
-        width: auto;
+    &:hover {
+        color: #5a5954;
     }
+}
 
-    .lpDescription {
-        clear: both;
-        color: #ccc;
-        display: block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 235px;
+.lp-gear-in-list-indicator {
+    flex-shrink: 0;
+    width: 14px;
+}
+
+/* ── Item info ──────────────────────────────────────────────── */
+.lp-gear-item-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.lp-gear-item-name {
+    color: #c8c6bc;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lp-gear-item-link {
+    color: #97b8d8;
+    text-decoration: none;
+    transition: color 120ms ease;
+
+    &:hover {
+        color: #4d84b4;
+        text-decoration: underline;
+        text-underline-offset: 2px;
     }
+}
 
-    .lpHandle {
-        height: 80px;
-        left: 0;
-        position: absolute;
-        top: 5px;
+.lp-gear-item-desc {
+    color: #5a5954;
+    display: block;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── Weight (DM Mono per style guide) ───────────────────────── */
+.lp-gear-item-weight {
+    color: #8a8880;
+    flex-shrink: 0;
+    font-family: 'DM Mono', 'Fira Mono', monospace;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    margin-top: 1px;
+    white-space: nowrap;
+}
+
+.lp-gear-item-unit {
+    color: #5a5954;
+    font-size: 10px;
+}
+
+/* ── Remove button ──────────────────────────────────────────── */
+.lp-gear-remove {
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: #3b3b37;
+    cursor: pointer;
+    display: flex;
+    flex-shrink: 0;
+    font-size: 13px;
+    height: 20px;
+    justify-content: center;
+    line-height: 1;
+    margin-top: 1px;
+    opacity: 0;
+    padding: 0;
+    transition:
+        color 120ms ease,
+        opacity 120ms ease;
+    width: 20px;
+
+    &:hover {
+        color: #c87171;
     }
-
-    .lpRemove {
-        bottom: 0;
-        position: absolute;
-        right: 14px;
-    }
-
-    #library.lpSearching & {
-        display: none;
-    }
-
-    #library.lpSearching &.lpHit {
-        display: block;
-    }
-
-    #main > & {
-        background: #666;
-        color: #fff;
-        padding: 10px;
-        width: 235px;
+    &:focus-visible {
+        outline: 2px solid #e8a220;
+        outline-offset: 2px;
     }
 }
 </style>

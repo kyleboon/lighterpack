@@ -1,8 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
 import Sidebar from '../../../app/components/sidebar.vue';
 
 describe('Sidebar component', () => {
+    beforeEach(() => {
+        setActivePinia(createPinia());
+    });
+
     const stubs = { libraryItems: true, libraryLists: true };
 
     it('renders the sidebar container', () => {

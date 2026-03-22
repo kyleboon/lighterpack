@@ -164,12 +164,14 @@ function importList() {
 
 <style lang="scss">
 #importValidate {
-    height: 500px;
-    overflow-y: scroll;
+    max-height: 80vh;
+    overflow-y: auto;
     width: 650px;
+}
 
-    .lpButton {
-        margin-bottom: 30px;
-    }
+#importData {
+    margin-bottom: 16px;
+    max-height: 50vh;
+    overflow-y: auto;
 }
 </style>

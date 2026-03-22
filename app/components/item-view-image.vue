@@ -26,11 +26,15 @@ const imageUrl = computed(() =>
 </script>
 
 <style lang="scss">
-#itemImageDialog {
-    width: 640px;
+#lpImageDialog {
+    width: auto;
+    max-width: 90vw;
 
-    .imageUploadDescription {
-        margin-bottom: 19px;
+    img {
+        border-radius: 6px;
+        display: block;
+        max-height: 80vh;
+        max-width: 100%;
     }
 }
 </style>

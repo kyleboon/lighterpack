@@ -75,7 +75,7 @@ function deleteAccount() {
     })
         .then((_response) => {
             store.signout();
-            router.push('/signin');
+            router.push('/welcome');
         })
         .catch((err) => {
             errors_.value = err;

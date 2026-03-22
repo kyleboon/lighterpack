@@ -40,7 +40,3 @@ function startHideTimeout() {
 
 defineExpose({ shown, show, hide, startHideTimeout });
 </script>
-
-<style lang="scss">
-@use '../assets/css/globals' as *;
-</style>

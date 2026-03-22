@@ -31,6 +31,7 @@ function createAuth() {
     return betterAuth({
         baseURL: config.get<string>('betterAuthBaseURL'),
         secret: config.get<string>('betterAuthSecret'),
+        trustedOrigins: config.get<string[]>('betterAuthTrustedOrigins'),
         database: drizzleAdapter(getDb(), {
             provider: 'sqlite',
             schema: {

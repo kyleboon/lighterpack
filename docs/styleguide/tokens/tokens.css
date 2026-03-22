@@ -1,0 +1,110 @@
+/* ================================================================
+   LighterPack Design System — CSS Custom Properties
+   Single source of truth for all design tokens.
+
+   Fonts: DM Serif Display · Figtree · DM Mono
+   Load via: https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Figtree:wght@400;500;600&display=swap
+
+   Usage: import this file first in any stylesheet.
+   Never hardcode a hex value in a component file.
+   ================================================================ */
+
+:root {
+    /* ── Color: Charcoal Trail ─────────────────────────────────── */
+    --charcoal-950: #1e1e1c;
+    --charcoal-900: #252523;
+    --charcoal-800: #2f2f2c;
+    --charcoal-700: #3b3b37;
+    --charcoal-500: #5a5954;
+    --charcoal-300: #8a8880;
+    --charcoal-100: #c8c6bc;
+
+    /* ── Color: Amber Pine ─────────────────────────────────────── */
+    --amber-50: #fdf0d5;
+    --amber-200: #f5c842;
+    --amber-400: #e8a220;
+    --amber-600: #c07a0a;
+    --amber-800: #8a520a;
+
+    /* ── Color: Stone White ────────────────────────────────────── */
+    --stone-50: #fafaf7;
+    --stone-100: #f3f2ee;
+    --stone-200: #e8e7e2;
+    --stone-300: #d0cfc9;
+    --stone-500: #a8a79f;
+
+    /* ── Color: Slate Blue ─────────────────────────────────────── */
+    --slate-50: #e8f0f8;
+    --slate-200: #97b8d8;
+    --slate-400: #4d84b4;
+    --slate-600: #2e5f88;
+    --slate-800: #1a3d5c;
+
+    /* ── Color: Data / chart (topo palette) ────────────────────── */
+    --data-bike: #4d84b4;
+    --data-shelter: #c05848;
+    --data-food: #e8a220;
+    --data-clothing: #5a8c6a;
+    --data-sleep: #7b6ea8;
+    --data-other: #8c7b5c;
+
+    /* ── Semantic aliases ──────────────────────────────────────── */
+    --color-bg-page: var(--stone-50);
+    --color-bg-surface: var(--stone-100);
+    --color-bg-sidebar: var(--charcoal-900);
+    --color-text-primary: #1e1e1c;
+    --color-text-secondary: #5a5954;
+    --color-text-muted: #a8a79f;
+    --color-text-inverse: #e8e4d8;
+    --color-border: rgb(30 30 28 / 10%);
+    --color-border-strong: rgb(30 30 28 / 20%);
+    --color-accent: var(--amber-400);
+    --color-accent-hover: var(--amber-600);
+    --color-link: var(--slate-400);
+    --color-link-hover: var(--slate-600);
+
+    /* ── Typography ────────────────────────────────────────────── */
+    --font-display: 'DM Serif Display', georgia, serif;
+    --font-ui: 'Figtree', system-ui, sans-serif;
+    --font-mono: 'DM Mono', 'Fira Mono', monospace;
+
+    /* ── Type scale ────────────────────────────────────────────── */
+    --text-xs: 11px;
+    --text-sm: 13px;
+    --text-base: 15px;
+    --text-lg: 17px;
+    --text-xl: 20px;
+    --text-2xl: 26px;
+    --text-3xl: 34px;
+
+    /* ── Spacing (4px base unit) ───────────────────────────────── */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+
+    /* ── Border radius ─────────────────────────────────────────── */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --radius-xl: 14px;
+    --radius-pill: 999px;
+
+    /* ── Motion ────────────────────────────────────────────────── */
+    --transition-fast: 120ms ease;
+    --transition-base: 200ms ease;
+}
+
+/* ── Reduced motion ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

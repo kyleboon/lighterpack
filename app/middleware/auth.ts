@@ -2,5 +2,5 @@ import { useLighterpackStore } from '~/store/store.js';
 
 export default defineNuxtRouteMiddleware(() => {
     const store = useLighterpackStore();
-    if (!store.loggedIn) return navigateTo('/signin');
+    if (!store.loggedIn) return navigateTo('/welcome');
 });

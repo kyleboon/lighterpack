@@ -18,7 +18,17 @@
                 <span class="lpQtyCell">qty</span>
                 <span class="lpRemoveCell"
                     ><a class="lpRemove lpRemoveCategory" title="Remove this category" @click="removeCategory(category)"
-                        ><i class="lpSprite lpSpriteRemove" /></a
+                        ><svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            aria-hidden="true"
+                        >
+                            <line x1="4" y1="4" x2="12" y2="12" />
+                            <line x1="12" y1="4" x2="4" y2="12" /></svg></a
                 ></span>
             </li>
             <item
@@ -29,7 +39,21 @@
             />
             <li class="lpFooter lpItemsFooter">
                 <span class="lpAddItemCell">
-                    <a class="lpAdd lpAddItem" @click="newItem"><i class="lpSprite lpSpriteAdd" />Add new item</a>
+                    <a class="lpAdd lpAddItem lp-action-link" @click="newItem">
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            aria-hidden="true"
+                        >
+                            <line x1="8" y1="3" x2="8" y2="13" />
+                            <line x1="3" y1="8" x2="13" y2="8" />
+                        </svg>
+                        Add new item
+                    </a>
                 </span>
                 <span v-if="library.optionalFields['price']" class="lpPriceCell lpNumber lpSubtotal">
                     {{ displayPrice(category.subtotalPrice, library.currencySymbol) }}
@@ -102,7 +126,50 @@ function removeCategory(category) {
 }
 
 .lpPriceSubtotal {
-    /* unused? */
     padding-right: 4px;
+}
+
+.lpCategoryName {
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+
+    &::placeholder {
+        color: #c8c7c2;
+    }
+}
+
+/* Action link for adding items */
+.lp-action-link {
+    align-items: center;
+    color: #8a8880;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 12px;
+    gap: 4px;
+    text-decoration: none;
+    transition: color 120ms ease;
+
+    &:hover {
+        color: #e8a220;
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+/* Remove button */
+.lpRemoveCategory {
+    align-items: center;
+    color: #c8c7c2;
+    cursor: pointer;
+    display: inline-flex;
+    transition: color 120ms ease;
+
+    &:hover {
+        color: #c05848;
+    }
 }
 </style>

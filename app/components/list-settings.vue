@@ -1,7 +1,23 @@
 <template>
     <span v-if="isSignedIn" id="settings" class="headerItem hasPopover">
         <PopoverHover>
-            <template #target><i class="lpSprite lpSettings" /> Settings</template>
+            <template #target>
+                <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                >
+                    <circle cx="8" cy="8" r="2.5" />
+                    <path
+                        d="M8 1.5v1M8 13.5v1M1.5 8h1m10 0h1M3.4 3.4l.7.7M11.9 11.9l.7.7M3.4 12.6l.7-.7M11.9 4.1l.7-.7"
+                    />
+                </svg>
+                Settings
+            </template>
             <template #content>
                 <ul id="lpOptionalFields">
                     <li v-for="optionalField in optionalFieldsLookup" :key="optionalField.name" class="lpOptionalField">
@@ -66,35 +82,70 @@ function updateCurrencySymbol(evt) {
 </script>
 
 <style lang="scss">
-#csvUrl {
-    display: block;
-    margin-top: 15px;
+#settings .lp-popover-content,
+#settings .lpContent {
+    width: 200px;
 }
 
 #lpOptionalFields {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    list-style: none;
     margin: 0;
     padding: 0;
 }
 
 .lpOptionalField {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
+    label {
+        align-items: center;
+        cursor: pointer;
+        display: flex;
+        font-family: 'Figtree', system-ui, sans-serif;
+        font-size: 13px;
+        gap: 8px;
+        padding: 4px 0;
+        user-select: none;
 
-#lpPriceSettings {
-    input {
-        display: inline-block;
-        margin-left: 10px;
-        width: 50px;
+        &:hover {
+            color: #1e1e1c;
+        }
+    }
+
+    input[type='checkbox'] {
+        accent-color: #e8a220;
+        cursor: pointer;
+        height: 14px;
+        width: 14px;
     }
 }
 
-#share .lpContent {
-    width: 330px;
-}
+#lpPriceSettings {
+    border-top: 1px solid #e8e7e1;
+    margin-top: 8px;
+    padding-top: 8px;
 
-#settings .lpContent {
-    width: 200px;
+    label {
+        align-items: center;
+        display: flex;
+        font-family: 'Figtree', system-ui, sans-serif;
+        font-size: 13px;
+        gap: 6px;
+    }
+
+    input {
+        background: #f3f2ee;
+        border: 1px solid #d0cfc9;
+        border-radius: 4px;
+        font-family: 'DM Mono', monospace;
+        font-size: 12px;
+        padding: 3px 6px;
+        width: 50px;
+
+        &:focus {
+            border-color: #e8a220;
+            outline: none;
+        }
+    }
 }
 </style>

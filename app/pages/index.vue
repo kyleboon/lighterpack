@@ -1,61 +1,9 @@
 <template>
-    <div v-if="isLoaded" id="main" :class="{ lpHasSidebar: library.showSidebar }">
+    <div v-if="isLoaded" id="main" class="lpHasSidebar">
         <sidebar />
-        <div class="lpList" :class="{ lpTransition: showTransition }">
-            <div id="header" class="clearfix">
-                <span class="headerItem">
-                    <a id="hamburger" class="lpTransition" @click="toggleSidebar"><i class="lpSprite lpHamburger" /></a>
-                </span>
-                <input
-                    id="lpListName"
-                    :value="activeList.name"
-                    type="text"
-                    class="lpListName lpSilent headerItem"
-                    placeholder="List Name"
-                    autocomplete="off"
-                    name="lastpass-disable-search"
-                    @input="updateListName"
-                />
-                <share />
-                <listSettings />
-                <accountDropdown v-if="isSignedIn" />
-                <span v-else class="headerItem signInRegisterButtons">
-                    <NuxtLink to="/register" class="lpButton lpSmall">Register</NuxtLink>
-                    or
-                    <NuxtLink to="/signin" class="lpButton lpSmall">Sign In</NuxtLink>
-                </span>
-                <span class="clearfix" />
-            </div>
 
+        <div class="lpList">
             <list />
-
-            <div id="lpFooter">
-                <div class="lpSiteBy">
-                    Site by
-                    <a class="lpHref" href="https://www.galenmaly.com/" target="_blank" rel="noopener noreferrer"
-                        >Galen Maly</a
-                    >
-                    and
-                    <a
-                        class="lpHref"
-                        href="https://github.com/galenmaly/lighterpack/graphs/contributors"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >friends</a
-                    >.
-                </div>
-                <div class="lpContact">
-                    <a
-                        class="lpHref"
-                        href="https://github.com/galenmaly/lighterpack"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >Copyleft</a
-                    >
-                    LighterPack 2019 -
-                    <a class="lpHref" href="mailto:info@lighterpack.com">Contact</a>
-                </div>
-            </div>
         </div>
 
         <globalAlerts />
@@ -72,21 +20,27 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount, onMounted, nextTick } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 import { useLighterpackStore } from '~/store/store.js';
 
 defineOptions({ name: 'Dashboard' });
 
+useHead({
+    link: [
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        {
+            rel: 'stylesheet',
+            href: 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Figtree:wght@400;500;600&display=swap',
+        },
+    ],
+});
+
 const store = useLighterpackStore();
 const router = useRouter();
 
 const isLoaded = ref(false);
-const showTransition = ref(false);
-
-const library = computed(() => store.library);
-const activeList = computed(() => library.value.getListById(library.value.defaultListId));
-const isSignedIn = computed(() => store.loggedIn);
 
 onBeforeMount(() => {
     if (!store.library) {
@@ -95,86 +49,6 @@ onBeforeMount(() => {
         isLoaded.value = true;
     }
 });
-
-onMounted(() => {
-    nextTick(() => {
-        showTransition.value = true;
-    });
-});
-
-function toggleSidebar() {
-    store.toggleSidebar();
-}
-
-function updateListName(evt) {
-    store.updateListName({ id: activeList.value.id, name: evt.target.value });
-}
 </script>
 
-<style lang="scss">
-@use '../assets/css/globals' as *;
-
-#header {
-    align-items: baseline;
-    display: flex;
-    height: 60px;
-    margin: 0 -20px 20px; /* lpList padding */
-    position: relative;
-}
-
-#hamburger {
-    cursor: pointer;
-    display: inline-block;
-    opacity: 0.6;
-    transition: transform $transitionDurationSlow;
-
-    &:hover {
-        opacity: 1;
-    }
-
-    .lpHasSidebar & {
-        transform: rotate(90deg);
-    }
-}
-
-#lpListName {
-    font-size: 24px;
-    font-weight: 600;
-    padding: 12px 15px;
-}
-
-.headerItem {
-    flex: 0 0 auto;
-    height: 100%;
-    padding: 17px 16px;
-    position: relative;
-
-    &:first-child {
-        padding-left: 20px;
-    }
-
-    .lpPopover {
-        &:hover .lpTarget {
-            color: $blue1;
-        }
-    }
-
-    .lpTarget {
-        font-weight: 600;
-        padding: 17px 16px 15px;
-    }
-
-    &#lpListName {
-        flex: 1 0 auto;
-    }
-
-    &.hasPopover {
-        padding: 0;
-    }
-
-    &.signInRegisterButtons {
-        height: auto;
-        padding: 0 16px;
-    }
-}
-</style>
+<style lang="scss"></style>

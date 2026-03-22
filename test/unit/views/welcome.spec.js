@@ -15,10 +15,10 @@ vi.mock('vue-router', async (importOriginal) => {
     };
 });
 
+vi.stubGlobal('useHead', vi.fn());
+
 const stubs = {
-    blackoutFooter: true,
     globalAlerts: true,
-    registerForm: true,
     SigninForm: true,
     RouterLink: { template: '<a><slot /></a>' },
 };

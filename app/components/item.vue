@@ -22,28 +22,102 @@
             @input="saveItem"
         />
         <span class="lpActionsCell">
-            <i class="lpSprite lpCamera" title="Upload a photo or use a photo from the web" @click="updateItemImage" />
-            <i
-                class="lpSprite lpLink"
+            <button
+                class="lp-icon-btn lpCamera"
+                title="Upload a photo or use a photo from the web"
+                @click="updateItemImage"
+            >
+                <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M13 11.5a.5.5 0 01-.5.5h-9a.5.5 0 01-.5-.5v-6a.5.5 0 01.5-.5H5l1-2h4l1 2h1.5a.5.5 0 01.5.5v6z"
+                    />
+                    <circle cx="8" cy="8.5" r="2" />
+                </svg>
+            </button>
+            <button
+                class="lp-icon-btn lpLink"
                 :class="{ lpActive: item.url }"
                 title="Add a link for this item"
                 @click="updateItemLink"
-            />
-            <i
+            >
+                <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                >
+                    <path d="M6.5 9.5a3.5 3.5 0 005 0l2-2a3.5 3.5 0 00-5-5L7 4" />
+                    <path d="M9.5 6.5a3.5 3.5 0 00-5 0l-2 2a3.5 3.5 0 005 5L9 12" />
+                </svg>
+            </button>
+            <button
                 v-if="library.optionalFields['worn']"
-                class="lpSprite lpWorn"
+                class="lp-icon-btn lpWorn"
                 :class="{ lpActive: categoryItem.worn }"
                 title="Mark this item as worn"
                 @click="toggleWorn"
-            />
-            <i
+            >
+                <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                >
+                    <circle cx="8" cy="3.5" r="1.5" />
+                    <path d="M5.5 7.5l-1.5 6h8l-1.5-6" />
+                    <path d="M5.5 7.5c.7 1.5 4.3 1.5 5 0" />
+                </svg>
+            </button>
+            <button
                 v-if="library.optionalFields['consumable']"
-                class="lpSprite lpConsumable"
+                class="lp-icon-btn lpConsumable"
                 :class="{ lpActive: categoryItem.consumable }"
                 title="Mark this item as a consumable"
                 @click="toggleConsumable"
-            />
-            <i :class="'lpSprite lpStar lpStar' + categoryItem.star" title="Star this item" @click="cycleStar" />
+            >
+                <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M8 13.5C5.5 13.5 4 11.8 4 9.5c0-1.8.8-3 2.5-4.5 0 1.5.7 2.3 1.5 2.5C8 6 8.8 4.5 9 3c1.8 1.3 3 2.7 3 4.5 0 2.5-1.5 3.5-2.5 4.5C9.2 13.2 8.6 13.5 8 13.5z"
+                    />
+                </svg>
+            </button>
+            <button
+                class="lp-icon-btn lpStar"
+                :class="'lpStar' + categoryItem.star"
+                title="Star this item"
+                @click="cycleStar"
+            >
+                <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                        d="M8 2l1.6 4H14l-3.4 2.5 1.3 4L8 10.3l-3.9 2.2 1.3-4L2 6h4.4L8 2z"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        :fill="categoryItem.star ? 'currentColor' : 'none'"
+                    />
+                </svg>
+            </button>
         </span>
         <span v-if="library.optionalFields['price']" class="lpPriceCell">
             <input
@@ -79,14 +153,49 @@
                 @keydown.down="decrementQty($event)"
             />
             <span class="lpArrows">
-                <span class="lpSprite lpUp" @click="incrementQty($event)" />
-                <span class="lpSprite lpDown" @click="decrementQty($event)" />
+                <span class="lp-arrow lpUp" @click="incrementQty($event)">
+                    <svg
+                        width="10"
+                        height="6"
+                        viewBox="0 0 10 6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        aria-hidden="true"
+                    >
+                        <path d="M1 5l4-4 4 4" />
+                    </svg>
+                </span>
+                <span class="lp-arrow lpDown" @click="decrementQty($event)">
+                    <svg
+                        width="10"
+                        height="6"
+                        viewBox="0 0 10 6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        aria-hidden="true"
+                    >
+                        <path d="M1 1l4 4 4-4" />
+                    </svg>
+                </span>
             </span>
         </span>
         <span class="lpRemoveCell">
-            <a class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem"
-                ><i class="lpSprite lpSpriteRemove"
-            /></a>
+            <a class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem">
+                <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                >
+                    <line x1="4" y1="4" x2="12" y2="12" />
+                    <line x1="12" y1="4" x2="4" y2="12" />
+                </svg>
+            </a>
         </span>
     </li>
 </template>
@@ -403,16 +512,12 @@ defineExpose({
 .lpItem {
     &:hover,
     &.ui-sortable-helper {
-        background: #fff;
+        background: #f3f2ee;
 
         .lpRemove,
-        .lpWorn,
-        .lpConsumable,
-        .lpCamera,
-        .lpLink,
         .lpHandle,
         .lpArrows,
-        .lpStar {
+        .lp-icon-btn {
             visibility: visible;
         }
     }
@@ -423,29 +528,78 @@ defineExpose({
     }
 }
 
-.lpArrows {
-    display: inline-block;
-    height: 14px;
-    position: relative;
+/* Action icon buttons (camera, link, worn, consumable, star) */
+.lp-icon-btn {
+    align-items: center;
+    background: none;
+    border: none;
+    color: #c8c7c2;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    padding: 2px;
+    transition: color 120ms ease;
     visibility: hidden;
-    width: 10px;
 
-    .lpUp,
-    .lpDown {
-        cursor: pointer;
-        left: 0;
-        margin: 2px;
-        opacity: 0.5;
-        position: absolute;
-        top: 0;
-
-        &:hover {
-            opacity: 1;
-        }
+    &:hover {
+        color: #5a5954;
     }
 
-    .lpDown {
-        top: 11px;
+    &.lpActive {
+        color: #e8a220;
+        visibility: visible;
+    }
+}
+
+/* Star states */
+.lpStar {
+    &.lpStar0 {
+        color: #c8c7c2;
+    }
+    &.lpStar1 {
+        color: #e8a220;
+        visibility: visible;
+    }
+    &.lpStar2 {
+        color: #d68a00;
+        visibility: visible;
+    }
+    &.lpStar3 {
+        color: #b06e00;
+        visibility: visible;
+    }
+}
+
+/* Remove link */
+.lpRemoveItem {
+    color: #c8c7c2;
+    cursor: pointer;
+    display: inline-flex;
+    visibility: hidden;
+    transition: color 120ms ease;
+
+    &:hover {
+        color: #c05848;
+    }
+}
+
+/* Qty arrows */
+.lpArrows {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 1px;
+    visibility: hidden;
+}
+
+.lp-arrow {
+    color: #8a8880;
+    cursor: pointer;
+    display: flex;
+    line-height: 1;
+    transition: color 120ms ease;
+
+    &:hover {
+        color: #1e1e1c;
     }
 }
 </style>

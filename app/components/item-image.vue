@@ -118,4 +118,52 @@ function removeItemImage() {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+#itemImageDialog {
+    width: 600px;
+}
+
+.columns {
+    display: flex;
+    gap: 24px;
+}
+
+.lpHalf {
+    flex: 1;
+    min-width: 0;
+
+    h2 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    input[type='text'] {
+        background: #f3f2ee;
+        border: 1px solid #d0cfc9;
+        border-radius: 6px;
+        color: #1e1e1c;
+        display: block;
+        font-family: 'Figtree', system-ui, sans-serif;
+        font-size: 13px;
+        margin-bottom: 10px;
+        padding: 7px 10px;
+        width: 100%;
+
+        &:focus {
+            border-color: #e8a220;
+            outline: none;
+        }
+    }
+
+    + .lpHalf {
+        border-left: 1px solid #e8e7e1;
+        padding-left: 24px;
+    }
+}
+
+.imageUploadDescription {
+    color: #8a8880;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+</style>

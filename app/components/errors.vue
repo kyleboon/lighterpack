@@ -1,6 +1,21 @@
 <template>
-    <ul v-if="sanitizedErrors && sanitizedErrors.length" class="lpError">
-        <li v-for="error in sanitizedErrors" :key="error.message">
+    <ul v-if="sanitizedErrors && sanitizedErrors.length" class="lp-errors" role="alert" aria-live="polite">
+        <li v-for="error in sanitizedErrors" :key="error.message" class="lp-errors-item">
+            <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+            >
+                <circle cx="7" cy="7" r="6" />
+                <line x1="7" y1="4.5" x2="7" y2="7.5" />
+                <circle cx="7" cy="10" r="0.75" fill="currentColor" stroke="none" />
+            </svg>
             {{ error.message }}
         </li>
     </ul>
@@ -63,4 +78,27 @@ const sanitizedErrors = computed(() => {
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.lp-errors {
+    border-left: 2px solid #c05848;
+    border-radius: 0 4px 4px 0;
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+}
+
+.lp-errors-item {
+    align-items: center;
+    color: #c05848;
+    display: flex;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    gap: 6px;
+    padding: 5px 10px;
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+</style>

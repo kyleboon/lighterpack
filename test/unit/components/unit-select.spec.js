@@ -5,7 +5,7 @@ import UnitSelect from '../../../app/components/unit-select.vue';
 describe('UnitSelect component', () => {
     it('renders the current unit', () => {
         const wrapper = mount(UnitSelect, { props: { unit: 'oz', weight: 100 } });
-        expect(wrapper.find('.lpDisplay').text()).toBe('oz');
+        expect(wrapper.find('select').element.value).toBe('oz');
     });
 
     it('starts closed', () => {

@@ -15,18 +15,18 @@ vi.mock('vue-router', async (importOriginal) => {
     };
 });
 
+vi.stubGlobal('useHead', vi.fn());
+
 const stubs = {
     sidebar: true,
     share: true,
-    listSettings: true,
-    accountDropdown: true,
     account: true,
     accountDelete: true,
     help: true,
     list: true,
     itemLink: true,
     copyList: true,
-    importCSV: true,
+    ImportCsv: true,
     itemImage: true,
     itemViewImage: true,
     speedbump: true,
@@ -60,22 +60,5 @@ describe('Dashboard view', () => {
         store.library = makeLibrary();
         const wrapper = mount(Dashboard, { global: { stubs } });
         expect(wrapper.find('#main').exists()).toBe(true);
-    });
-
-    it('isSignedIn reflects store.loggedIn', () => {
-        const store = useLighterpackStore();
-        store.library = makeLibrary();
-        store.loggedIn = 'testuser';
-        const wrapper = mount(Dashboard, { global: { stubs } });
-        expect(wrapper.findComponent({ name: 'accountDropdown' }).exists()).toBe(true);
-    });
-
-    it('toggleSidebar calls store action', () => {
-        const store = useLighterpackStore();
-        store.library = makeLibrary();
-        store.toggleSidebar = vi.fn();
-        const wrapper = mount(Dashboard, { global: { stubs } });
-        wrapper.vm.toggleSidebar();
-        expect(store.toggleSidebar).toHaveBeenCalled();
     });
 });

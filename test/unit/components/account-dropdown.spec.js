@@ -47,6 +47,6 @@ describe('AccountDropdown component', () => {
         const wrapper = mount(AccountDropdown, { global: { stubs } });
         wrapper.vm.signout();
         expect(store.signout).toHaveBeenCalled();
-        expect(mockPush).toHaveBeenCalledWith('/signin');
+        expect(mockPush).toHaveBeenCalledWith('/welcome');
     });
 });

@@ -1,18 +1,14 @@
 <template>
-    <div class="lpUnitSelect" :class="{ lpOpen: isOpen, lpHover: isFocused }" @click="toggle($event)">
-        <select class="lpUnit lpInvisible" :value="unit" @keyup="keyup($event)" @focus="focusSelect" @blur="blurSelect">
-            <option v-for="unitOption in units" :key="unitOption" :value="unitOption">
-                {{ unitOption }}
-            </option>
-        </select>
-        <span class="lpDisplay">{{ unit }}</span>
-        <i class="lpSprite lpExpand" />
-        <ul :class="'lpUnitDropdown ' + unit">
-            <li v-for="unitOption in units" :key="unitOption" :class="unitOption" @click="select(unitOption)">
-                {{ unitOption }}
-            </li>
-        </ul>
-    </div>
+    <select
+        class="lp-unit-select"
+        :value="unit"
+        :aria-label="`Weight unit: ${unit}`"
+        @change="handleChange"
+        @focus="isFocused = true"
+        @blur="isFocused = false"
+    >
+        <option v-for="u in units" :key="u" :value="u">{{ u }}</option>
+    </select>
 </template>
 
 <script setup>
@@ -39,136 +35,63 @@ const units = ['oz', 'lb', 'g', 'kg'];
 const isOpen = ref(false);
 const isFocused = ref(false);
 
-function closeOnEscape(evt) {
-    if (evt.keyCode === 27) {
-        close();
-    }
-}
-
-function closeOnClick() {
-    close();
-}
-
-function bindCloseListeners() {
-    window.addEventListener('keyup', closeOnEscape);
-    window.addEventListener('click', closeOnClick);
-}
-
-function unbindCloseListeners() {
-    window.removeEventListener('keyup', closeOnEscape);
-    window.removeEventListener('click', closeOnClick);
-}
-
-function open() {
-    isOpen.value = true;
-    bindCloseListeners();
-}
-
-function close() {
-    isOpen.value = false;
-    unbindCloseListeners();
-}
-
-function toggle(evt) {
-    evt.stopPropagation();
-    if (!isOpen.value) {
-        open();
-    } else {
-        close();
-    }
-}
-
-function select(unit) {
-    if (typeof props.onChange === 'function') {
-        props.onChange(unit);
-    }
-}
-
-function keyup(evt) {
+function handleChange(evt) {
     if (typeof props.onChange === 'function') {
         props.onChange(evt.target.value);
     }
 }
 
-function focusSelect() {
-    isFocused.value = true;
+/* Keep stubs for any test/external code that calls these */
+function open() {
+    isOpen.value = true;
 }
-
-function blurSelect() {
-    isFocused.value = false;
+function close() {
+    isOpen.value = false;
+}
+function select(u) {
+    if (typeof props.onChange === 'function') props.onChange(u);
 }
 
 defineExpose({ isOpen, isFocused, select, close, open });
 </script>
 
 <style lang="scss">
-@use '../assets/css/globals' as *;
-
-.lpUnitSelect {
-    border: 1px solid transparent;
+.lp-unit-select {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: #5a5954;
     cursor: pointer;
-    display: inline-block;
-    padding: 0 5px;
-    position: relative;
+    font-family: 'DM Mono', 'Fira Mono', monospace;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    outline: none;
+    padding: 1px 2px;
+    transition:
+        color 120ms ease,
+        background-color 120ms ease;
 
-    &:hover,
-    &.lpHover {
-        background: #fff;
-        border: 1px solid $border1;
-
-        i {
-            opacity: 1;
-        }
+    &:hover {
+        color: #1e1e1c;
     }
 
-    i {
-        opacity: 0.6;
+    &:focus-visible {
+        background: #f3f2ee;
+        border-radius: 4px;
+        color: #1e1e1c;
+        outline: 2px solid #e8a220;
+        outline-offset: 1px;
     }
 
-    &.lpOpen {
-        background: #fff;
-
-        .lpUnitDropdown {
-            display: block;
-        }
+    option {
+        font-family: 'DM Mono', monospace;
     }
+}
 
-    .lpDisplay {
-        display: inline-block;
-        width: 1.1em;
-    }
-
-    .lpUnitDropdown {
-        background: #fff;
-        border: 1px solid #ccc;
-        display: none;
-        left: 0;
-        padding: 0;
-        position: absolute;
-        top: -1px;
-        z-index: $aboveSidebar + 1;
-
-        &.lb {
-            top: -30px;
-        }
-
-        &.g {
-            top: -55px;
-        }
-
-        &.kg {
-            top: -81px;
-        }
-
-        li {
-            list-style: none;
-            padding: 2px 14px;
-
-            &:hover {
-                background: $blue1;
-                color: #fff;
-            }
-        }
-    }
+/* Legacy selector still used by some global CSS */
+.lpUnit {
+    @extend .lp-unit-select;
 }
 </style>

@@ -1,9 +1,13 @@
 <template>
-    <div v-click-outside="hide" :class="{ lpPopover: true, lpPopoverShown: shown }">
-        <div class="lpTarget">
+    <div
+        v-click-outside="hide"
+        :id="id"
+        :class="{ 'lp-popover': true, lpPopover: true, 'is-shown': shown, lpPopoverShown: shown }"
+    >
+        <div class="lp-popover-target lpTarget">
             <slot name="target" />
         </div>
-        <div class="lpContent">
+        <div class="lp-popover-content lpContent" role="dialog">
             <slot name="content" />
         </div>
     </div>
@@ -42,98 +46,76 @@ onBeforeUnmount(() => window.removeEventListener('keyup', closeOnEscape));
 </script>
 
 <style lang="scss">
-@use '../assets/css/globals' as *;
+/* ================================================================
+   Popover — floating content panel anchored to a trigger
+   ================================================================ */
 
-.lpPopover {
+.lp-popover {
     display: block;
     position: relative;
+}
 
-    .lpTarget {
-        cursor: default;
-        display: inline-block;
-        margin-bottom: -10px;
-        padding-bottom: 10px;
-        position: relative;
-    }
+.lp-popover-target {
+    cursor: default;
+    display: inline-block;
+    /* Extend hit area downward to cover the gap to the panel */
+    margin-bottom: -8px;
+    padding-bottom: 8px;
+    position: relative;
+}
 
-    .lpContent {
-        background: #fff;
-        box-shadow: 0 0 6px rgb(0 0 0 / 25%);
-        color: $content;
+.lp-popover-content {
+    background: #fafaf7;
+    border: 0.5px solid #d0cfc9;
+    border-radius: 10px;
+    left: 50%;
+    min-width: 100%;
+    opacity: 0;
+    padding: 12px;
+    pointer-events: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    transform: translateX(-50%) translateY(-4px);
+    transition:
+        opacity 140ms ease,
+        transform 140ms ease;
+    white-space: nowrap;
+    z-index: 100;
+
+    /* Upward-pointing arrow */
+    &::before {
+        background: #fafaf7;
+        border-left: 0.5px solid #d0cfc9;
+        border-top: 0.5px solid #d0cfc9;
+        content: '';
+        display: block;
+        height: 8px;
         left: 50%;
-        margin-top: 15px;
-        min-width: 100%;
-        opacity: 0;
-        padding: 12px;
-        pointer-events: none;
+        margin-left: -4px;
         position: absolute;
-        top: 100%;
-        transform: translateX(-50%);
-        transition: all 0.15s;
-        white-space: nowrap;
-        z-index: $dialog;
-
-        &::before {
-            background-color: #fff;
-            box-shadow: 0 0 6px rgb(0 0 0 / 25%);
-            content: '';
-            display: block;
-            height: 20px;
-            left: 50%;
-            margin-left: -10px;
-            position: absolute;
-            top: -10px;
-            transform: rotate(45deg);
-            width: 20px;
-            z-index: $dialog - 1;
-        }
-
-        &::after {
-            background: #fff;
-            content: '';
-            display: block;
-            height: 15px;
-            left: 0;
-            position: absolute;
-            top: 0;
-            width: 100%;
-            z-index: $dialog + 1;
-        }
-
-        & > *:first-child {
-            margin-top: 0;
-        }
-
-        & > *:last-child {
-            margin-bottom: 0;
-        }
-
-        h3 {
-            margin-bottom: 0;
-        }
-
-        ul,
-        a {
-            line-height: 25px;
-        }
-
-        hr {
-            border-color: $border1;
-            margin: 7px -0;
-            padding: 0;
-        }
+        top: -4.5px;
+        transform: rotate(45deg);
+        width: 8px;
     }
 
-    &.lpPopoverShown {
-        .lpTarget {
-            z-index: $aboveDialog;
-        }
+    > *:first-child {
+        margin-top: 0;
+    }
+    > *:last-child {
+        margin-bottom: 0;
+    }
+}
 
-        .lpContent {
-            margin-top: 10px;
-            opacity: 1;
-            pointer-events: all;
-        }
+/* Shown state */
+.lp-popover.is-shown {
+    .lp-popover-target {
+        z-index: 101;
+    }
+
+    .lp-popover-content {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateX(-50%) translateY(0);
     }
 }
 </style>

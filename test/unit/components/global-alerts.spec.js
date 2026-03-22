@@ -19,8 +19,8 @@ describe('GlobalAlerts component', () => {
         store.globalAlerts.push({ message: 'Test alert' });
 
         const wrapper = mount(GlobalAlerts);
-        expect(wrapper.find('ul').exists()).toBe(true);
-        expect(wrapper.find('li').text()).toBe('Test alert');
+        expect(wrapper.find('.lp-global-alert').exists()).toBe(true);
+        expect(wrapper.find('.lp-global-alert').text()).toContain('Test alert');
     });
 
     it('renders multiple alerts', async () => {
@@ -28,7 +28,7 @@ describe('GlobalAlerts component', () => {
         store.globalAlerts.push({ message: 'Alert 1' }, { message: 'Alert 2' });
 
         const wrapper = mount(GlobalAlerts);
-        const items = wrapper.findAll('li');
+        const items = wrapper.findAll('.lp-global-alert');
         expect(items).toHaveLength(2);
     });
 });

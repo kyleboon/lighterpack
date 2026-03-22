@@ -64,3 +64,27 @@ async function sendMagicLink() {
     }
 }
 </script>
+
+<style lang="scss">
+.signin {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Base success state — overridden by .lp-hero-signin context in welcome.vue */
+.lpSuccess {
+    background: #f3f2ee;
+    border-left: 3px solid #e8a220;
+    border-radius: 6px;
+    color: #1e1e1c;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 10px 14px;
+
+    p {
+        margin: 0;
+    }
+}
+</style>

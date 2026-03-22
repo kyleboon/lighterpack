@@ -14,5 +14,6 @@
     "authRateLimit": 20,
     "betterAuthSecret": "",
     "betterAuthBaseURL": "http://localhost:3000",
+    "betterAuthTrustedOrigins": ["http://localhost:*", "http://127.0.0.1:*"],
     "magicLinkExpiresIn": 300
 }

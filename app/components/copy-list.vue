@@ -44,5 +44,29 @@ function copyList() {
 </script>
 
 <style lang="scss">
-@use '../assets/css/globals' as *;
+#copyListDialog {
+    width: 360px;
+}
+
+#listToCopy {
+    appearance: none;
+    background: #f3f2ee
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a8880' stroke-width='1.5' fill='none'/%3E%3C/svg%3E")
+        no-repeat right 10px center;
+    border: 1px solid #d0cfc9;
+    border-radius: 6px;
+    color: #1e1e1c;
+    cursor: pointer;
+    display: block;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 13px;
+    margin: 8px 0 16px;
+    padding: 7px 32px 7px 10px;
+    width: 100%;
+
+    &:focus {
+        border-color: #e8a220;
+        outline: none;
+    }
+}
 </style>

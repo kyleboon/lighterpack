@@ -1,14 +1,15 @@
 <template>
-    <div class="lpModalContainer">
-        <transition name="lpModal">
-            <div v-if="shown" :id="id" class="lpModal">
+    <div class="lp-modal-container">
+        <transition name="lp-modal">
+            <div v-if="shown" :id="id" class="lp-modal">
                 <slot />
             </div>
         </transition>
-        <transition name="lpModal">
+        <transition name="lp-modal">
             <div
                 v-if="shown"
-                :class="{ lpModalOverlay: true, lpBlackout: blackout, lpTransparent: transparentOverlay }"
+                class="lp-modal-overlay"
+                :class="{ 'is-transparent': transparentOverlay }"
                 @click="hide"
             />
         </transition>
@@ -56,83 +57,197 @@ onBeforeUnmount(() => window.removeEventListener('keyup', closeOnEscape));
 </script>
 
 <style lang="scss">
-@use '../assets/css/globals' as *;
+/* ================================================================
+   Modal
+   Tokens follow docs/styleguide/tokens/tokens.css
+   ================================================================ */
 
-.lpModal {
-    background: $background1;
-    box-shadow: 0 0 30px rgb(0 0 0 / 25%);
+.lp-modal {
+    --stone-50: #fafaf7;
+    --stone-300: #d0cfc9;
+    --font-ui: 'Figtree', system-ui, sans-serif;
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --radius-xl: 14px;
+    --space-8: 32px;
+
+    background: var(--stone-50);
+    border: 0.5px solid var(--stone-300);
+    border-radius: var(--radius-xl);
     left: 50%;
-    max-height: calc(90% - (#{$spacingLarge} * 2));
+    max-height: calc(90vh - 64px);
     overflow-y: auto;
-    padding: $spacingLarge;
+    padding: var(--space-8);
     position: fixed;
     text-align: left;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    transition: all $transitionDuration;
     width: 420px;
-    z-index: $dialog;
+    z-index: 100;
 
-    .lpHalf {
-        padding: 0 20px;
-
-        &:first-child {
-            padding-left: 0;
-        }
-
-        &:last-child {
-            padding-right: 0;
-        }
+    h2 {
+        font-family: var(--font-display);
+        font-size: 20px;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+        margin: 0 0 20px;
     }
 
     p {
-        margin: 5px 0 10px;
+        color: #5a5954;
+        font-family: var(--font-ui);
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 0 0 12px;
     }
 
     ul {
-        padding-left: 15px;
-    }
-
-    .lpContent {
-        max-height: 400px;
-        overflow-y: scroll;
+        padding-left: 16px;
     }
 }
 
-.lpModalHeader {
-    align-items: baseline;
-    display: flex;
-    justify-content: space-between;
-}
-
-.lpModalOverlay {
-    background: rgb(0 0 0 / 50%);
+.lp-modal-overlay {
+    background: rgba(30, 30, 28, 0.5);
     height: 100%;
-    left: 0;
+    inset: 0;
     position: fixed;
-    top: 0;
-    transition: all $transitionDuration;
-    width: 100%;
-    z-index: $belowDialog;
+    z-index: 90;
 
-    &.lpBlackout {
-        animation: none;
-        background: url('/images/lp_bg2.jpg') 50% 50%;
-        background-size: cover;
-        opacity: 1;
-    }
-
-    &.lpTransparent {
-        background: rgb(0 0 0 / 1%);
+    &.is-transparent {
+        background: rgba(30, 30, 28, 0.01);
     }
 }
 
-.lpModal-enter,
-.lpModal-leave-active {
+/* ── Transition ─────────────────────────────────────────────── */
+.lp-modal-enter-active,
+.lp-modal-leave-active {
+    transition: opacity 160ms ease;
+
+    &.lp-modal {
+        transition:
+            opacity 160ms ease,
+            transform 160ms ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition-duration: 0.01ms !important;
+    }
+}
+
+.lp-modal-enter-from,
+.lp-modal-leave-to {
     opacity: 0;
 
-    &.lpModal {
-        transform: translateX(-50%) translateY(-50%) scale(0.95);
+    &.lp-modal {
+        transform: translateX(-50%) translateY(-50%) scale(0.97);
+    }
+}
+
+/* ── Legacy class forwarding (used by child modal components) ── */
+.lpFields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+
+    input,
+    select,
+    textarea {
+        background: #fafaf7;
+        border: 0.5px solid #d0cfc9;
+        border-radius: 6px;
+        color: #1e1e1c;
+        font-family: 'Figtree', system-ui, sans-serif;
+        font-size: 13px;
+        height: 36px;
+        outline: none;
+        padding: 0 10px;
+        transition: border-color 120ms ease;
+        width: 100%;
+
+        &:focus {
+            border-color: #e8a220;
+        }
+
+        &::placeholder {
+            color: #a8a79f;
+        }
+    }
+
+    textarea {
+        height: auto;
+        min-height: 80px;
+        padding: 8px 10px;
+        resize: vertical;
+    }
+}
+
+.lpButtons {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.lpButton {
+    align-items: center;
+    background: #e8a220;
+    border: none;
+    border-radius: 6px;
+    color: #1e1e1c;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    height: 34px;
+    justify-content: center;
+    padding: 0 16px;
+    transition: background-color 120ms ease;
+
+    &:hover {
+        background: #c07a0a;
+        color: #fff;
+    }
+    &:focus-visible {
+        outline: 2px solid #e8a220;
+        outline-offset: 2px;
+    }
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &.lpButtonDisabled,
+    &[disabled] {
+        background: #e8e7e2;
+        color: #a8a79f;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+}
+
+.lpWarning {
+    background: #fdf0d5;
+    border: 0.5px solid #c07a0a;
+    border-radius: 6px;
+    color: #8a520a;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 13px;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+}
+
+.lpHref {
+    color: #4d84b4;
+    cursor: pointer;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 120ms ease;
+
+    &:hover {
+        color: #2e5f88;
+        text-decoration: underline;
+        text-underline-offset: 3px;
     }
 }
 </style>
