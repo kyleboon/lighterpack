@@ -13,7 +13,7 @@ async function setupSharedList(page: any): Promise<string> {
     await registerUser(page, `share${now}`, 'testtest', `share+${now}@lighterpack.com`);
 
     // Name the list and add one item with a weight so the donut chart renders
-    await page.getByPlaceholder('List Name').fill('Summer Pack');
+    await page.getByPlaceholder('List name').fill('Summer Pack');
     await page.locator('input.lpCategoryName').first().fill('Shelter');
     await page.locator('.lpCategory').first().locator('input.lpName').first().fill('Tent');
     await page.locator('.lpCategory').first().locator('input.lpWeight').first().fill('800');

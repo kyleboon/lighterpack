@@ -23,14 +23,13 @@ async function freshUser(page: any) {
  *              consumable totals: 26 oz, $44.00
  */
 async function seedListData(page: any) {
-    // Enable item prices, list description, consumable items, and worn items via Settings
-    await page.locator('#settings').hover();
-    await page.getByLabel('Item prices').check();
-    await page.getByLabel('List descriptions').check();
-    await page.getByLabel('Consumable items').check();
-    await page.getByLabel('Worn items').check();
-    // Click away to close the popover before interacting with the list
-    await page.locator('.lpListBody').click();
+    // Enable optional fields via the store — settings moved to Account Settings modal in redesign
+    await page.evaluate(() => {
+        const store = (document.getElementById('lp') as any).__vue_app__.config.globalProperties.$store;
+        ['price', 'listDescription', 'consumable', 'worn'].forEach((f) => {
+            if (!store.library.optionalFields[f]) store.toggleOptionalField(f);
+        });
+    });
 
     // Set the list description using markdown
     await page.locator('#listDescription').fill(
@@ -155,36 +154,35 @@ test.describe('Item and category management', () => {
         await freshUser(page);
         await seedListData(page);
 
-        const categories = page.locator('.lpTotalCategory');
+        const categories = page.locator('.lp-summary-row');
 
         // Per-category subtotals
         await expect(categories.nth(0).locator('.lpDisplaySubtotal')).toContainText('1400');
-        await expect(categories.nth(0).locator('.lpCell.lpNumber').first()).toContainText('$700.00');
+        await expect(categories.nth(0).locator('.lp-s-price')).toContainText('$700.00');
 
         await expect(categories.nth(1).locator('.lpDisplaySubtotal')).toContainText('550');
-        await expect(categories.nth(1).locator('.lpCell.lpNumber').first()).toContainText('$250.00');
+        await expect(categories.nth(1).locator('.lp-s-price')).toContainText('$250.00');
 
         await expect(categories.nth(2).locator('.lpDisplaySubtotal')).toContainText('700');
-        await expect(categories.nth(2).locator('.lpCell.lpNumber').first()).toContainText('$125.00');
+        await expect(categories.nth(2).locator('.lp-s-price')).toContainText('$125.00');
 
         await expect(categories.nth(3).locator('.lpDisplaySubtotal')).toContainText('26');
-        await expect(categories.nth(3).locator('.lpCell.lpNumber').first()).toContainText('$44.00');
+        await expect(categories.nth(3).locator('.lp-s-price')).toContainText('$44.00');
 
         // Total row
-        await expect(page.locator('.lpTotal .lpTotalValue')).toContainText('2676');
-        await expect(page.locator('.lpTotal .lpCell.lpNumber.lpSubtotal').first()).toContainText('$1119.00');
+        await expect(page.locator('.lp-summary-total .lpTotalValue')).toContainText('2676');
+        await expect(page.locator('.lp-summary-total .lp-s-price')).toContainText('$1119.00');
 
         // Base weight = total (2676) − worn (550) − consumable (26) = 2100
-        await expect(page.locator('.lpBaseWeight .lpDisplaySubtotal')).toContainText('2100');
+        await expect(page.locator('[data-weight-type="base"] .lpDisplaySubtotal')).toContainText('2100');
     });
 
     test('should show consumable weight and price in the list summary', async ({ page }) => {
         await freshUser(page);
         await seedListData(page);
-        // Trail Mix (8 oz × 1) + Energy Bars (6 oz × 3) = 26 oz, $8 + $36 = $44.00
-        await expect(page.locator('.lpConsumableWeight')).toBeVisible();
-        await expect(page.locator('.lpConsumableWeight .lpDisplaySubtotal')).toContainText('26');
-        await expect(page.locator('.lpConsumableWeight .lpCell.lpNumber.lpSubtotal').first()).toContainText('$44.00');
+        // Trail Mix (8 oz × 1) + Energy Bars (6 oz × 3) = 26 oz
+        await expect(page.locator('[data-weight-type="consumable"]')).toBeVisible();
+        await expect(page.locator('[data-weight-type="consumable"] .lpDisplaySubtotal')).toContainText('26');
     });
 
     test('should display existing categories and items after logout and login', async ({ page }) => {
@@ -220,8 +218,7 @@ test.describe('Item and category management', () => {
         await freshUser(page);
         await seedListData(page);
         // Rain Jacket (300 oz) + Fleece (250 oz) = 550 oz worn
-        // Note: the worn row has no price column in the summary template
-        await expect(page.locator('.lpWornWeight')).toBeVisible();
-        await expect(page.locator('.lpWornWeight .lpDisplaySubtotal')).toContainText('550');
+        await expect(page.locator('[data-weight-type="worn"]')).toBeVisible();
+        await expect(page.locator('[data-weight-type="worn"] .lpDisplaySubtotal')).toContainText('550');
     });
 });

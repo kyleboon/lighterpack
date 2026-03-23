@@ -7,6 +7,6 @@ test.describe('Authentication error handling', () => {
 
         await page.getByRole('button').filter({ hasText: 'Send sign-in link' }).click();
 
-        await expect(page.locator('.lpError')).toContainText('Please enter your email address.');
+        await expect(page.locator('.lp-errors-item')).toContainText('Please enter your email address.');
     });
 });

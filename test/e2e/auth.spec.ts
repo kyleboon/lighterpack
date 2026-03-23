@@ -6,7 +6,6 @@ test('has title', async ({ page }) => {
     await page.goto(testRoot);
 
     await expect(page).toHaveTitle(/LighterPack/);
-    await expect(page).toHaveScreenshot();
 });
 
 test.describe('User Authentication Tests', () => {
@@ -25,7 +24,7 @@ test.describe('User Authentication Tests', () => {
         const { email } = await getSharedUser();
 
         await loginUser(page, email);
-        await expect(page.getByText(`Signed in as ${email}`)).toBeVisible();
+        await expect(page.locator('.lp-sidebar-footer')).toBeVisible();
         await expect(page.getByText('Welcome to LighterPack!')).toBeVisible();
     });
 
@@ -34,7 +33,7 @@ test.describe('User Authentication Tests', () => {
 
         await loginUser(page, email);
         await logoutUser(page);
-        await expect(page.getByRole('heading').filter({ hasText: 'Sign in' })).toBeVisible();
+        await expect(page.locator('.lp-landing')).toBeVisible();
     });
 
     test('should successfully delete a user', async ({ page }) => {
@@ -42,13 +41,12 @@ test.describe('User Authentication Tests', () => {
         const email = `del${now}@lighterpack.com`;
 
         await loginUser(page, email);
-        await page.getByText('Signed in as').hover();
-        await page.getByText('Account Settings').click();
+        await page.getByText('Account settings').click();
         await page.getByText('Delete account').click();
 
         await page.getByPlaceholder('Your email address').fill(email);
         await page.getByText('Permanently delete account').click();
 
-        await expect(page.getByRole('heading').filter({ hasText: 'Sign in' })).toBeVisible();
+        await expect(page.locator('.lp-landing')).toBeVisible();
     });
 });

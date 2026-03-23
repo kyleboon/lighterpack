@@ -72,7 +72,7 @@ test.describe('Export and re-import a list', () => {
             const app = (document.getElementById('lp') as any).__vue_app__;
             app.config.globalProperties.$store.newList();
         });
-        await page.locator('.lpLibraryList').nth(1).locator('.lpLibraryListSwitch').click();
+        await page.locator('.lp-nav-list-item').nth(1).locator('.lp-nav-link').click();
 
         // #csv is visually off-screen (position:absolute; left:-999px) but always in the DOM
         await page.locator('#csv').setInputFiles({
@@ -107,7 +107,7 @@ test.describe('Export and re-import a list', () => {
             const app = (document.getElementById('lp') as any).__vue_app__;
             app.config.globalProperties.$store.newList();
         });
-        await page.locator('.lpLibraryList').nth(1).locator('.lpLibraryListSwitch').click();
+        await page.locator('.lp-nav-list-item').nth(1).locator('.lp-nav-link').click();
 
         await page.locator('#csv').setInputFiles({
             name: 'export.csv',

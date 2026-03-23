@@ -25,7 +25,7 @@ test.describe('List management', () => {
         await freshUser(page);
 
         await addNewList(page);
-        await expect(page.locator('.lpLibraryList')).toHaveCount(2);
+        await expect(page.locator('.lp-nav-list-item')).toHaveCount(2);
     });
 
     test('should switch to a different list', async ({ page }) => {
@@ -34,10 +34,10 @@ test.describe('List management', () => {
         await addNewList(page);
 
         // Second list is now in the sidebar; click it to make it active
-        const secondList = page.locator('.lpLibraryList').nth(1);
-        await secondList.locator('.lpLibraryListSwitch').click();
+        const secondList = page.locator('.lp-nav-list-item').nth(1);
+        await secondList.locator('.lp-nav-link').click();
 
-        await expect(secondList).toHaveClass(/lpActive/);
+        await expect(secondList).toHaveClass(/is-active/);
     });
 
     test('should delete a list after confirming the speedbump', async ({ page }) => {
@@ -47,13 +47,13 @@ test.describe('List management', () => {
         await addNewList(page);
 
         // Switch to second list so the first list's remove button is visible
-        await page.locator('.lpLibraryList').nth(1).locator('.lpLibraryListSwitch').click();
+        await page.locator('.lp-nav-list-item').nth(1).locator('.lp-nav-link').click();
 
         // Delete the first list
-        await page.locator('.lpLibraryList').nth(0).locator('.lpRemove').click({ force: true });
+        await page.locator('.lp-nav-list-item').nth(0).locator('.lp-nav-remove').click({ force: true });
         await page.getByRole('button', { name: 'Yes' }).click();
 
-        await expect(page.locator('.lpLibraryList')).toHaveCount(1);
+        await expect(page.locator('.lp-nav-list-item')).toHaveCount(1);
     });
 
     test('should copy a list', async ({ page }) => {
@@ -74,18 +74,18 @@ test.describe('List management', () => {
         await page.locator('#listToCopy').selectOption({ index: 0 });
         await page.locator('#copyConfirm').click();
 
-        await expect(page.locator('.lpLibraryList')).toHaveCount(2);
+        await expect(page.locator('.lp-nav-list-item')).toHaveCount(2);
     });
 
     test('should rename a list', async ({ page }) => {
         await freshUser(page);
 
-        const listNameInput = page.getByPlaceholder('List Name');
+        const listNameInput = page.getByPlaceholder('List name');
         await listNameInput.fill('Weekend Trip');
         // Blur to trigger save
         await listNameInput.blur();
 
         // The sidebar should reflect the new name
-        await expect(page.locator('.lpLibraryListSwitch').first()).toContainText('Weekend Trip');
+        await expect(page.locator('.lp-nav-link').first()).toContainText('Weekend Trip');
     });
 });

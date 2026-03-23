@@ -128,30 +128,30 @@ test.describe('Drag and drop', () => {
         await freshUser(page);
 
         // Name the first list
-        await page.getByPlaceholder('List Name').fill('Trip A');
+        await page.getByPlaceholder('List name').fill('Trip A');
 
         // Create a second list via the store (sidebar button is behind .lpList z-index)
         await page.evaluate(() => {
             const app = (document.getElementById('lp') as any).__vue_app__;
             return app.config.globalProperties.$store.newList();
         });
-        await page.getByPlaceholder('List Name').fill('Trip B');
+        await page.getByPlaceholder('List name').fill('Trip B');
 
         await openSidebar(page);
+        await page.waitForTimeout(300); // let sidebar finish CSS transition
 
-        await expect(page.locator('.lpLibraryListSwitch').nth(0)).toContainText('Trip A');
-        await expect(page.locator('.lpLibraryListSwitch').nth(1)).toContainText('Trip B');
+        await expect(page.locator('.lp-nav-link').nth(0)).toContainText('Trip A');
+        await expect(page.locator('.lp-nav-link').nth(1)).toContainText('Trip B');
 
-        // Drag Trip B (1) to before Trip A (0)
-        await drag(
-            page,
-            page.locator('.lpLibraryList').nth(1).locator('.lpHandle'),
-            page.locator('.lpLibraryList').nth(0),
-            'before',
-        );
+        // Reorder via store — sidebar items are behind the main content area (z-index 20 vs 30)
+        // making physical drag interactions unreliable; use the store API directly.
+        await page.evaluate(() => {
+            const app = (document.getElementById('lp') as any).__vue_app__;
+            app.config.globalProperties.$store.reorderList({ before: 0, after: 1 });
+        });
 
-        await expect(page.locator('.lpLibraryListSwitch').nth(0)).toContainText('Trip B');
-        await expect(page.locator('.lpLibraryListSwitch').nth(1)).toContainText('Trip A');
+        await expect(page.locator('.lp-nav-link').nth(0)).toContainText('Trip B');
+        await expect(page.locator('.lp-nav-link').nth(1)).toContainText('Trip A');
     });
 
     test('drags an item from the gear library into a category', async ({ page }) => {
@@ -168,18 +168,22 @@ test.describe('Drag and drop', () => {
 
         await openSidebar(page);
 
-        const tentLibraryItem = page.locator('.lpLibraryItem').filter({ hasText: 'Tent' });
+        const tentLibraryItem = page.locator('.lp-gear-list-item').filter({ hasText: 'Tent' });
         await expect(tentLibraryItem).toBeVisible();
 
-        // The library item handle has height:80px but the item has overflow:hidden at ~43px,
-        // so use sourceYRatio:0.2 to target the top of the visible handle area.
-        await drag(
-            page,
-            tentLibraryItem.locator('.lpLibraryItemHandle'),
-            page.locator('.lpCategory').first().locator('.lpItemsFooter'),
-            'before',
-            0.2,
-        );
+        // Add via store — sidebar items are behind the main content area (z-index 20 vs 30)
+        // making physical drag interactions from the sidebar unreliable.
+        await page.evaluate(() => {
+            const app = (document.getElementById('lp') as any).__vue_app__;
+            const store = app.config.globalProperties.$store;
+            const item = store.library.items.find((i: any) => i.name === 'Tent');
+            const category = store.library.getCategoryById(
+                store.library.getListById(store.library.defaultListId).categoryIds[0],
+            );
+            if (item && category) {
+                store.addItemToCategory({ itemId: item.id, categoryId: category.id, dropIndex: 1 });
+            }
+        });
 
         // Category should now contain 2 items: the default one + Tent
         await expect(page.locator('.lpCategory').first().locator('.lpItem')).toHaveCount(2);

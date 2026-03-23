@@ -16,27 +16,11 @@ export async function getSharedUser(): Promise<{ email: string }> {
  * Better Auth session cookie so the app loads in an authenticated state.
  */
 export async function loginUser(page: Page, email: string): Promise<void> {
-    const response = await page.request.post(`${testRoot}api/test/create-user-session`, {
-        data: { email },
-    });
-    const { token } = await response.json();
-
-    await page.context().addCookies([
-        {
-            name: 'better-auth.session_token',
-            value: token,
-            domain: 'localhost',
-            path: '/',
-            httpOnly: false,
-            secure: false,
-            sameSite: 'Lax',
-        },
-    ]);
-
-    await page.goto(testRoot);
-    // Wait for the app to recognize the session and load the library
-    await page.waitForSelector('#lp', { state: 'attached' });
-    await page.waitForTimeout(2000); // allow the SPA to boot and fetch /api/library
+    // The GET endpoint sets the session cookie via Set-Cookie header and redirects
+    // to / — fully browser-native, so Chromium, Firefox, and WebKit all pick it up.
+    await page.goto(`${testRoot}api/test/login?email=${encodeURIComponent(email)}`);
+    // Wait for the sidebar footer — it renders only after the session is restored and library loaded
+    await page.waitForSelector('.lp-sidebar-footer', { state: 'visible', timeout: 15000 });
 }
 
 /**
@@ -53,7 +37,6 @@ export async function registerUser(
 }
 
 export async function logoutUser(page: Page): Promise<void> {
-    await page.getByText('Signed in as').hover();
     await page.getByText('Sign out').click();
-    await page.waitForURL(`${testRoot}signin`);
+    await page.waitForURL(`${testRoot}welcome`);
 }

@@ -39,8 +39,8 @@ test.describe('List tests', () => {
         await expect(shareUrlLocator).toHaveValue(/\S/);
         const shareUrl = await shareUrlLocator.inputValue();
 
-        await page.getByPlaceholder('List Name').fill(listName);
-        await page.getByPlaceholder('List Name').blur();
+        await page.getByPlaceholder('List name').fill(listName);
+        await page.getByPlaceholder('List name').blur();
 
         // Saves are immediate — poll briefly to allow the PATCH request to complete
         await expect(async () => {
