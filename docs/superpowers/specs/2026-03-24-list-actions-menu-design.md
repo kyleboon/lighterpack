@@ -37,37 +37,54 @@ Removed entirely:
 
 ## Design
 
+### Authentication Guard
+
+The `<list-actions>` component only renders when the user is authenticated (`v-if="isSignedIn"`), matching `share.vue`'s existing guard. In local-save / guest mode, no actions button is shown.
+
 ### List Header
 
-The existing `<share>` component in `list.vue`'s header is replaced by a new `<list-actions>` component. The button is icon-only: a horizontal three-dot (ellipsis) icon (`⋯`), no label text. It has `aria-label="List actions"` and `title="List actions"` for accessibility.
+The existing `<share>` component in `list.vue`'s header is replaced by a new `<list-actions>` component. The button is icon-only: a horizontal three-dot (ellipsis) icon, no label text. It has `aria-label="List actions"` and `title="List actions"` for accessibility.
 
 **Button states:**
 
-- **Default:** muted icon button (`#f3f2ee` background, `#8a8880` icon)
+- **Default:** muted icon button (`#f3f2ee` background, `#8a8880` icon), same style as the existing camera icon button (`.lp-icon-btn`)
 - **Hover:** slightly darker background (`#e8e7e1`), darker icon (`#1e1e1c`)
-- **Post-copy:** green tint (`#e8fde8` background, `#5a9e6b` checkmark icon), reverts after 2 seconds
+- **Post-copy:** green tint (`#e8fde8` background, `#5a9e6b` checkmark icon), reverts to default after 2 seconds via `setTimeout`
+
+No toast is shown. The button's checkmark state is the sole success confirmation for clipboard copy — this avoids any changes to the `globalAlerts` system.
 
 ### Dropdown Menu
 
-Clicking the button opens a dropdown (using the existing `Popover` component) aligned to the right edge of the button. The menu is divided into three labeled sections:
+Clicking the button toggles `menuOpen` (a local `ref(false)`). When `menuOpen` is true, render a `<Popover :shown="menuOpen" @hide="menuOpen = false">`. The parent (`list-actions.vue`) is responsible for setting `menuOpen = false` after any menu item is clicked — the `Popover` component does not do this automatically.
+
+**Alignment:** The default `Popover` CSS centers the panel under its trigger (`left: 50%; transform: translateX(-50%)`). The ellipsis button sits at the far right of the header, so a centered panel will overflow the viewport on narrow screens. Add a scoped CSS override on the popover content to right-align it: `right: 0; left: auto; transform: none`. The `::before` arrow caret is also positioned at `left: 50%` by default — override it too so it points at the button: `left: auto; right: 12px; margin-left: 0`.
+
+The menu is divided into three labeled sections:
 
 **Share**
 
-- _Copy share link_ — copies the public share URL to the clipboard. If no `externalId` exists yet, calls `POST /api/external-id` first to generate one, then copies. On success, shows a toast and flips button to checkmark state for 2 seconds.
+- _Copy share link_ — copies the public share URL to the clipboard. See "Generating a share link on demand" below. On success, flips button to checkmark state for 2 seconds.
 
 **Export**
 
-- _Export to CSV_ — navigates to `/csv/:externalId` in a new tab (same behaviour as today). Generates `externalId` first if needed.
+- _Export to CSV_ — opens `/csv/:externalId` in a new tab. See "Generating a share link on demand" below.
 
 **Manage**
 
-- _Copy this list_ — calls `store.showModal('copyList')`, opening the existing `copy-list.vue` modal (no changes to that modal).
+- _Copy this list_ — calls `store.showModal('copyList')`, opening the existing `copy-list.vue` modal. No `externalId` needed; not affected by loading state.
 
-### Toast Notification
+### Loading State
 
-On successful clipboard copy, a dark toast (`#1e1e1c` background, white text, green checkmark) appears at the bottom-center of the screen: **"Share link copied to clipboard"**. Uses the existing `globalAlerts` store mechanism with a success variant (auto-dismisses after 3 seconds).
+Both "Copy share link" and "Export to CSV" require an `externalId`. If one doesn't exist, `list-actions.vue` must call `POST /api/external-id` first.
 
-If the clipboard API or `externalId` generation fails, show an error alert via the existing `_showError` store action.
+Track a local `loading = ref(false)` in `list-actions.vue`:
+
+- Set `loading = true` before the API call; set `loading = false` when it resolves (success or error)
+- While `loading` is true: disable the "Copy share link" and "Export to CSV" items (muted color, `cursor: not-allowed`, pointer-events off)
+- Guard against re-entry: if `loading` is already true when an item is clicked, do nothing
+- "Copy this list" is never disabled — it doesn't need `externalId`
+
+Errors from the API call are shown via the existing `store._showError()` action (unchanged).
 
 ---
 
@@ -81,6 +98,7 @@ If the clipboard API or `externalId` generation fails, show an error alert via t
 | `app/components/library-lists.vue` | **Updated** — remove `+ Copy a list` button and `copyList()` handler                        |
 | `app/components/copy-list.vue`     | **Unchanged** — modal still triggered via `store.showModal('copyList')`                     |
 | `app/store/store.js`               | **Unchanged** — `globalAlerts`, `showModal`, `_showError`, `setExternalId` all reused as-is |
+| `app/components/global-alerts.vue` | **Unchanged** — no success variant needed                                                   |
 
 ---
 
@@ -88,23 +106,22 @@ If the clipboard API or `externalId` generation fails, show an error alert via t
 
 ### Generating a share link on demand
 
-The `externalId` may not exist when the user opens the menu. Both "Copy share link" and "Export to CSV" require it. The `list-actions` component should:
+The `externalId` may not exist when the user opens the menu. Both "Copy share link" and "Export to CSV" require it. When either item is clicked:
 
 1. Check `list.externalId` — if present, proceed immediately
-2. If absent, call `POST /api/external-id`, then call `store.setExternalId(...)` with the result
-3. Only then copy to clipboard / open the CSV URL
+2. If absent, set `loading = true`, call `POST /api/external-id`, then call `store.setExternalId(...)` with the result, set `loading = false`
+3. Only then perform the action (copy to clipboard / open the CSV URL)
+4. On API error, call `store._showError(...)` and set `loading = false`
 
-This matches the logic already in `share.vue`'s `focusShare()` function — it moves into `list-actions.vue`.
+This mirrors the logic in `share.vue`'s `focusShare()` function, which moves into `list-actions.vue`.
 
 ### Dropdown close behaviour
 
 The dropdown closes on:
 
-- Clicking any menu item
-- Clicking outside the popover
-- Pressing Escape
-
-Use `Popover` component (click-triggered, not hover) rather than `PopoverHover`.
+- Clicking any menu item (parent sets `menuOpen = false`)
+- Clicking outside the popover (the `Popover` component emits `@hide`, parent handles it)
+- Pressing Escape (handled by existing `Popover` component)
 
 ---
 
