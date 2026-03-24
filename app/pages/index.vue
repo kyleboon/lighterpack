@@ -13,7 +13,6 @@
         <itemImage />
         <itemViewImage />
         <itemLink />
-        <help />
         <account />
         <accountDelete />
     </div>

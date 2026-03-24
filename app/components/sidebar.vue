@@ -7,7 +7,6 @@
 
         <footer v-if="isSignedIn" class="lp-sidebar-footer">
             <button class="lp-sidebar-footer-link" @click="showAccount">Account settings</button>
-            <button class="lp-sidebar-footer-link" @click="showHelp">Help</button>
             <button class="lp-sidebar-footer-link lp-sidebar-footer-signout" @click="signout">Sign out</button>
         </footer>
     </aside>
@@ -29,10 +28,6 @@ const isSignedIn = computed(() => store.loggedIn);
 
 function showAccount() {
     store.showModal('account');
-}
-
-function showHelp() {
-    store.showModal('help');
 }
 
 function signout() {
