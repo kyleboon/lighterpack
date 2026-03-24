@@ -36,9 +36,7 @@ export default defineEventHandler(async (event) => {
         .where(eq(schema.category_items.category_id, categoryId))
         .orderBy(schema.category_items.sort_order);
 
-    const maxSort = existing.length
-        ? Math.max(...existing.map((i) => i.sort_order ?? 0))
-        : -1;
+    const maxSort = existing.length ? Math.max(...existing.map((i) => i.sort_order ?? 0)) : -1;
 
     const [item] = await db
         .insert(schema.category_items)

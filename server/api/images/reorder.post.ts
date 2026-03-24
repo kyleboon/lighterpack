@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
         return { message: 'Please log in.' };
     }
 
-    const body = await readBody(event) as ReorderEntry[];
+    const body = (await readBody(event)) as ReorderEntry[];
 
     if (!Array.isArray(body) || body.some((e) => typeof e.id !== 'number' || typeof e.sort_order !== 'number')) {
         setResponseStatus(event, 400);
@@ -37,10 +37,7 @@ export default defineEventHandler(async (event) => {
 
     // Update each sort_order individually (SQLite has no multi-row update shorthand)
     for (const entry of body) {
-        await db
-            .update(schema.images)
-            .set({ sort_order: entry.sort_order })
-            .where(eq(schema.images.id, entry.id));
+        await db.update(schema.images).set({ sort_order: entry.sort_order }).where(eq(schema.images.id, entry.id));
     }
 
     return { ok: true };

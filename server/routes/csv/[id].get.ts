@@ -22,10 +22,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const db = getDb();
-    const lists = await db
-        .select()
-        .from(schema.lists)
-        .where(eq(schema.lists.external_id, id));
+    const lists = await db.select().from(schema.lists).where(eq(schema.lists.external_id, id));
 
     if (!lists.length) {
         throw createError({ statusCode: 400, message: 'Invalid list specified.' });

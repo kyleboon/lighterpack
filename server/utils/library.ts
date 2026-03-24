@@ -20,10 +20,7 @@ export async function generateUniqueExternalId(): Promise<string> {
     const db = getDb();
     while (true) {
         const id = generateExternalId();
-        const existing = await db
-            .select()
-            .from(schema.lists)
-            .where(eq(schema.lists.external_id, id));
+        const existing = await db.select().from(schema.lists).where(eq(schema.lists.external_id, id));
         if (!existing.length) return id;
     }
 }
@@ -59,9 +56,7 @@ export async function initNewUserLibrary(userId: string) {
         .returning();
 
     // Create the initial item
-    await db
-        .insert(schema.category_items)
-        .values({ category_id: category.id, user_id: userId, sort_order: 0 });
+    await db.insert(schema.category_items).values({ category_id: category.id, user_id: userId, sort_order: 0 });
 }
 
 // ---------------------------------------------------------------------------
@@ -175,9 +170,7 @@ export async function buildLibraryBlob(userId: string) {
         description: list.description ?? '',
         externalId: list.external_id,
         images: imagesByKey[`list:${list.id}`] ?? [],
-        categoryIds: dbCategories
-            .filter((cat) => cat.list_id === list.id)
-            .map((cat) => cat.id),
+        categoryIds: dbCategories.filter((cat) => cat.list_id === list.id).map((cat) => cat.id),
     }));
 
     // Compute a safe sequence value above all used IDs

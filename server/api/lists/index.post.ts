@@ -21,9 +21,7 @@ export default defineEventHandler(async (event) => {
         .where(eq(schema.lists.user_id, user.id))
         .orderBy(schema.lists.sort_order);
 
-    const maxSort = existingLists.length
-        ? Math.max(...existingLists.map((l) => l.sort_order ?? 0))
-        : -1;
+    const maxSort = existingLists.length ? Math.max(...existingLists.map((l) => l.sort_order ?? 0)) : -1;
 
     const [list] = await db
         .insert(schema.lists)

@@ -75,11 +75,14 @@ test.describe('Export and re-import a list', () => {
         await page.locator('.lp-nav-list-item').nth(1).locator('.lp-nav-link').click();
 
         // #csv is visually off-screen (position:absolute; left:-999px) but always in the DOM
-        await page.locator('#csv').setInputFiles({
-            name: 'export.csv',
-            mimeType: 'text/csv',
-            buffer: Buffer.from(csvContent),
-        }, { force: true });
+        await page.locator('#csv').setInputFiles(
+            {
+                name: 'export.csv',
+                mimeType: 'text/csv',
+                buffer: Buffer.from(csvContent),
+            },
+            { force: true },
+        );
 
         // Validation modal should show both items
         await expect(page.locator('#importValidate')).toBeVisible();
@@ -109,11 +112,14 @@ test.describe('Export and re-import a list', () => {
         });
         await page.locator('.lp-nav-list-item').nth(1).locator('.lp-nav-link').click();
 
-        await page.locator('#csv').setInputFiles({
-            name: 'export.csv',
-            mimeType: 'text/csv',
-            buffer: Buffer.from(csvContent),
-        }, { force: true });
+        await page.locator('#csv').setInputFiles(
+            {
+                name: 'export.csv',
+                mimeType: 'text/csv',
+                buffer: Buffer.from(csvContent),
+            },
+            { force: true },
+        );
 
         await expect(page.locator('#importValidate')).toBeVisible();
         await page.locator('#importConfirm').click();

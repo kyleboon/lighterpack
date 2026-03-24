@@ -9,8 +9,8 @@ async function freshUser(page: Page) {
 
 async function openSidebar(page: Page) {
     // Check if sidebar is already open (new users start with showSidebar=true)
-    const isOpen = await page.evaluate(() =>
-        document.getElementById('main')?.classList.contains('lpHasSidebar') ?? false,
+    const isOpen = await page.evaluate(
+        () => document.getElementById('main')?.classList.contains('lpHasSidebar') ?? false,
     );
     if (!isOpen) {
         await page.locator('#hamburger').click();

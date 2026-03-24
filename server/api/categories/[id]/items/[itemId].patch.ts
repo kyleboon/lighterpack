@@ -3,8 +3,17 @@ import * as schema from '../../../../schema.js';
 import { getDb } from '../../../../db.js';
 
 const ITEM_FIELDS = [
-    'name', 'description', 'weight', 'author_unit', 'price',
-    'url', 'qty', 'worn', 'consumable', 'star', 'sort_order',
+    'name',
+    'description',
+    'weight',
+    'author_unit',
+    'price',
+    'url',
+    'qty',
+    'worn',
+    'consumable',
+    'star',
+    'sort_order',
 ] as const;
 
 export default defineEventHandler(async (event) => {

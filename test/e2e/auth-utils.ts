@@ -27,12 +27,7 @@ export async function loginUser(page: Page, email: string): Promise<void> {
  * Backward-compatible wrapper — the username and password args are ignored.
  * The email (4th arg) is used to log in via the programmatic session API.
  */
-export async function registerUser(
-    page: Page,
-    _username: string,
-    _password: string,
-    email: string,
-): Promise<void> {
+export async function registerUser(page: Page, _username: string, _password: string, email: string): Promise<void> {
     await loginUser(page, email);
 }
 

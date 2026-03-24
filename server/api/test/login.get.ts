@@ -10,7 +10,9 @@ import { initNewUserLibrary } from '../../utils/library.js';
 // cookie is picked up identically by Chromium, Firefox, and WebKit.
 export default defineEventHandler(async (event) => {
     const query = getQuery(event);
-    const email = String(query.email ?? '').trim().toLowerCase();
+    const email = String(query.email ?? '')
+        .trim()
+        .toLowerCase();
     if (!email) {
         setResponseStatus(event, 400);
         return { error: 'email required' };

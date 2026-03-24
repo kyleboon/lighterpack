@@ -32,9 +32,11 @@ async function seedListData(page: any) {
     });
 
     // Set the list description using markdown
-    await page.locator('#listDescription').fill(
-        '## Summer Backpacking Kit\n\nA **lightweight** setup for 3-season trips.\n\n- Targets a [base weight](https://en.wikipedia.org/wiki/Ultralight_backpacking) under 10 lb\n- Suitable for *moderate* trails',
-    );
+    await page
+        .locator('#listDescription')
+        .fill(
+            '## Summer Backpacking Kit\n\nA **lightweight** setup for 3-season trips.\n\n- Targets a [base weight](https://en.wikipedia.org/wiki/Ultralight_backpacking) under 10 lb\n- Suitable for *moderate* trails',
+        );
 
     // Fill the default category and its existing item
     await page.locator('input.lpCategoryName').first().fill('Shelter');
@@ -83,7 +85,12 @@ async function seedListData(page: any) {
     await page.getByText('Add new category').click();
     await page.locator('input.lpCategoryName').nth(3).fill('Food');
     await page.locator('.lpCategory').nth(3).locator('input.lpName').first().fill('Trail Mix');
-    await page.locator('.lpCategory').nth(3).locator('input.lpDescription').first().fill('Assorted nuts and dried fruit');
+    await page
+        .locator('.lpCategory')
+        .nth(3)
+        .locator('input.lpDescription')
+        .first()
+        .fill('Assorted nuts and dried fruit');
     await page.locator('.lpCategory').nth(3).locator('input.lpWeight').first().fill('8');
     await page.locator('.lpCategory').nth(3).locator('input.lpPrice').first().fill('8');
     await page.locator('.lpCategory').nth(3).locator('.lpConsumable').first().click({ force: true });

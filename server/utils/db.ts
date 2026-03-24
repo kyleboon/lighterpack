@@ -10,19 +10,13 @@ import * as schema from '../schema.js';
 
 export async function getLibrarySettings(userId: string) {
     const db = getDb();
-    const rows = await db
-        .select()
-        .from(schema.library_settings)
-        .where(eq(schema.library_settings.user_id, userId));
+    const rows = await db.select().from(schema.library_settings).where(eq(schema.library_settings.user_id, userId));
     return rows[0] ?? null;
 }
 
 export async function createLibrarySettings(userId: string) {
     const db = getDb();
-    const result = await db
-        .insert(schema.library_settings)
-        .values({ user_id: userId })
-        .returning();
+    const result = await db.insert(schema.library_settings).values({ user_id: userId }).returning();
     return result[0]!;
 }
 

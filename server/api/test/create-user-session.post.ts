@@ -7,7 +7,9 @@ import { initNewUserLibrary } from '../../utils/library.js';
 // Used by E2E tests to create a session programmatically without magic link flow.
 export default defineEventHandler(async (event) => {
     const body = await readBody(event);
-    const email = String(body.email ?? '').trim().toLowerCase();
+    const email = String(body.email ?? '')
+        .trim()
+        .toLowerCase();
     if (!email) {
         setResponseStatus(event, 400);
         return { error: 'email required' };

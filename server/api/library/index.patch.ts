@@ -1,10 +1,17 @@
 const ALLOWED_FIELDS = [
-    'total_unit', 'item_unit', 'show_sidebar', 'currency_symbol',
-    'default_list_id', 'opt_images', 'opt_price', 'opt_worn',
-    'opt_consumable', 'opt_list_description',
+    'total_unit',
+    'item_unit',
+    'show_sidebar',
+    'currency_symbol',
+    'default_list_id',
+    'opt_images',
+    'opt_price',
+    'opt_worn',
+    'opt_consumable',
+    'opt_list_description',
 ] as const;
 
-type AllowedField = typeof ALLOWED_FIELDS[number];
+type AllowedField = (typeof ALLOWED_FIELDS)[number];
 
 export default defineEventHandler(async (event) => {
     const user = event.context.user;
