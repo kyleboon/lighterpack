@@ -45,11 +45,13 @@ The `<list-actions>` component only renders when the user is authenticated (`v-i
 
 The existing `<share>` component in `list.vue`'s header is replaced by a new `<list-actions>` component. The button is icon-only: a horizontal three-dot (ellipsis) icon, no label text. It has `aria-label="List actions"` and `title="List actions"` for accessibility.
 
+Use the styleguide's `.lp-btn.lp-btn-icon` pattern (defined in `docs/styleguide/04-buttons.md`) — `transparent` background, `var(--color-text-muted)` icon, `var(--stone-200)` hover background. All color values must come from `tokens/tokens.css` custom properties; no hardcoded hex values.
+
 **Button states:**
 
-- **Default:** muted icon button (`#f3f2ee` background, `#8a8880` icon), same style as the existing camera icon button (`.lp-icon-btn`)
-- **Hover:** slightly darker background (`#e8e7e1`), darker icon (`#1e1e1c`)
-- **Post-copy:** green tint (`#e8fde8` background, `#5a9e6b` checkmark icon), reverts to default after 2 seconds via `setTimeout`
+- **Default:** `background: transparent`, icon color `var(--charcoal-300)` — matches `.lp-btn-icon` base style
+- **Hover:** `background: var(--stone-200)`, icon color `var(--color-text-primary)` — matches `.lp-btn-icon` hover
+- **Post-copy:** amber tint (`var(--amber-50)` background, `var(--amber-400)` checkmark icon), reverts to default after 2 seconds via `setTimeout` — uses the system's only accent color per the "Amber accent only" rule
 
 No toast is shown. The button's checkmark state is the sole success confirmation for clipboard copy — this avoids any changes to the `globalAlerts` system.
 
