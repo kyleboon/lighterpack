@@ -70,6 +70,7 @@ jobs:
               run: npx playwright test --update-snapshots
               env:
                   CI: true
+                  NODE_CONFIG: '{"betterAuthSecret":"ci-test-secret-key-not-used-in-production","databasePath":"./data/test.db"}'
 
             - name: Commit new Linux snapshots
               run: |
