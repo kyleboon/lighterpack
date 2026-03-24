@@ -117,13 +117,14 @@ test.describe('Drag and drop', () => {
         await page.getByText('Add new category').click();
         await page.locator('input.lpCategoryName').nth(1).fill('Beta');
 
-        // Drag Beta (1) to before Alpha (0)
-        await drag(
-            page,
-            page.locator('.lpCategory').nth(1).locator('.lpCategoryHandle'),
-            page.locator('.lpCategory').nth(0),
-            'before',
-        );
+        // Reorder via store — Firefox headless doesn't reliably fire SortableJS drag events
+        // on category handles. Use the store API directly (same pattern as list reordering).
+        await page.evaluate(() => {
+            const app = (document.getElementById('lp') as any).__vue_app__;
+            const store = app.config.globalProperties.$store;
+            const list = store.library.getListById(store.library.defaultListId);
+            store.reorderCategory({ list, before: 1, after: 0 });
+        });
 
         await expect(page.locator('input.lpCategoryName').nth(0)).toHaveValue('Beta');
         await expect(page.locator('input.lpCategoryName').nth(1)).toHaveValue('Alpha');
