@@ -17,30 +17,32 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 22
+                  npm-version: 11
                   cache: npm
 
             - name: Install dependencies
               run: npm ci
 
             - name: Run ESLint
-              run: npx eslint app.js server/ client/
+              run: npm run lint:js
 
             - name: Run Stylelint
-              run: npx stylelint "client/**/*.{scss,vue}"
+              run: npm run lint:css
 
             - name: Check Prettier formatting
               run: npm run format:check
+
+            - name: TypeScript type check
+              run: npm run typecheck
+
+            - name: Run unit tests
+              run: npm run test:unit
 
     test:
         name: E2E Tests
         runs-on: ubuntu-latest
         permissions:
             contents: write
-        services:
-            mongodb:
-                image: mongo:7.0
-                ports:
-                    - 27017:27017
         steps:
             - uses: actions/checkout@v4
 
@@ -48,6 +50,7 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 22
+                  npm-version: 11
                   cache: npm
 
             - name: Install dependencies
@@ -60,7 +63,6 @@ jobs:
               run: npx playwright test --update-snapshots
               env:
                   CI: true
-                  NODE_CONFIG: '{"databaseUrl":"mongodb://localhost:27017/lighterpack"}'
 
             - name: Commit new Linux snapshots
               run: |
