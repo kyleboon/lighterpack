@@ -15,7 +15,7 @@ module.exports = {
         'at-rule-no-unknown': [
             true,
             {
-                ignoreAtRules: ['function', 'for', 'each', 'include', 'mixin', 'use', 'forward'], // for SASS directives
+                ignoreAtRules: ['extend', 'function', 'for', 'each', 'include', 'mixin', 'use', 'forward'], // for SASS directives
             },
         ],
         'function-no-unknown': [
