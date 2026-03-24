@@ -48,13 +48,13 @@ async function drag(
     const tgtY = position === 'before' ? tgtBox.y + tgtBox.height * 0.25 : tgtBox.y + tgtBox.height * 0.75;
 
     await page.mouse.move(srcX, srcY);
-    await page.waitForTimeout(60); // let :hover CSS apply (makes visibility:hidden handles visible)
+    await page.waitForTimeout(200); // let :hover CSS apply (makes visibility:hidden handles visible); Firefox needs more time
     await page.mouse.down();
     await page.mouse.move(srcX + 2, srcY + 2, { steps: 3 }); // cross SortableJS drag-start threshold
     await page.mouse.move(tgtX, tgtY, { steps: 30 });
-    await page.waitForTimeout(100); // let SortableJS process the final position before drop
+    await page.waitForTimeout(200); // let SortableJS process the final position before drop
     await page.mouse.up();
-    await page.waitForTimeout(200); // wait for Vue reactivity
+    await page.waitForTimeout(500); // wait for Vue reactivity; Firefox needs more time than Chrome
 }
 
 test.describe('Drag and drop', () => {
