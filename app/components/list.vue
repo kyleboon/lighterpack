@@ -33,7 +33,7 @@
                         <circle cx="8" cy="8.5" r="2" />
                     </svg>
                 </button>
-                <share />
+                <list-actions />
             </div>
         </header>
 
@@ -110,7 +110,7 @@ import Sortable from 'sortablejs';
 import { useItemDrag } from '../composables/useItemDrag.js';
 import category from './category.vue';
 import listSummary from './list-summary.vue';
-import share from './share.vue';
+import listActions from './list-actions.vue';
 
 defineOptions({ name: 'List' });
 

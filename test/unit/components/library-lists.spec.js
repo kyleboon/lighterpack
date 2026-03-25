@@ -62,15 +62,6 @@ describe('LibraryLists component', () => {
         expect(store.newList).toHaveBeenCalled();
     });
 
-    it('copyList calls store.showModal with "copyList"', () => {
-        const store = useLighterpackStore();
-        store.library = makeLibrary();
-        store.showModal = vi.fn();
-        const wrapper = mount(LibraryLists, { global: { stubs } });
-        wrapper.vm.copyList();
-        expect(store.showModal).toHaveBeenCalledWith('copyList');
-    });
-
     it('importCSV calls store.triggerImportCSV', () => {
         const store = useLighterpackStore();
         store.library = makeLibrary();

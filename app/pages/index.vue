@@ -8,7 +8,6 @@
 
         <globalAlerts />
         <speedbump />
-        <copyList />
         <ImportCsv />
         <itemImage />
         <itemViewImage />

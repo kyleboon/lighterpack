@@ -43,7 +43,6 @@
         <div class="lp-lists-actions">
             <button class="lp-action-link" @click="newList">+ Add new list</button>
             <button class="lp-action-link" @click="importCSV">+ Import CSV</button>
-            <button class="lp-action-link" @click="copyList">+ Copy a list</button>
         </div>
     </section>
 </template>
@@ -100,10 +99,6 @@ function setDefaultList(list) {
 
 function newList() {
     store.newList();
-}
-
-function copyList() {
-    store.showModal('copyList');
 }
 
 function importCSV() {

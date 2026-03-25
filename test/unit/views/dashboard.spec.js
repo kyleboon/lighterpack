@@ -25,7 +25,6 @@ const stubs = {
     help: true,
     list: true,
     itemLink: true,
-    copyList: true,
     ImportCsv: true,
     itemImage: true,
     itemViewImage: true,

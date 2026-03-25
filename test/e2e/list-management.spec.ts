@@ -59,20 +59,12 @@ test.describe('List management', () => {
     test('should copy a list', async ({ page }) => {
         await freshUser(page);
 
-        // Add an item name so the list has a real name to copy
+        // Add a category name so the list has content to copy
         await page.locator('input.lpCategoryName').first().fill('Shelter');
 
-        // Open the copy-list modal via the store (the flyout is behind .lpList due to
-        // a stacking-context z-index: the sidebar is z:20, .lpList is z:30)
-        await page.evaluate(() => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
-            app.config.globalProperties.$store.showModal('copyList');
-        });
-
-        // The copy-list modal should appear; select the first list and confirm
-        await expect(page.locator('#copyListDialog')).toBeVisible();
-        await page.locator('#listToCopy').selectOption({ index: 0 });
-        await page.locator('#copyConfirm').click();
+        // Copy the current list via the list-actions menu
+        await page.locator('button[aria-label="List actions"]').click();
+        await page.locator('.lp-actions-menu-item', { hasText: 'Copy this list' }).click();
 
         await expect(page.locator('.lp-nav-list-item')).toHaveCount(2);
     });
