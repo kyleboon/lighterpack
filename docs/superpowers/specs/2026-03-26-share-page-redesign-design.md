@@ -103,25 +103,53 @@ Prop propagation: `list.vue` receives `readonly` and passes it to `list-summary`
 The share page uses SSR (`routeRules: '/r/**'`). Key points:
 
 - In readonly mode, all SSR-unsafe code paths (Sortable, drag setup, DOM queries) are skipped entirely — they're behind `onMounted` or gated by editing-only logic
-- `Sortable` import in `list.vue` must be changed to a dynamic import inside `onMounted` to prevent server-side module evaluation (Sortable references `window` at module level)
+- **Both `Sortable` imports must be dynamic:** `list.vue` imports Sortable directly AND imports `useItemDrag.js` which also imports Sortable at module scope. Both must become dynamic imports inside `onMounted` to prevent server-side module evaluation (Sortable references `window` at module level). In readonly mode, `onMounted` returns early before either import.
 - Store hydration: `useAsyncData` fetches on the server, populates Pinia store via a new `loadShareData()` action. Nuxt automatically serializes and transfers Pinia state during hydration.
 
 ```js
-// list.vue — dynamic import to prevent SSR breakage
+// list.vue — dynamic imports to prevent SSR breakage
 onMounted(async () => {
     if (props.readonly) return;
-    const { default: Sortable } = await import('sortablejs');
-    // ... existing setup
+    const [{ default: Sortable }, { useItemDrag }] = await Promise.all([
+        import('sortablejs'),
+        import('../composables/useItemDrag.js'),
+    ]);
+    // ... existing setup with Sortable and itemDrag
 });
 ```
 
 ### Store Changes
 
-Add `loadShareData(libraryBlob)` action to `app/store/store.js`:
+Add `loadShareData(libraryBlob, externalId)` action to `app/store/store.js`:
 
 - Creates a `Library` instance from the blob
-- Sets `store.library` and resolves `store.activeList`
+- Finds the list matching `externalId` and sets `library.defaultListId` to that list's `id` (critical — `store.activeList` resolves via `defaultListId`)
+- Sets `store.library` so child components can read from it
 - Does NOT trigger save/sync logic (share page is read-only)
+
+### Security: Share Endpoint Exposes Full Library
+
+The existing `/api/share/:id` endpoint returns `buildLibraryBlob(list.user_id)` — the owner's **entire** library, including unshared lists. This is a pre-existing issue (the current share page has the same problem), but with SSR hydration the full blob will be serialized into the HTML page source. This should be addressed as a follow-up: modify the share endpoint to strip non-shared lists and their exclusive items before returning. For this spec, we acknowledge the limitation and don't change the endpoint.
+
+### Markdown Rendering in `list.vue`
+
+In readonly mode, `list.vue` needs to render the list description as HTML (via `marked()`). This requires:
+
+- Importing `marked` in `list.vue` (new dependency for this component)
+- Using `v-html` with sanitized output — use DOMPurify or equivalent to prevent XSS from user-authored markdown
+- The current share page uses `marked` without sanitization; we should fix this as part of the migration
+
+### Deleting `_share.scss` — Audit Required
+
+`_share.scss` contains responsive breakpoint styles and layout overrides beyond just share-specific tweaks. Before deletion, audit whether any responsive styles (media queries for `.lpItems`, `.lpChart`, `.lpListSummary`) need to be migrated to the component-level `<style>` blocks or to `_common.scss`. Do not delete blindly.
+
+### Copy Endpoint: Image Handling
+
+The copy-list endpoint should copy item image references (URLs) but not duplicate image records in the database. Copied items point to the same image URLs as the originals. If the original owner later deletes an image, the copy's reference becomes stale — this is acceptable for an MVP.
+
+### SEO / Open Graph Meta Tags
+
+Since the share page is SSR-rendered, add `useHead()` / `useSeoMeta()` with the list name and description for social sharing previews. This is a lightweight addition that adds significant value for share URLs posted on forums and social media.
 
 ## Files Changed
 
@@ -133,7 +161,7 @@ Add `loadShareData(libraryBlob)` action to `app/store/store.js`:
 | `app/components/category.vue`          | Add `readonly` prop, static name, hide edit affordances, pass readonly to items                   |
 | `app/components/item.vue`              | Add `readonly` prop, static name/description, hide edit controls, show static icons               |
 | `app/components/signin-form.vue`       | Add `callbackURL` prop (default `'/'`), use in magic link request                                 |
-| `app/store/store.js`                   | Add `loadShareData()` action                                                                      |
+| `app/store/store.js`                   | Add `loadShareData(libraryBlob, externalId)` action                                               |
 | `server/api/library/copy-list.post.ts` | New endpoint: duplicate shared list into authenticated user's library                             |
 | `app/assets/css/_share.scss`           | Delete (no longer needed)                                                                         |
 
@@ -147,4 +175,4 @@ Add `loadShareData(libraryBlob)` action to `app/store/store.js`:
 ## What Gets Deleted
 
 - ~200 lines of duplicate rendering logic in the current `r/[id].vue`
-- `app/assets/css/_share.scss` (transition overrides, hover overrides)
+- `app/assets/css/_share.scss` (after auditing responsive styles for migration)
