@@ -11,6 +11,9 @@
                         <span class="lpCell">Qty</span>
                         <span class="lpCell">Weight</span>
                         <span class="lpCell">Unit</span>
+                        <span v-if="hasPrice" class="lpCell">Price</span>
+                        <span v-if="hasWorn" class="lpCell">Worn</span>
+                        <span v-if="hasConsumable" class="lpCell">Consumable</span>
                     </li>
                     <li v-for="(row, index) in importData.data" :key="index" class="lpRow">
                         <span class="lpCell">{{ row.name }}</span>
@@ -19,6 +22,9 @@
                         <span class="lpCell">{{ row.qty }}</span>
                         <span class="lpCell">{{ row.weight }}</span>
                         <span class="lpCell">{{ row.unit }}</span>
+                        <span v-if="hasPrice" class="lpCell">{{ row.price || '' }}</span>
+                        <span v-if="hasWorn" class="lpCell">{{ row.worn ? '&#10003;' : '' }}</span>
+                        <span v-if="hasConsumable" class="lpCell">{{ row.consumable ? '&#10003;' : '' }}</span>
                     </li>
                 </ul>
             </div>
@@ -46,6 +52,9 @@ const shown = ref(false);
 const importData = ref({});
 
 const library = computed(() => store.library);
+const hasPrice = computed(() => importData.value.data?.some((row) => row.price > 0));
+const hasWorn = computed(() => importData.value.data?.some((row) => row.worn));
+const hasConsumable = computed(() => importData.value.data?.some((row) => row.consumable));
 
 watch(
     () => store.importCSVTrigger,
@@ -103,7 +112,7 @@ function importList() {
 #importValidate {
     max-height: 80vh;
     overflow-y: auto;
-    width: 650px;
+    width: 780px;
 }
 
 #importData {
