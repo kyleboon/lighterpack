@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { testRoot } from './utils';
+import { testRoot, getShareUrl } from './utils';
 
 import { registerUser } from './auth-utils';
 
@@ -12,11 +12,7 @@ test.describe('List tests', () => {
         const password = 'testtest';
 
         await registerUser(page, username, password, email);
-        await page.getByText('Share', { exact: true }).hover();
-
-        const shareUrlLocator = page.getByLabel('Share your list');
-        await expect(shareUrlLocator).toHaveValue(/\S/);
-        const shareUrl = await shareUrlLocator.inputValue();
+        const shareUrl = await getShareUrl(page);
 
         await expect(async () => {
             const response = await page.request.get(shareUrl);
@@ -33,11 +29,7 @@ test.describe('List tests', () => {
         const listName = 'Test List Name';
 
         await registerUser(page, username, password, email);
-        await page.getByText('Share', { exact: true }).hover();
-
-        const shareUrlLocator = page.getByLabel('Share your list');
-        await expect(shareUrlLocator).toHaveValue(/\S/);
-        const shareUrl = await shareUrlLocator.inputValue();
+        const shareUrl = await getShareUrl(page);
 
         await page.getByPlaceholder('List name').fill(listName);
         await page.getByPlaceholder('List name').blur();

@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test';
 
-import { testRoot } from './utils';
+import { testRoot, getShareUrl } from './utils';
 
 import { registerUser } from './auth-utils';
 
 /**
  * Registers a fresh user, adds a named item with weight, obtains a share URL,
- * and returns both the page and the share URL so tests can navigate to it.
+ * and returns the share URL so tests can navigate to it.
  */
 async function setupSharedList(page: any): Promise<string> {
     const now = Date.now();
@@ -18,12 +18,7 @@ async function setupSharedList(page: any): Promise<string> {
     await page.locator('.lpCategory').first().locator('input.lpName').first().fill('Tent');
     await page.locator('.lpCategory').first().locator('input.lpWeight').first().fill('800');
 
-    // Hover the Share header item to reveal the share URL
-    await page.getByText('Share', { exact: true }).hover();
-
-    const shareUrlInput = page.getByLabel('Share your list');
-    await expect(shareUrlInput).toHaveValue(/\S/, { timeout: 10000 });
-    const shareUrl = await shareUrlInput.inputValue();
+    const shareUrl = await getShareUrl(page);
 
     // Saves are immediate — poll briefly to allow in-flight PATCH requests to complete
     await expect(async () => {

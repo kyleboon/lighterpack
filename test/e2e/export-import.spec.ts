@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { testRoot } from './utils';
+import { testRoot, getShareUrl } from './utils';
 
 import { registerUser } from './auth-utils';
 
@@ -10,8 +10,8 @@ async function freshUser(page: any) {
 }
 
 /**
- * Seeds a small list, publishes it to get an externalId, and returns the CSV
- * download URL so the caller can fetch the file content.
+ * Seeds a small list and returns the CSV download URL by reading the
+ * externalId from the store.
  */
 async function seedAndGetCsvUrl(page: any): Promise<string> {
     // Add two categories with one item each
@@ -24,15 +24,12 @@ async function seedAndGetCsvUrl(page: any): Promise<string> {
     await page.locator('.lpCategory').nth(1).locator('input.lpName').first().fill('Stove');
     await page.locator('.lpCategory').nth(1).locator('input.lpWeight').first().fill('100');
 
-    // Open the Share popover to reveal the share URL
-    await page.getByText('Share', { exact: true }).hover();
-    const shareUrlInput = page.getByLabel('Share your list');
-    await expect(shareUrlInput).toHaveValue(/\S/, { timeout: 10000 });
-    const shareUrl = await shareUrlInput.inputValue();
-
-    // Saves are immediate — poll briefly to allow in-flight PATCH requests to complete
+    // Get the share URL from the store and derive the CSV URL
+    const shareUrl = await getShareUrl(page);
     const externalId = shareUrl.split('/r/')[1];
     const csvUrl = `${testRoot}csv/${externalId}`;
+
+    // Saves are immediate — poll briefly to allow in-flight PATCH requests to complete
     await expect(async () => {
         const response = await page.request.get(csvUrl);
         expect(response.status()).toBe(200);
