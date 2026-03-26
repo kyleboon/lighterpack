@@ -34,6 +34,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useLighterpackStore } from '../store/store.js';
+import { parseCSV } from '../utils/csvParser.js';
 import modal from './modal.vue';
 
 defineOptions({ name: 'ImportCsv' });
@@ -43,23 +44,6 @@ const store = useLighterpackStore();
 const csvInput = ref(null);
 const shown = ref(false);
 const importData = ref({});
-
-const fullUnitToUnit = {
-    ounce: 'oz',
-    ounces: 'oz',
-    oz: 'oz',
-    pound: 'lb',
-    pounds: 'lb',
-    lb: 'lb',
-    lbs: 'lb',
-    gram: 'g',
-    grams: 'g',
-    g: 'g',
-    kilogram: 'kg',
-    kilograms: 'kg',
-    kg: 'kg',
-    kgs: 'kg',
-};
 
 const library = computed(() => store.library);
 
@@ -98,58 +82,11 @@ function importCSV(evt) {
     reader.readAsText(file);
 }
 
-function CSVToArray(strData) {
-    const strDelimiter = ',';
-    const arrData = [[]];
-    let arrMatches = null;
-
-    const objPattern = new RegExp(
-        `(\\${strDelimiter}|\\r?\\n|\\r|^)` + '(?:"([^"]*(?:""[^"]*)*)"|' + `([^"\\${strDelimiter}\\r\\n]*))`,
-        'gi',
-    );
-
-    while ((arrMatches = objPattern.exec(strData))) {
-        const strMatchedDelimiter = arrMatches[1];
-        if (strMatchedDelimiter.length && strMatchedDelimiter !== strDelimiter) {
-            arrData.push([]);
-        }
-
-        let strMatchedValue;
-        if (arrMatches[2]) {
-            strMatchedValue = arrMatches[2].replace(new RegExp('""', 'g'), '"');
-        } else {
-            strMatchedValue = arrMatches[3];
-        }
-
-        arrData[arrData.length - 1].push(strMatchedValue);
-    }
-
-    return arrData;
-}
-
 function validateImport(input, name) {
-    const csv = CSVToArray(input);
-    importData.value = { data: [], name };
+    const data = parseCSV(input);
+    importData.value = { data, name };
 
-    for (const i in csv) {
-        const row = csv[i];
-        if (row.length < 6) continue;
-        if (row[0].toLowerCase() === 'item name') continue;
-        if (isNaN(parseInt(row[3]))) continue;
-        if (isNaN(parseInt(row[4]))) continue;
-        if (typeof fullUnitToUnit[row[5]] === 'undefined') continue;
-
-        importData.value.data.push({
-            name: row[0],
-            category: row[1],
-            description: row[2],
-            qty: parseFloat(row[3]),
-            weight: parseFloat(row[4]),
-            unit: fullUnitToUnit[row[5]],
-        });
-    }
-
-    if (!importData.value.data.length) {
+    if (!data.length) {
         alert('Unable to load spreadsheet - please verify the format.');
     } else {
         shown.value = true;
