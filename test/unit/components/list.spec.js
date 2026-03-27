@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('sortablejs', () => ({ default: { create: vi.fn(() => ({ destroy: vi.fn() })) } }));
-vi.mock('../../../client/composables/useItemDrag.js', () => ({
+vi.mock('../../../app/composables/useItemDrag.js', () => ({
     useItemDrag: () => ({ setup: vi.fn(), destroy: vi.fn() }),
+}));
+vi.mock('isomorphic-dompurify', () => ({
+    default: { sanitize: (html) => html },
 }));
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
@@ -12,7 +15,7 @@ import List from '../../../app/components/list.vue';
 describe('List component', () => {
     beforeEach(() => setActivePinia(createPinia()));
 
-    const stubs = { category: true, listSummary: true };
+    const stubs = { category: true, listSummary: true, listActions: true };
 
     function makeCategory(id, overrides = {}) {
         return { id, name: 'Category ' + id, categoryItems: [], ...overrides };
@@ -102,5 +105,74 @@ describe('List component', () => {
         const wrapper = mount(List, { global: { stubs } });
         wrapper.vm.newCategory();
         expect(store.newCategory).toHaveBeenCalledWith(list);
+    });
+
+    describe('readonly mode', () => {
+        it('renders list name as h1 instead of input', () => {
+            const store = useLighterpackStore();
+            const list = makeList({ name: 'Test List', totalWeight: 100 });
+            store.library = makeLibrary(list);
+            const wrapper = mount(List, {
+                props: { readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('h1.lp-list-title').exists()).toBe(true);
+            expect(wrapper.find('h1.lp-list-title').text()).toBe('Test List');
+            expect(wrapper.find('input.lp-list-title').exists()).toBe(false);
+        });
+
+        it('hides header actions in readonly mode', () => {
+            const store = useLighterpackStore();
+            const list = makeList({ totalWeight: 100 });
+            store.library = makeLibrary(list);
+            const wrapper = mount(List, {
+                props: { readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('.lp-list-header-actions').exists()).toBe(false);
+        });
+
+        it('hides add category link in readonly mode', () => {
+            const store = useLighterpackStore();
+            const list = makeList({ totalWeight: 100 });
+            store.library = makeLibrary(list);
+            const wrapper = mount(List, {
+                props: { readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('.addCategory').exists()).toBe(false);
+        });
+
+        it('renders markdown description in readonly mode when description exists', () => {
+            const store = useLighterpackStore();
+            const list = makeList({ totalWeight: 100, description: '**bold text**' });
+            store.library = makeLibrary(list);
+            const wrapper = mount(List, {
+                props: { readonly: true },
+                global: { stubs },
+            });
+            const descEl = wrapper.find('#lpListDescription');
+            expect(descEl.exists()).toBe(true);
+            expect(descEl.html()).toContain('<strong>bold text</strong>');
+        });
+
+        it('passes readonly to list-summary and category components', () => {
+            const store = useLighterpackStore();
+            const cat1 = makeCategory('cat1');
+            const list = makeList({ totalWeight: 100, categoryIds: ['cat1'] });
+            store.library = makeLibrary(list, [cat1]);
+            const wrapper = mount(List, {
+                props: { readonly: true },
+                global: { stubs },
+            });
+            const summary =
+                wrapper.findComponent({ name: 'listSummary' }) || wrapper.findComponent({ name: 'list-summary' });
+            expect(summary.exists()).toBe(true);
+            expect(summary.props('readonly')).toBe(true);
+
+            const categoryComp = wrapper.findComponent({ name: 'category' });
+            expect(categoryComp.exists()).toBe(true);
+            expect(categoryComp.props('readonly')).toBe(true);
+        });
     });
 });

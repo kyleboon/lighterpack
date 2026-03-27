@@ -35,6 +35,13 @@ import spinner from './spinner.vue';
 
 defineOptions({ name: 'SigninForm' });
 
+const props = defineProps({
+    callbackURL: {
+        type: String,
+        default: '/',
+    },
+});
+
 const fetching = ref(false);
 const errors_ = ref([]);
 const email = ref('');
@@ -54,7 +61,7 @@ async function sendMagicLink() {
     try {
         await $fetch('/api/auth/sign-in/magic-link', {
             method: 'POST',
-            body: { email: email.value, callbackURL: '/' },
+            body: { email: email.value, callbackURL: props.callbackURL },
         });
         emailSent.value = true;
     } catch (err) {

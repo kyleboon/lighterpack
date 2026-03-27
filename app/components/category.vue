@@ -2,10 +2,12 @@
     <li :id="category.id" class="lpCategory">
         <ul class="lpItems lpDataTable">
             <li class="lpHeader lpItemsHeader">
-                <span class="lpHandleCell">
+                <span v-if="!readonly" class="lpHandleCell">
                     <div class="lpHandle lpCategoryHandle" title="Reorder this category" />
                 </span>
+                <h2 v-if="readonly" class="lpCategoryName">{{ category.name }}</h2>
                 <input
+                    v-else
                     v-focus-on-create="category._isNew"
                     type="text"
                     :value="category.name"
@@ -14,7 +16,7 @@
                     @input="updateCategoryName"
                 />
                 <button
-                    v-if="library.optionalFields['images']"
+                    v-if="!readonly && library.optionalFields['images']"
                     class="lp-icon-btn lpCategoryCamera"
                     title="Manage category images"
                     @click="manageCategoryImages"
@@ -37,7 +39,7 @@
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">Price</span>
                 <span class="lpWeightCell">Weight</span>
                 <span class="lpQtyCell">qty</span>
-                <span class="lpRemoveCell"
+                <span v-if="!readonly" class="lpRemoveCell"
                     ><a class="lpRemove lpRemoveCategory" title="Remove this category" @click="removeCategory(category)"
                         ><svg
                             width="16"
@@ -75,10 +77,11 @@
                 :key="itemContainer.item.id"
                 :item-container="itemContainer"
                 :category="category"
+                :readonly="readonly"
             />
             <li class="lpFooter lpItemsFooter">
                 <span class="lpAddItemCell">
-                    <a class="lpAdd lpAddItem lp-action-link" @click="newItem">
+                    <a v-if="!readonly" class="lpAdd lpAddItem lp-action-link" @click="newItem">
                         <svg
                             width="16"
                             height="16"
@@ -122,6 +125,7 @@ defineOptions({ name: 'Category' });
 
 const props = defineProps({
     category: { type: Object, default: null },
+    readonly: { type: Boolean, default: false },
 });
 
 const store = useLighterpackStore();

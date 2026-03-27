@@ -104,4 +104,51 @@ describe('Category component', () => {
         });
         expect(wrapper.vm.displayPrice(9.5, '$')).toBe('$9.50');
     });
+
+    describe('readonly mode', () => {
+        function mountReadonly(overrides = {}) {
+            const store = useLighterpackStore();
+            store.library = makeLibrary();
+            return mount(Category, {
+                props: { category: makeCategory(), readonly: true, ...overrides },
+                global: { stubs },
+            });
+        }
+
+        it('renders category name as h2 instead of input', () => {
+            const wrapper = mountReadonly();
+            expect(wrapper.find('input.lpCategoryName').exists()).toBe(false);
+            expect(wrapper.find('h2.lpCategoryName').exists()).toBe(true);
+            expect(wrapper.find('h2.lpCategoryName').text()).toBe('Shelter');
+        });
+
+        it('hides drag handle in readonly mode', () => {
+            const wrapper = mountReadonly();
+            expect(wrapper.find('.lpHandleCell').exists()).toBe(false);
+            expect(wrapper.find('.lpCategoryHandle').exists()).toBe(false);
+        });
+
+        it('hides remove button in readonly mode', () => {
+            const wrapper = mountReadonly();
+            expect(wrapper.find('.lpRemoveCategory').exists()).toBe(false);
+        });
+
+        it('hides add item link in readonly mode', () => {
+            const wrapper = mountReadonly();
+            expect(wrapper.find('.lpAddItem').exists()).toBe(false);
+        });
+
+        it('passes readonly prop to child item components', () => {
+            const store = useLighterpackStore();
+            const itemObj = { id: 'item1', name: 'Tent' };
+            store.library = makeLibrary([itemObj]);
+            const category = makeCategory({ categoryItems: [{ itemId: 'item1' }] });
+            const wrapper = mount(Category, {
+                props: { category, readonly: true },
+                global: { stubs },
+            });
+            const itemStub = wrapper.findComponent({ name: 'item' });
+            expect(itemStub.props('readonly')).toBe(true);
+        });
+    });
 });

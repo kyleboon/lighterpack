@@ -89,55 +89,59 @@ export const fetchJson = (url, options) => {
     });
 };
 
-window.readCookie = function (name) {
-    const nameEQ = `${name}=`;
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-};
-
-window.createCookie = function (name, value, days) {
-    if (days) {
-        const date = new Date();
-        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        var expires = `; expires=${date.toGMTString()}`;
-    } else var expires = '';
-    document.cookie = `${name}=${value}${expires}; path=/`;
-};
-
-window.getElementIndex = function (node) {
-    let index = 0;
-    let currentNode = node;
-    while ((currentNode = currentNode.previousElementSibling)) {
-        index++;
-    }
-    return index;
-};
-
-window.arrayMove = function (inputArray, oldIndex, newIndex) {
-    const array = inputArray.slice();
-    const element = array[oldIndex];
-    array.splice(oldIndex, 1);
-    array.splice(newIndex, 0, element);
-    return array;
-};
-
-// Display helper functions (formerly Vue 2 filters)
-window.displayWeight = function (mg, unit) {
+// Display helper functions — defined as plain functions for SSR compatibility,
+// then attached to window for legacy code that expects globals.
+export function displayWeight(mg, unit) {
     return weightUtils.MgToWeight(mg, unit) || 0;
-};
+}
 
-window.displayPrice = function (price, symbol) {
+export function displayPrice(price, symbol) {
     let amount = '0.00';
     if (typeof price === 'number') {
         amount = price.toFixed(2);
     }
     return symbol + amount;
-};
+}
 
-export const displayWeight = window.displayWeight;
-export const displayPrice = window.displayPrice;
+// Browser-only globals — skip during SSR
+if (typeof window !== 'undefined') {
+    window.readCookie = function (name) {
+        const nameEQ = `${name}=`;
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    };
+
+    window.createCookie = function (name, value, days) {
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+            var expires = `; expires=${date.toGMTString()}`;
+        } else var expires = '';
+        document.cookie = `${name}=${value}${expires}; path=/`;
+    };
+
+    window.getElementIndex = function (node) {
+        let index = 0;
+        let currentNode = node;
+        while ((currentNode = currentNode.previousElementSibling)) {
+            index++;
+        }
+        return index;
+    };
+
+    window.arrayMove = function (inputArray, oldIndex, newIndex) {
+        const array = inputArray.slice();
+        const element = array[oldIndex];
+        array.splice(oldIndex, 1);
+        array.splice(newIndex, 0, element);
+        return array;
+    };
+
+    window.displayWeight = displayWeight;
+    window.displayPrice = displayPrice;
+}

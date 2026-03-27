@@ -27,9 +27,14 @@
                 >
                     <span class="lp-s-dot lp-s-dot--picker">
                         <colorPicker
-                            v-if="category.displayColor"
+                            v-if="!readonly && category.displayColor"
                             :color="colorToHex(category.displayColor)"
                             @color-change="updateColor(category, $event)"
+                        />
+                        <span
+                            v-else-if="category.displayColor"
+                            class="lpLegend"
+                            :style="{ backgroundColor: category.displayColor }"
                         />
                     </span>
                     <span class="lp-s-name">{{ category.name }}</span>
@@ -57,8 +62,12 @@
                     <span class="lp-s-weight lp-s-num">
                         <span class="lpTotalValue">{{ displayWeight(list.totalWeight, library.totalUnit) }}</span>
                         <span class="lp-s-unit"
-                            ><unitSelect :unit="library.totalUnit" :on-change="setTotalUnit"
-                        /></span>
+                            ><unitSelect
+                                v-if="!readonly"
+                                :unit="library.totalUnit"
+                                :on-change="setTotalUnit"
+                            /><template v-else>{{ library.totalUnit }}</template></span
+                        >
                     </span>
                 </div>
 
@@ -116,7 +125,10 @@ import donutChart from './donut-chart.vue';
 
 defineOptions({ name: 'ListSummary' });
 
-const props = defineProps({ list: { type: Object, default: null } });
+const props = defineProps({
+    list: { type: Object, default: null },
+    readonly: { type: Boolean, default: false },
+});
 
 const store = useLighterpackStore();
 

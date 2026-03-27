@@ -102,4 +102,28 @@ describe('ListSummary component', () => {
         expect(wrapper.vm.categories).toHaveLength(1);
         expect(wrapper.vm.categories[0].name).toBe('Shelter');
     });
+
+    it('renders a static color swatch instead of colorPicker when readonly', () => {
+        const store = useLighterpackStore();
+        const category = { id: 1, name: 'Shelter', color: null };
+        store.library = makeLibrary([category]);
+        const list = makeList({ categoryIds: [1] });
+        const wrapper = mount(ListSummary, {
+            props: { list, readonly: true },
+            global: { stubs },
+        });
+        expect(wrapper.findComponent({ name: 'colorPicker' }).exists()).toBe(false);
+        expect(wrapper.find('.lpLegend').exists()).toBe(true);
+    });
+
+    it('renders static unit text instead of unitSelect when readonly', () => {
+        const store = useLighterpackStore();
+        store.library = makeLibrary();
+        const wrapper = mount(ListSummary, {
+            props: { list: makeList(), readonly: true },
+            global: { stubs },
+        });
+        expect(wrapper.findComponent({ name: 'unitSelect' }).exists()).toBe(false);
+        expect(wrapper.find('.lp-s-unit').text()).toBe('oz');
+    });
 });

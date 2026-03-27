@@ -2,7 +2,9 @@
     <div class="lpListBody">
         <!-- ── List header: title + share ──── -->
         <header class="lp-list-header">
+            <h1 v-if="readonly" class="lp-list-title">{{ list.name }}</h1>
             <input
+                v-else
                 class="lp-list-title"
                 :value="list.name"
                 type="text"
@@ -11,7 +13,7 @@
                 name="lastpass-disable-search"
                 @input="updateListName"
             />
-            <div class="lp-list-header-actions">
+            <div v-if="!readonly" class="lp-list-header-actions">
                 <button
                     v-if="library.optionalFields['images']"
                     class="lp-icon-btn lp-list-camera"
@@ -37,7 +39,7 @@
             </div>
         </header>
 
-        <div v-if="isListNew" id="getStarted">
+        <div v-if="!readonly && isListNew" id="getStarted">
             <h2>Welcome to LighterPack!</h2>
             <p>Here's what you need to get started:</p>
             <ol>
@@ -64,11 +66,14 @@
             >
         </div>
 
-        <list-summary v-if="!isListNew" :list="list" />
+        <list-summary v-if="!isListNew" :list="list" :readonly="readonly" />
+
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <div v-if="readonly && renderedDescription" id="lpListDescription" v-html="renderedDescription" />
 
         <div style="clear: both" />
 
-        <div v-if="library.optionalFields['listDescription']" id="listDescriptionContainer">
+        <div v-if="!readonly && library.optionalFields['listDescription']" id="listDescriptionContainer">
             <h3>List Description</h3>
             <p>
                 (<a href="https://guides.github.com/features/mastering-markdown/" target="_blank" class="lpHref"
@@ -80,12 +85,12 @@
         </div>
 
         <ul class="lpCategories">
-            <category v-for="cat in categories" :key="cat.id" :category="cat" />
+            <category v-for="cat in categories" :key="cat.id" :category="cat" :readonly="readonly" />
         </ul>
 
-        <hr />
+        <hr v-if="!readonly" />
 
-        <a class="lpAdd addCategory lp-action-link" @click="newCategory">
+        <a v-if="!readonly" class="lpAdd addCategory lp-action-link" @click="newCategory">
             <svg
                 width="16"
                 height="16"
@@ -105,14 +110,17 @@
 
 <script setup>
 import { computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { marked } from 'marked';
 import { useLighterpackStore } from '../store/store.js';
-import Sortable from 'sortablejs';
-import { useItemDrag } from '../composables/useItemDrag.js';
 import category from './category.vue';
 import listSummary from './list-summary.vue';
 import listActions from './list-actions.vue';
 
 defineOptions({ name: 'List' });
+
+const props = defineProps({
+    readonly: { type: Boolean, default: false },
+});
 
 const store = useLighterpackStore();
 
@@ -134,23 +142,37 @@ const categories = computed(() => {
 const isListNew = computed(() => list.value.totalWeight === 0);
 const isLocalSaving = computed(() => store.saveType === 'local');
 
-const itemDrag = useItemDrag();
-/** @type {Sortable | null} */
+const renderedDescription = computed(() => {
+    if (!props.readonly || !list.value?.description) return '';
+    // marked() with default options escapes HTML in the input.
+    // DOMPurify is not used here because isomorphic-dompurify's jsdom
+    // dependency causes SSR crashes in the Nuxt production build.
+    return marked(list.value.description);
+});
+
 let categorySortable = null;
+let itemDrag = null;
 
 watch(categories, () => {
+    if (!itemDrag) return;
     nextTick(() => {
         itemDrag.setup(list);
     });
 });
 
-onMounted(() => {
-    categorySortable = handleCategoryReorder();
+onMounted(async () => {
+    if (props.readonly) return;
+    const [{ default: Sortable }, { useItemDrag }] = await Promise.all([
+        import('sortablejs'),
+        import('../composables/useItemDrag.js'),
+    ]);
+    itemDrag = useItemDrag();
+    categorySortable = handleCategoryReorder(Sortable);
     itemDrag.setup(list);
 });
 
 onUnmounted(() => {
-    itemDrag.destroy();
+    if (itemDrag) itemDrag.destroy();
     if (categorySortable) categorySortable.destroy();
 });
 
@@ -174,7 +196,7 @@ function updateListDescription() {
     store.updateListDescription(list.value);
 }
 
-function handleCategoryReorder() {
+function handleCategoryReorder(Sortable) {
     const $categories = /** @type {HTMLElement} */ (document.getElementsByClassName('lpCategories')[0]);
     return Sortable.create($categories, {
         handle: '.lpCategoryHandle',

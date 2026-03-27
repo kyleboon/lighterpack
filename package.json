@@ -48,6 +48,7 @@
         "drizzle-orm": "^0.45.1",
         "form-data": "^4.0.5",
         "formidable": "^3.5.4",
+        "isomorphic-dompurify": "^3.7.1",
         "lock": "^1.1.0",
         "mailgun.js": "^12.7.1",
         "marked": "^17.0.5",

@@ -1,6 +1,6 @@
 <template>
     <li :id="item.id" :class="'lpItem ' + item.classes">
-        <span class="lpHandleCell">
+        <span v-if="!readonly" class="lpHandleCell">
             <div class="lpItemHandle lpHandle" title="Reorder this item" />
         </span>
         <span v-if="library.optionalFields['images']" class="lpImageCell">
@@ -19,22 +19,40 @@
             </span>
             <img v-else-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()" />
         </span>
-        <input
-            v-model="item.name"
-            v-focus-on-create="categoryItem._isNew"
-            type="text"
-            class="lpName lpSilent"
-            placeholder="Name"
-            @input="saveItem"
-        />
-        <input
-            v-model="item.description"
-            type="text"
-            class="lpDescription lpSilent"
-            placeholder="Description"
-            @input="saveItem"
-        />
-        <span class="lpActionsCell">
+        <template v-if="readonly">
+            <span class="lpName">
+                <a v-if="item.url" class="lpHref" :href="item.url">{{ item.name }}</a>
+                <template v-else>{{ item.name }}</template>
+            </span>
+            <span class="lpDescription">{{ item.description }}</span>
+        </template>
+        <template v-else>
+            <input
+                v-model="item.name"
+                v-focus-on-create="categoryItem._isNew"
+                type="text"
+                class="lpName lpSilent"
+                placeholder="Name"
+                @input="saveItem"
+            />
+            <input
+                v-model="item.description"
+                type="text"
+                class="lpDescription lpSilent"
+                placeholder="Description"
+                @input="saveItem"
+            />
+        </template>
+        <span v-if="readonly" class="lpActionsCell">
+            <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{ lpActive: categoryItem.worn }" />
+            <i
+                v-if="library.optionalFields['consumable']"
+                class="lpSprite lpConsumable"
+                :class="{ lpActive: categoryItem.consumable }"
+            />
+            <i v-if="categoryItem.star" class="lpSprite lpStar" :class="'lpStar' + categoryItem.star" />
+        </span>
+        <span v-else class="lpActionsCell">
             <button
                 class="lp-icon-btn lpCamera"
                 title="Upload a photo or use a photo from the web"
@@ -133,7 +151,11 @@
             </button>
         </span>
         <span v-if="library.optionalFields['price']" class="lpPriceCell">
+            <template v-if="readonly"
+                >{{ library.currencySymbol }}{{ item.price ? item.price.toFixed(2) : '0.00' }}</template
+            >
             <input
+                v-else
                 v-model="displayPrice"
                 v-empty-if-zero
                 type="text"
@@ -145,56 +167,62 @@
             />
         </span>
         <span class="lpWeightCell lpNumber">
-            <input
-                v-model="displayWeight"
-                v-empty-if-zero
-                type="text"
-                :class="{ lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError }"
-                @input="saveWeight"
-                @keydown.up="incrementWeight($event)"
-                @keydown.down="decrementWeight($event)"
-            />
-            <unitSelect :unit="item.authorUnit" :on-change="setUnit" />
+            <template v-if="readonly">{{ displayWeight }} {{ item.authorUnit }}</template>
+            <template v-else>
+                <input
+                    v-model="displayWeight"
+                    v-empty-if-zero
+                    type="text"
+                    :class="{ lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError }"
+                    @input="saveWeight"
+                    @keydown.up="incrementWeight($event)"
+                    @keydown.down="decrementWeight($event)"
+                />
+                <unitSelect :unit="item.authorUnit" :on-change="setUnit" />
+            </template>
         </span>
         <span class="lpQtyCell">
-            <input
-                v-model="displayQty"
-                type="text"
-                :class="{ lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError }"
-                @input="saveQty"
-                @keydown.up="incrementQty($event)"
-                @keydown.down="decrementQty($event)"
-            />
-            <span class="lpArrows">
-                <span class="lp-arrow lpUp" @click="incrementQty($event)">
-                    <svg
-                        width="10"
-                        height="6"
-                        viewBox="0 0 10 6"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        aria-hidden="true"
-                    >
-                        <path d="M1 5l4-4 4 4" />
-                    </svg>
+            <template v-if="readonly">{{ displayQty }}</template>
+            <template v-else>
+                <input
+                    v-model="displayQty"
+                    type="text"
+                    :class="{ lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError }"
+                    @input="saveQty"
+                    @keydown.up="incrementQty($event)"
+                    @keydown.down="decrementQty($event)"
+                />
+                <span class="lpArrows">
+                    <span class="lp-arrow lpUp" @click="incrementQty($event)">
+                        <svg
+                            width="10"
+                            height="6"
+                            viewBox="0 0 10 6"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            aria-hidden="true"
+                        >
+                            <path d="M1 5l4-4 4 4" />
+                        </svg>
+                    </span>
+                    <span class="lp-arrow lpDown" @click="decrementQty($event)">
+                        <svg
+                            width="10"
+                            height="6"
+                            viewBox="0 0 10 6"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            aria-hidden="true"
+                        >
+                            <path d="M1 1l4 4 4-4" />
+                        </svg>
+                    </span>
                 </span>
-                <span class="lp-arrow lpDown" @click="decrementQty($event)">
-                    <svg
-                        width="10"
-                        height="6"
-                        viewBox="0 0 10 6"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        aria-hidden="true"
-                    >
-                        <path d="M1 1l4 4 4-4" />
-                    </svg>
-                </span>
-            </span>
+            </template>
         </span>
-        <span class="lpRemoveCell">
+        <span v-if="!readonly" class="lpRemoveCell">
             <a class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem">
                 <svg
                     width="16"
@@ -229,6 +257,10 @@ const props = defineProps({
     itemContainer: {
         type: Object,
         default: null,
+    },
+    readonly: {
+        type: Boolean,
+        default: false,
     },
 });
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import SigninForm from '../../../app/components/signin-form.vue';
@@ -25,5 +25,44 @@ describe('SigninForm component', () => {
         const wrapper = mount(SigninForm, { global: { stubs } });
         await wrapper.find('form').trigger('submit');
         expect(wrapper.vm.errors_).toEqual(expect.arrayContaining([expect.objectContaining({ field: 'email' })]));
+    });
+
+    it('uses default callbackURL of "/" when prop is not provided', async () => {
+        const fetchSpy = vi.fn().mockResolvedValue({});
+        vi.stubGlobal('$fetch', fetchSpy);
+
+        const wrapper = mount(SigninForm, { global: { stubs } });
+        await wrapper.find('input[name="email"]').setValue('test@example.com');
+        await wrapper.vm.sendMagicLink();
+
+        expect(fetchSpy).toHaveBeenCalledWith(
+            '/api/auth/sign-in/magic-link',
+            expect.objectContaining({
+                body: expect.objectContaining({ callbackURL: '/' }),
+            }),
+        );
+
+        vi.unstubAllGlobals();
+    });
+
+    it('uses provided callbackURL prop in magic link request', async () => {
+        const fetchSpy = vi.fn().mockResolvedValue({});
+        vi.stubGlobal('$fetch', fetchSpy);
+
+        const wrapper = mount(SigninForm, {
+            global: { stubs },
+            props: { callbackURL: '/r/abc123' },
+        });
+        await wrapper.find('input[name="email"]').setValue('test@example.com');
+        await wrapper.vm.sendMagicLink();
+
+        expect(fetchSpy).toHaveBeenCalledWith(
+            '/api/auth/sign-in/magic-link',
+            expect.objectContaining({
+                body: expect.objectContaining({ callbackURL: '/r/abc123' }),
+            }),
+        );
+
+        vi.unstubAllGlobals();
     });
 });

@@ -37,9 +37,9 @@ describe('Item component', () => {
         };
     }
 
-    function makeLibrary() {
+    function makeLibrary(overrides = {}) {
         return {
-            optionalFields: { images: false, worn: false, consumable: false, price: false },
+            optionalFields: { images: false, worn: false, consumable: false, price: false, ...overrides },
         };
     }
 
@@ -144,5 +144,112 @@ describe('Item component', () => {
         });
         wrapper.vm.removeItem();
         expect(store.removeItemFromCategory).toHaveBeenCalledWith(expect.objectContaining({ itemId: 'item1' }));
+    });
+
+    describe('readonly mode', () => {
+        it('renders item name as static text instead of input', () => {
+            const store = useLighterpackStore();
+            store.library = makeLibrary();
+            const wrapper = mount(Item, {
+                props: { ...makeProps({ name: 'Tent' }), readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('input.lpName').exists()).toBe(false);
+            expect(wrapper.find('span.lpName').exists()).toBe(true);
+            expect(wrapper.find('span.lpName').text()).toBe('Tent');
+        });
+
+        it('renders item name as a link when url is set', () => {
+            const store = useLighterpackStore();
+            store.library = makeLibrary();
+            const wrapper = mount(Item, {
+                props: { ...makeProps({ name: 'Tent', url: 'https://example.com' }), readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('a.lpHref').exists()).toBe(true);
+            expect(wrapper.find('a.lpHref').attributes('href')).toBe('https://example.com');
+            expect(wrapper.find('a.lpHref').text()).toBe('Tent');
+        });
+
+        it('renders description as static text instead of input', () => {
+            const store = useLighterpackStore();
+            store.library = makeLibrary();
+            const wrapper = mount(Item, {
+                props: { ...makeProps({ description: 'A tent' }), readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('input.lpDescription').exists()).toBe(false);
+            expect(wrapper.find('span.lpDescription').exists()).toBe(true);
+            expect(wrapper.find('span.lpDescription').text()).toBe('A tent');
+        });
+
+        it('hides drag handle', () => {
+            const store = useLighterpackStore();
+            store.library = makeLibrary();
+            const wrapper = mount(Item, {
+                props: { ...makeProps(), readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('.lpHandleCell').exists()).toBe(false);
+        });
+
+        it('hides action buttons (camera, link, remove)', () => {
+            const store = useLighterpackStore();
+            store.library = makeLibrary();
+            const wrapper = mount(Item, {
+                props: { ...makeProps(), readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('button.lpCamera').exists()).toBe(false);
+            expect(wrapper.find('button.lpLink').exists()).toBe(false);
+        });
+
+        it('hides remove button', () => {
+            const store = useLighterpackStore();
+            store.library = makeLibrary();
+            const wrapper = mount(Item, {
+                props: { ...makeProps(), readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('.lpRemoveCell').exists()).toBe(false);
+        });
+
+        it('shows static weight and unit instead of input', () => {
+            const store = useLighterpackStore();
+            store.library = makeLibrary();
+            const wrapper = mount(Item, {
+                props: { ...makeProps({ weight: 28349, authorUnit: 'oz' }), readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('input.lpWeight').exists()).toBe(false);
+            const weightCell = wrapper.find('.lpWeightCell');
+            expect(weightCell.exists()).toBe(true);
+            expect(weightCell.text()).toContain('oz');
+        });
+
+        it('shows static qty instead of input', () => {
+            const store = useLighterpackStore();
+            store.library = makeLibrary();
+            const wrapper = mount(Item, {
+                props: { ...makeProps({}, { qty: 3 }), readonly: true },
+                global: { stubs },
+            });
+            expect(wrapper.find('input.lpQty').exists()).toBe(false);
+            const qtyCell = wrapper.find('.lpQtyCell');
+            expect(qtyCell.exists()).toBe(true);
+            expect(qtyCell.text()).toContain('3');
+        });
+
+        it('shows static worn icon when worn is active', () => {
+            const store = useLighterpackStore();
+            store.library = makeLibrary({ worn: true });
+            const wrapper = mount(Item, {
+                props: { ...makeProps({}, { worn: true }), readonly: true },
+                global: { stubs },
+            });
+            const wornIcon = wrapper.find('i.lpWorn');
+            expect(wornIcon.exists()).toBe(true);
+            expect(wornIcon.classes()).toContain('lpActive');
+        });
     });
 });

@@ -98,6 +98,27 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 this.globalAlerts.push({ message: 'An error occurred while loading your data.' });
             }
         },
+        loadShareData(libraryData, externalId) {
+            const library = new Library();
+            try {
+                const parsed = typeof libraryData === 'string' ? JSON.parse(libraryData) : libraryData;
+                library.load(parsed);
+                // Find the list matching the shared externalId and set it as active
+                for (const l of library.lists) {
+                    if (l.externalId && l.externalId === externalId) {
+                        library.defaultListId = l.id;
+                        break;
+                    }
+                }
+                // Pre-calculate subtotals for all categories
+                for (const cat of library.categories) {
+                    cat.calculateSubtotal();
+                }
+                this.library = library;
+            } catch (_err) {
+                this.globalAlerts.push({ message: 'An error occurred while loading the shared list.' });
+            }
+        },
         clearLibraryData() {
             this.library = false;
         },
