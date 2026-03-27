@@ -73,26 +73,60 @@ Playwright automatically starts the app server before running tests (via `npm ru
 
 ## Roadmap
 
-- Switch to tailwind and get rid of scss
-- Remove "popups" and improve the user experience
-- Update the UX to be responsive
-- Accessibility: ARIA labels, keyboard navigation for drag-drop, skip links
+### Critical — Must fix before launch
 
-- Full TypeScript migration across client and server
-- Route-level code splitting with `defineAsyncComponent`
-- Virtual scrolling for large gear lists (`vue-virtual-scroller`)
-- Bundle analysis with `rollup-plugin-visualizer`
-- Fix disabled WebKit Playwright tests
-- Replace email provider
-- Handle decimal display better
-- Stop using imgur for image uploads (cloudflare? and maybe a local storage option)
-- Implement column sorting and bulk selection.
-- Define clear rules for "Worn" vs "Consumable" weight.
-- Add additional fields (url, notes, condition, multiple images, calories)
-- Add a "pantry" section for food
-- Better support for copying a pack
-- deploy to vps
-- give option for self hosting - maybe
-- SEO improvements
-- **Replace embed widget with iframe**: Replace the current embed endpoint with a simple `<iframe src="/r/:id?embed=true">` pointing at the SSR share page. Zero script injection on the host page, no CSS conflicts, impossible to break. (is embedding even a good idea?)
-- markdown export along with csv
+- [ ] Gate test endpoints behind `NODE_ENV` check (`/api/test/create-user-session`, `/api/test/login`) — currently allow full auth bypass in production
+- [ ] Fix copy-list authorization — `copy-list.post.ts` allows any user to copy any other user's list without ownership check
+- [ ] Implement rate limiting on auth endpoints, image uploads, and API routes (config value `authRateLimit` exists but is never enforced)
+- [ ] Replace broken Dockerfile (based on Ubuntu 16.04, references MongoDB, wrong entrypoint) with multi-stage Node.js 22 build for Nitro
+- [ ] Add `/health` endpoint for orchestration and load balancer health checks
+
+### High — Should fix before launch
+
+- [ ] Wrap multi-step DB operations in transactions (list deletion + default reset, list copying, new user initialization)
+- [ ] Add security headers middleware (CSP, X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy)
+- [ ] Add structured logging (pino or similar) — replace scattered `console.log` calls, add request tracing
+- [ ] Standardize error handling on `createError` + throw pattern — only 4 try-catch blocks across 56+ error paths; wrap DB operations, Sharp image processing, and `unlinkSync` calls
+- [ ] Add compound database indexes (`lists(user_id, sort_order)`, `categories(list_id)`, `category_items(category_id)`, `images(user_id, entity_type, entity_id)`)
+- [ ] Add startup validation for required config values (`betterAuthSecret`, `mailgunAPIKey`, `betterAuthBaseURL`, `betterAuthTrustedOrigins`)
+- [ ] Deploy to VPS
+- [ ] Replace email provider (Mailgun)
+
+### Medium — Should fix shortly after launch
+
+- [ ] Fix silent frontend failures — 15+ `.catch(() => {})` blocks in Pinia store swallow errors without user feedback
+- [ ] Add Open Graph and Twitter Card meta tags to share pages (`/r/[id]`) so shared links preview correctly on social media
+- [ ] Accessibility: ARIA labels, `role="dialog"` on modals, `alt` text on images, keyboard navigation for drag-drop, focus trapping in modals, skip links
+- [ ] Add database backup strategy — automated backups for the SQLite file
+- [ ] Add LIMIT to unbounded queries — `buildLibraryBlob()` loads all user data with no bounds
+- [ ] Add graceful shutdown handling (SIGTERM handler to close DB connections and drain in-flight requests)
+- [ ] Create `.env.example` and deployment documentation (required env vars, secrets management, database setup)
+- [ ] Stop using imgur for image uploads (Cloudflare R2, S3, or local storage with CDN and backup strategy)
+- [ ] Update the UX to be responsive
+- [ ] Remove "popups" and improve the user experience
+- [ ] SEO improvements (sitemap, robots.txt, canonical links, structured data)
+
+### Low — Nice to have for v1
+
+- [ ] Standardize error response shapes across all API routes
+- [ ] Add request body validation with zod (negative weights, invalid unit values, string length limits)
+- [ ] Add missing FK constraint on `library_settings.default_list_id`
+- [ ] Split monolithic 829-line Pinia store into modules
+- [ ] Add API documentation (OpenAPI spec)
+- [ ] Bundle size monitoring in CI (`rollup-plugin-visualizer`)
+- [ ] Consider PostgreSQL migration if expecting >100 concurrent users (SQLite single-writer limitation)
+- [ ] Add explicit CSRF token validation for sensitive endpoints (DELETE, account operations)
+- [ ] Switch to Tailwind and get rid of SCSS
+- [ ] Handle decimal display better
+- [ ] Define clear rules for "Worn" vs "Consumable" weight
+- [ ] Fix disabled WebKit Playwright tests
+- [ ] Markdown export along with CSV
+
+### Future features
+
+- [ ] Full TypeScript migration across client and server
+- [ ] Route-level code splitting with `defineAsyncComponent`
+- [ ] Virtual scrolling for large gear lists (`vue-virtual-scroller`)
+- [ ] Implement column sorting
+- [ ] Add additional fields (url, notes, condition, calories)
+- [ ] Add a "pantry" section for food
