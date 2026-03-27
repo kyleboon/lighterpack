@@ -18,47 +18,67 @@ describe('copy-list authorization', () => {
         db = initDb(':memory:');
 
         // Seed two users
-        db.insert(schema.user).values([
-            { id: 'user-1', email: 'a@test.com', emailVerified: false, createdAt: new Date(), updatedAt: new Date() },
-            { id: 'user-2', email: 'b@test.com', emailVerified: false, createdAt: new Date(), updatedAt: new Date() },
-        ]).run();
+        db.insert(schema.user)
+            .values([
+                {
+                    id: 'user-1',
+                    email: 'a@test.com',
+                    emailVerified: false,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                },
+                {
+                    id: 'user-2',
+                    email: 'b@test.com',
+                    emailVerified: false,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                },
+            ])
+            .run();
 
         // Seed a list owned by user-1
-        db.insert(schema.lists).values({
-            id: 1,
-            user_id: 'user-1',
-            name: 'Test List',
-            description: '',
-            external_id: 'abc123',
-            sort_order: 0,
-            created_at: Math.floor(Date.now() / 1000),
-        }).run();
+        db.insert(schema.lists)
+            .values({
+                id: 1,
+                user_id: 'user-1',
+                name: 'Test List',
+                description: '',
+                external_id: 'abc123',
+                sort_order: 0,
+                created_at: Math.floor(Date.now() / 1000),
+            })
+            .run();
 
         // Seed a category + item so the full copy path is exercised
-        db.insert(schema.categories).values({
-            id: 1,
-            user_id: 'user-1',
-            list_id: 1,
-            name: 'Shelter',
-            sort_order: 0,
-        }).run();
+        db.insert(schema.categories)
+            .values({
+                id: 1,
+                user_id: 'user-1',
+                list_id: 1,
+                name: 'Shelter',
+                sort_order: 0,
+            })
+            .run();
 
-        db.insert(schema.category_items).values({
-            id: 1,
-            category_id: 1,
-            user_id: 'user-1',
-            name: 'Tent',
-            description: '',
-            weight: 1000,
-            author_unit: 'g',
-            price: 0,
-            url: '',
-            qty: 1,
-            worn: 0,
-            consumable: 0,
-            star: 0,
-            sort_order: 0,
-        }).run();
+        db.insert(schema.category_items)
+            .values({
+                id: 1,
+                category_id: 1,
+                user_id: 'user-1',
+                name: 'Tent',
+                description: '',
+                weight: 1000,
+                author_unit: 'g',
+                price: 0,
+                url: '',
+                qty: 1,
+                worn: 0,
+                consumable: 0,
+                star: 0,
+                sort_order: 0,
+            })
+            .run();
     });
 
     async function callHandler(userId: string | null, externalId: string) {
@@ -83,7 +103,7 @@ describe('copy-list authorization', () => {
         });
     });
 
-    it('rejects copying another user\'s list with 403', async () => {
+    it("rejects copying another user's list with 403", async () => {
         await expect(callHandler('user-2', 'abc123')).rejects.toMatchObject({
             statusCode: 403,
         });

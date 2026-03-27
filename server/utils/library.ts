@@ -185,9 +185,10 @@ export async function buildLibraryBlob(userId: string) {
         version: '0.3',
         totalUnit: settings.total_unit ?? 'oz',
         itemUnit: settings.item_unit ?? 'oz',
-        defaultListId: (settings.default_list_id != null && listsData.some((l) => l.id === settings.default_list_id))
-            ? settings.default_list_id
-            : listsData[0]?.id ?? 0,
+        defaultListId:
+            settings.default_list_id != null && listsData.some((l) => l.id === settings.default_list_id)
+                ? settings.default_list_id
+                : (listsData[0]?.id ?? 0),
         sequence: maxId + 100,
         showSidebar: settings.show_sidebar === 1,
         optionalFields: {
