@@ -8,7 +8,12 @@ import { initNewUserLibrary } from '../../utils/library.js';
 // Creates (or reuses) the user, inserts a session, sets the Better Auth session
 // cookie via Set-Cookie, then redirects to /  — fully browser-native so the
 // cookie is picked up identically by Chromium, Firefox, and WebKit.
+// Disabled unless ENABLE_TEST_ENDPOINTS=true to prevent auth bypass in production.
 export default defineEventHandler(async (event) => {
+    if (useRuntimeConfig().enableTestEndpoints !== true) {
+        throw createError({ statusCode: 404, statusMessage: 'Not Found' });
+    }
+
     const query = getQuery(event);
     const email = String(query.email ?? '')
         .trim()

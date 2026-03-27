@@ -5,7 +5,12 @@ import * as schema from '../../schema.js';
 import { initNewUserLibrary } from '../../utils/library.js';
 
 // Used by E2E tests to create a session programmatically without magic link flow.
+// Disabled unless ENABLE_TEST_ENDPOINTS=true to prevent auth bypass in production.
 export default defineEventHandler(async (event) => {
+    if (useRuntimeConfig().enableTestEndpoints !== true) {
+        throw createError({ statusCode: 404, statusMessage: 'Not Found' });
+    }
+
     const body = await readBody(event);
     const email = String(body.email ?? '')
         .trim()

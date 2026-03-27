@@ -4,6 +4,9 @@ import { resolve, dirname } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineNuxtConfig({
+    runtimeConfig: {
+        enableTestEndpoints: process.env.ENABLE_TEST_ENDPOINTS === 'true',
+    },
     modules: ['@pinia/nuxt'],
     app: {
         rootId: 'lp',

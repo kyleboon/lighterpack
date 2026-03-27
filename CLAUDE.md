@@ -92,6 +92,10 @@ When Mailgun is not configured (dev), the magic link URL is logged to the consol
 - Playwright auto-starts the app via `npm run start` with `DATABASE_PATH=./data/test.db` (`reuseExistingServer: !process.env.CI` — kill stale servers on port 3000 before re-running locally)
 - Load testing with Locust (Python) in `test/load-testing/`
 
+## Security Rules
+
+- **Test endpoints must be gated behind a runtime config check.** Any endpoint under `server/api/test/` must reject requests unless `useRuntimeConfig().enableTestEndpoints === true`, by throwing `createError({ statusCode: 404, statusMessage: 'Not Found' })` as the first line of the handler. Do not use `process.env.NODE_ENV` — Nitro inlines it at build time, making it unreliable at runtime. The `ENABLE_TEST_ENDPOINTS` env var is only set in the Playwright config; it is never set in production.
+
 ## Key Technical Notes
 
 - The sidebar has `z-index: 20` (below `.lpList` at `z-index: 30`) — flyout popovers inside the sidebar are visually trapped behind the main list area. Use `page.evaluate` with `__vue_app__.config.globalProperties.$store` to trigger store actions in E2E tests instead of clicking sidebar flyout buttons.
