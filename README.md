@@ -45,10 +45,13 @@ npm run lint:js          # ESLint with auto-fix (.js and .vue files)
 npm run lint:css         # Stylelint with auto-fix (.scss and .vue files)
 npm run test:unit        # Run Vitest unit tests
 npm run test:unit:watch  # Run Vitest in watch mode
+npm run test:server      # Run server-side integration tests
 npm run typecheck        # TypeScript type check (no emit)
 ```
 
 ## Testing
+
+Server-side integration tests use Vitest with an in-memory SQLite database to test API handler authorization and logic directly.
 
 E2E tests use Playwright and run against Chromium and Firefox.
 

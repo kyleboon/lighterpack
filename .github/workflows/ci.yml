@@ -43,6 +43,9 @@ jobs:
             - name: Run unit tests
               run: npm run test:unit
 
+            - name: Run server tests
+              run: npm run test:server
+
     test:
         name: E2E Tests
         runs-on: ubuntu-latest

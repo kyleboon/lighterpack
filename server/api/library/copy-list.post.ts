@@ -25,6 +25,11 @@ export default defineEventHandler(async (event) => {
     }
     const sourceList = sourceLists[0]!;
 
+    // Verify the authenticated user owns the source list
+    if (sourceList.user_id !== user.id) {
+        throw createError({ statusCode: 403, message: 'You do not have permission to copy this list' });
+    }
+
     const now = Math.floor(Date.now() / 1000);
 
     // Create new list for the authenticated user

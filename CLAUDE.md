@@ -16,6 +16,7 @@ npm run lint:js          # ESLint with auto-fix (.js and .vue files)
 npm run lint:css         # Stylelint with auto-fix (.scss and .vue files)
 npm run test:unit        # Run Vitest unit tests
 npm run test:unit:watch  # Run Vitest in watch mode
+npm run test:server      # Run server-side integration tests
 npm run typecheck        # TypeScript type check (no emit)
 npx playwright test                                    # Run all E2E tests
 npx playwright test test/e2e/auth.spec.ts              # Run a single test file
@@ -84,6 +85,13 @@ When Mailgun is not configured (dev), the magic link URL is logged to the consol
 - Vitest unit tests in `test/unit/` — components, data types, utils, and views
 - Pattern: `mount()` from `@vue/test-utils`; use `createPinia()`/`setActivePinia()` for components that access the store; use `vi.useFakeTimers()` for timer-dependent behavior
 - Run with `npm run test:unit`
+
+### Server tests (Vitest)
+
+- Server-side integration tests in `test/server/` — test API handler authorization and logic directly
+- Separate config in `vitest.server.config.ts` (uses `node` environment, not `jsdom`)
+- Pattern: `initDb(':memory:')` for a real in-memory SQLite DB; stub Nitro globals (`defineEventHandler`, `createError`, `readBody`) on `globalThis`; import and call the handler directly
+- Run with `npm run test:server`
 
 ### E2E tests (Playwright)
 
