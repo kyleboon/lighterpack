@@ -76,24 +76,18 @@ Playwright automatically starts the app server before running tests (via `npm ru
 
 ## Roadmap
 
-### Critical — Must fix before launch
+### Deployment related
 
-- [ ] Gate test endpoints behind `NODE_ENV` check (`/api/test/create-user-session`, `/api/test/login`) — currently allow full auth bypass in production
-- [ ] Fix copy-list authorization — `copy-list.post.ts` allows any user to copy any other user's list without ownership check
-- [ ] Implement rate limiting on auth endpoints, image uploads, and API routes (config value `authRateLimit` exists but is never enforced)
-- [ ] Replace broken Dockerfile (based on Ubuntu 16.04, references MongoDB, wrong entrypoint) with multi-stage Node.js 22 build for Nitro
-- [ ] Add `/health` endpoint for orchestration and load balancer health checks
+- [ ] Register new domain name
+- [ ] Update branding to use new domain name
+- [ ] Create a simple logo and add it to the branding
+- [ ] Deploy to VPS
+- [ ] Replace email provider (Mailgun)
 
 ### High — Should fix before launch
 
-- [ ] Wrap multi-step DB operations in transactions (list deletion + default reset, list copying, new user initialization)
-- [ ] Add security headers middleware (CSP, X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy)
 - [ ] Add structured logging (pino or similar) — replace scattered `console.log` calls, add request tracing
 - [ ] Standardize error handling on `createError` + throw pattern — only 4 try-catch blocks across 56+ error paths; wrap DB operations, Sharp image processing, and `unlinkSync` calls
-- [ ] Add compound database indexes (`lists(user_id, sort_order)`, `categories(list_id)`, `category_items(category_id)`, `images(user_id, entity_type, entity_id)`)
-- [ ] Add startup validation for required config values (`betterAuthSecret`, `mailgunAPIKey`, `betterAuthBaseURL`, `betterAuthTrustedOrigins`)
-- [ ] Deploy to VPS
-- [ ] Replace email provider (Mailgun)
 
 ### Medium — Should fix shortly after launch
 
