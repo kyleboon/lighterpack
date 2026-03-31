@@ -4,6 +4,9 @@ import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { resolve } from 'path';
 import { readdirSync } from 'node:fs';
 import * as schema from './schema.js';
+import { createChildLogger } from './utils/logger.js';
+
+const log = createChildLogger({ module: 'db' });
 
 let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
 
@@ -21,11 +24,11 @@ export function initDb(dbPath: string) {
 
     // Resolve migrations relative to the project root (works in both dev and production).
     const migrationsFolder = resolve(process.cwd(), 'drizzle/migrations');
-    console.log('[db] migrationsFolder:', migrationsFolder);
+    log.debug({ migrationsFolder }, 'migrations folder');
     try {
-        console.log('[db] migration files:', readdirSync(migrationsFolder));
+        log.debug({ files: readdirSync(migrationsFolder) }, 'migration files');
     } catch (e) {
-        console.log('[db] could not read migrations folder:', e);
+        log.warn({ err: e }, 'could not read migrations folder');
     }
 
     const sqlite = new BetterSqlite3(dbPath);
@@ -39,12 +42,12 @@ export function initDb(dbPath: string) {
     _db = drizzle(sqlite, { schema });
     try {
         migrate(_db, { migrationsFolder });
-        console.log('[db] migrations complete');
+        log.info('migrations complete');
     } catch (e) {
-        console.error('[db] migration error:', e);
+        log.error({ err: e }, 'migration error');
         throw e;
     }
 
-    console.log({ message: 'SQLite database initialized', path: dbPath });
+    log.info({ path: dbPath }, 'database initialized');
     return _db;
 }
