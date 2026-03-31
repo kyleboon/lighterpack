@@ -15,8 +15,7 @@ const MAX_SIZE_BYTES = (config.get('maxImageSizeMb') as number) * 1024 * 1024;
 export default defineEventHandler(async (event) => {
     const user = event.context.user;
     if (!user) {
-        setResponseStatus(event, 401);
-        return { message: 'Please log in.' };
+        throw createError({ statusCode: 401, message: 'Please log in.' });
     }
 
     const _require = createRequire(process.argv[1]);
@@ -28,23 +27,30 @@ export default defineEventHandler(async (event) => {
     mkdirSync(userDir, { recursive: true });
 
     const form = new formidable.IncomingForm({ maxFileSize: MAX_SIZE_BYTES });
-    const { fields, files } = await new Promise<any>((resolve, reject) => {
-        form.parse(event.node.req, (err: any, parsedFields: any, parsedFiles: any) => {
-            if (err) reject(err);
-            else resolve({ fields: parsedFields, files: parsedFiles });
+
+    let fields: any;
+    let files: any;
+    try {
+        const parsed = await new Promise<any>((resolve, reject) => {
+            form.parse(event.node.req, (err: any, parsedFields: any, parsedFiles: any) => {
+                if (err) reject(err);
+                else resolve({ fields: parsedFields, files: parsedFiles });
+            });
         });
-    });
+        fields = parsed.fields;
+        files = parsed.files;
+    } catch (err) {
+        throw createError({ statusCode: 400, message: 'Failed to parse upload.' });
+    }
 
     if (!files?.image?.[0]) {
-        setResponseStatus(event, 400);
-        return { message: 'No image file provided.' };
+        throw createError({ statusCode: 400, message: 'No image file provided.' });
     }
 
     const file = files.image[0];
 
     if (!ALLOWED_TYPES.has(file.mimetype)) {
-        setResponseStatus(event, 400);
-        return { message: 'File must be an image (PNG, JPG, GIF, or WebP).' };
+        throw createError({ statusCode: 400, message: 'File must be an image (PNG, JPG, GIF, or WebP).' });
     }
 
     const entityType = fields?.entityType?.[0];
@@ -52,47 +58,62 @@ export default defineEventHandler(async (event) => {
     const sortOrder = parseInt(fields?.sortOrder?.[0] ?? '0', 10);
 
     if (!entityType || !['item', 'category', 'list'].includes(entityType) || isNaN(entityId)) {
-        setResponseStatus(event, 400);
-        return { message: 'Invalid entityType or entityId.' };
+        throw createError({ statusCode: 400, message: 'Invalid entityType or entityId.' });
     }
 
     const db = getDb();
-    const [{ total }] = await db
-        .select({ total: count() })
-        .from(schema.images)
-        .where(
-            and(
-                eq(schema.images.entity_type, entityType),
-                eq(schema.images.entity_id, entityId),
-                eq(schema.images.user_id, user.id),
-            ),
-        );
+
+    let total: number;
+    try {
+        const [result] = await db
+            .select({ total: count() })
+            .from(schema.images)
+            .where(
+                and(
+                    eq(schema.images.entity_type, entityType),
+                    eq(schema.images.entity_id, entityId),
+                    eq(schema.images.user_id, user.id),
+                ),
+            );
+        total = result.total;
+    } catch (err) {
+        throw createError({ statusCode: 500, message: 'Failed to check image count.' });
+    }
+
     if (total >= MAX_IMAGES_PER_ENTITY) {
-        setResponseStatus(event, 400);
-        return { message: `Maximum of ${MAX_IMAGES_PER_ENTITY} images per item.` };
+        throw createError({ statusCode: 400, message: `Maximum of ${MAX_IMAGES_PER_ENTITY} images per item.` });
     }
 
     const maxWidth = config.get('imageMaxWidthPx') as number;
     const filename = `${user.id}/${randomUUID()}.webp`;
     const outputPath = join(uploadsBase, filename);
 
-    await sharp(file.filepath)
-        .resize({ width: maxWidth, withoutEnlargement: true })
-        .webp({ quality: 82 })
-        .toFile(outputPath);
+    try {
+        await sharp(file.filepath)
+            .resize({ width: maxWidth, withoutEnlargement: true })
+            .webp({ quality: 82 })
+            .toFile(outputPath);
+    } catch (err) {
+        throw createError({ statusCode: 500, message: 'Image processing failed.' });
+    }
 
-    const [inserted] = await db
-        .insert(schema.images)
-        .values({
-            user_id: user.id,
-            entity_type: entityType,
-            entity_id: entityId,
-            filename,
-            is_local: true,
-            sort_order: sortOrder,
-            created_at: Math.floor(Date.now() / 1000),
-        })
-        .returning();
+    let inserted: any;
+    try {
+        [inserted] = await db
+            .insert(schema.images)
+            .values({
+                user_id: user.id,
+                entity_type: entityType,
+                entity_id: entityId,
+                filename,
+                is_local: true,
+                sort_order: sortOrder,
+                created_at: Math.floor(Date.now() / 1000),
+            })
+            .returning();
+    } catch (err) {
+        throw createError({ statusCode: 500, message: 'Failed to save image record.' });
+    }
 
     return {
         id: inserted.id,
