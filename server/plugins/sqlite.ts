@@ -1,5 +1,5 @@
 import config from 'config';
-import { initDb } from '../db.js';
+import { initDb, closeDb } from '../db.js';
 import { logger } from '../utils/logger.js';
 
 function validateConfig() {
@@ -20,8 +20,14 @@ function validateConfig() {
 }
 
 // Initialise the SQLite connection and validate config when the Nitro server starts.
-export default defineNitroPlugin(() => {
+// The close hook runs on SIGTERM/SIGINT to cleanly shut down the database.
+export default defineNitroPlugin((nitroApp) => {
     validateConfig();
     const dbPath = process.env.DATABASE_PATH ?? config.get<string>('databasePath') ?? './data/lighterpack.db';
     initDb(dbPath);
+
+    nitroApp.hooks.hook('close', () => {
+        logger.info('shutting down — closing database connection');
+        closeDb();
+    });
 });

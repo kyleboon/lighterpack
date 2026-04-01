@@ -9,10 +9,20 @@ import { createChildLogger } from './utils/logger.js';
 const log = createChildLogger({ module: 'db' });
 
 let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
+let _sqlite: InstanceType<typeof import('better-sqlite3')> | null = null;
 
 export function getDb() {
     if (!_db) throw new Error('Database not initialized. Call initDb() first.');
     return _db;
+}
+
+export function closeDb() {
+    if (_sqlite) {
+        _sqlite.close();
+        _sqlite = null;
+        _db = null;
+        log.info('database connection closed');
+    }
 }
 
 export function initDb(dbPath: string) {
@@ -31,15 +41,15 @@ export function initDb(dbPath: string) {
         log.warn({ err: e }, 'could not read migrations folder');
     }
 
-    const sqlite = new BetterSqlite3(dbPath);
-    sqlite.pragma('journal_mode = WAL');
-    sqlite.pragma('synchronous = NORMAL');
-    sqlite.pragma('foreign_keys = ON');
-    sqlite.pragma('busy_timeout = 5000');
-    sqlite.pragma('cache_size = -20000');
-    sqlite.pragma('temp_store = MEMORY');
+    _sqlite = new BetterSqlite3(dbPath);
+    _sqlite.pragma('journal_mode = WAL');
+    _sqlite.pragma('synchronous = NORMAL');
+    _sqlite.pragma('foreign_keys = ON');
+    _sqlite.pragma('busy_timeout = 5000');
+    _sqlite.pragma('cache_size = -20000');
+    _sqlite.pragma('temp_store = MEMORY');
 
-    _db = drizzle(sqlite, { schema });
+    _db = drizzle(_sqlite, { schema });
     try {
         migrate(_db, { migrationsFolder });
         log.info('migrations complete');
