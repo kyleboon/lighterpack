@@ -145,25 +145,39 @@ export const useLighterpackStore = defineStore('lighterpack', {
 
         // ── library settings ─────────────────────────────────────────────────
         toggleSidebar() {
+            const old = this.library.showSidebar;
             this.library.showSidebar = !this.library.showSidebar;
             if (this.loggedIn) {
-                this._api('PATCH', '/api/library', { show_sidebar: this.library.showSidebar ? 1 : 0 }).catch(() => {});
+                this._api('PATCH', '/api/library', { show_sidebar: this.library.showSidebar ? 1 : 0 }).catch(() => {
+                    this.library.showSidebar = old;
+                    this._showError('Failed to save setting.');
+                });
             }
         },
         setDefaultList(list) {
+            const oldId = this.library.defaultListId;
             this.library.defaultListId = list.id;
             this.library.getListById(this.library.defaultListId).calculateTotals();
             if (this.loggedIn) {
-                this._api('PATCH', '/api/library', { default_list_id: list.id }).catch(() => {});
+                this._api('PATCH', '/api/library', { default_list_id: list.id }).catch(() => {
+                    this.library.defaultListId = oldId;
+                    this.library.getListById(oldId).calculateTotals();
+                    this._showError('Failed to save setting.');
+                });
             }
         },
         setTotalUnit(unit) {
+            const old = this.library.totalUnit;
             this.library.totalUnit = unit;
             if (this.loggedIn) {
-                this._api('PATCH', '/api/library', { total_unit: unit }).catch(() => {});
+                this._api('PATCH', '/api/library', { total_unit: unit }).catch(() => {
+                    this.library.totalUnit = old;
+                    this._showError('Failed to save setting.');
+                });
             }
         },
         toggleOptionalField(optionalField) {
+            const old = this.library.optionalFields[optionalField];
             this.library.optionalFields[optionalField] = !this.library.optionalFields[optionalField];
             this.library.getListById(this.library.defaultListId).calculateTotals();
             if (this.loggedIn) {
@@ -178,20 +192,32 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 if (key) {
                     this._api('PATCH', '/api/library', {
                         [key]: this.library.optionalFields[optionalField] ? 1 : 0,
-                    }).catch(() => {});
+                    }).catch(() => {
+                        this.library.optionalFields[optionalField] = old;
+                        this.library.getListById(this.library.defaultListId).calculateTotals();
+                        this._showError('Failed to save setting.');
+                    });
                 }
             }
         },
         updateCurrencySymbol(currencySymbol) {
+            const old = this.library.currencySymbol;
             this.library.currencySymbol = currencySymbol;
             if (this.loggedIn) {
-                this._api('PATCH', '/api/library', { currency_symbol: currencySymbol }).catch(() => {});
+                this._api('PATCH', '/api/library', { currency_symbol: currencySymbol }).catch(() => {
+                    this.library.currencySymbol = old;
+                    this._showError('Failed to save setting.');
+                });
             }
         },
         updateItemUnit(unit) {
+            const old = this.library.itemUnit;
             this.library.itemUnit = unit;
             if (this.loggedIn) {
-                this._api('PATCH', '/api/library', { item_unit: unit }).catch(() => {});
+                this._api('PATCH', '/api/library', { item_unit: unit }).catch(() => {
+                    this.library.itemUnit = old;
+                    this._showError('Failed to save setting.');
+                });
             }
         },
 
@@ -262,8 +288,12 @@ export const useLighterpackStore = defineStore('lighterpack', {
         reorderList(args) {
             this.library.lists = arrayMove(this.library.lists, args.before, args.after);
             if (this.loggedIn) {
-                this.library.lists.forEach((list, index) => {
-                    this._api('PATCH', `/api/lists/${list.id}`, { sort_order: index }).catch(() => {});
+                const patches = this.library.lists.map((list, index) =>
+                    this._api('PATCH', `/api/lists/${list.id}`, { sort_order: index }),
+                );
+                Promise.all(patches).catch(async () => {
+                    await this._reloadLibrary();
+                    this._showError('Failed to save list order.');
                 });
             }
         },
@@ -370,8 +400,12 @@ export const useLighterpackStore = defineStore('lighterpack', {
             list.categoryIds = arrayMove(list.categoryIds, args.before, args.after);
             this.library.getListById(this.library.defaultListId).calculateTotals();
             if (this.loggedIn) {
-                list.categoryIds.forEach((catId, index) => {
-                    this._api('PATCH', `/api/categories/${catId}`, { sort_order: index }).catch(() => {});
+                const patches = list.categoryIds.map((catId, index) =>
+                    this._api('PATCH', `/api/categories/${catId}`, { sort_order: index }),
+                );
+                Promise.all(patches).catch(async () => {
+                    await this._reloadLibrary();
+                    this._showError('Failed to save category order.');
                 });
             }
         },
@@ -439,10 +473,14 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 dropCategory.categoryItems = arrayMove(dropCategory.categoryItems, oldIndex, args.dropIndex);
                 this.library.getListById(this.library.defaultListId).calculateTotals();
                 if (this.loggedIn) {
-                    dropCategory.categoryItems.forEach((ci, index) => {
+                    const patches = dropCategory.categoryItems.map((ci, index) =>
                         this._api('PATCH', `/api/categories/${dropCategory.id}/items/${ci.itemId}`, {
                             sort_order: index,
-                        }).catch(() => {});
+                        }),
+                    );
+                    Promise.all(patches).catch(async () => {
+                        await this._reloadLibrary();
+                        this._showError('Failed to save item order.');
                     });
                 }
             } else {
@@ -598,7 +636,9 @@ export const useLighterpackStore = defineStore('lighterpack', {
                         url: args.imageUrl,
                     });
                     item.images.push({ id: result.id, url: result.url, sort_order: result.sort_order ?? 0 });
-                    this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {});
+                    this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
+                    this._showError('Failed to enable images setting.');
+                });
                 } catch {
                     this._showError('An error occurred saving the image URL.');
                 }
@@ -631,7 +671,9 @@ export const useLighterpackStore = defineStore('lighterpack', {
             if (entity) entity.images.push(image);
 
             this.library.optionalFields.images = true;
-            this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {});
+            this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
+                    this._showError('Failed to enable images setting.');
+                });
             return image;
         },
         async deleteImage({ id, entityType, entityId }) {
@@ -667,7 +709,9 @@ export const useLighterpackStore = defineStore('lighterpack', {
             const result = await this._api('POST', '/api/images/url', { entityType, entityId, url });
             entity.images.push({ id: result.id, url: result.url, sort_order: result.sort_order ?? 0 });
             this.library.optionalFields.images = true;
-            this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {});
+            this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
+                    this._showError('Failed to enable images setting.');
+                });
         },
 
         // ── CSV import ────────────────────────────────────────────────────────
