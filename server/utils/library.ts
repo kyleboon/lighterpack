@@ -36,36 +36,35 @@ export function generateUniqueExternalId(tx?: DbOrTx): string {
 export function initNewUserLibrary(userId: string) {
     const db = getDb();
 
-    db.transaction((tx) => {
-        const now = Math.floor(Date.now() / 1000);
+    try {
+        db.transaction((tx) => {
+            const now = Math.floor(Date.now() / 1000);
 
-        // Create library settings with defaults
-        tx.insert(schema.library_settings).values({ user_id: userId }).run();
+            tx.insert(schema.library_settings).values({ user_id: userId }).run();
 
-        // Create the initial list
-        const externalId = generateUniqueExternalId(tx);
-        const [list] = tx
-            .insert(schema.lists)
-            .values({ user_id: userId, name: '', external_id: externalId, sort_order: 0, created_at: now })
-            .returning()
-            .all();
+            const externalId = generateUniqueExternalId(tx);
+            const [list] = tx
+                .insert(schema.lists)
+                .values({ user_id: userId, name: '', external_id: externalId, sort_order: 0, created_at: now })
+                .returning()
+                .all();
 
-        // Set as default list
-        tx.update(schema.library_settings)
-            .set({ default_list_id: list.id })
-            .where(eq(schema.library_settings.user_id, userId))
-            .run();
+            tx.update(schema.library_settings)
+                .set({ default_list_id: list.id })
+                .where(eq(schema.library_settings.user_id, userId))
+                .run();
 
-        // Create the initial category
-        const [category] = tx
-            .insert(schema.categories)
-            .values({ user_id: userId, list_id: list.id, name: '', sort_order: 0 })
-            .returning()
-            .all();
+            const [category] = tx
+                .insert(schema.categories)
+                .values({ user_id: userId, list_id: list.id, name: '', sort_order: 0 })
+                .returning()
+                .all();
 
-        // Create the initial item
-        tx.insert(schema.category_items).values({ category_id: category.id, user_id: userId, sort_order: 0 }).run();
-    });
+            tx.insert(schema.category_items).values({ category_id: category.id, user_id: userId, sort_order: 0 }).run();
+        });
+    } catch (err) {
+        throw createError({ statusCode: 500, message: 'Failed to initialize user library.' });
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -75,11 +74,15 @@ export function initNewUserLibrary(userId: string) {
 export async function buildLibraryBlob(userId: string) {
     const db = getDb();
 
-    // Settings
-    const settingsRows = await db
-        .select()
-        .from(schema.library_settings)
-        .where(eq(schema.library_settings.user_id, userId));
+    let settingsRows;
+    try {
+        settingsRows = await db
+            .select()
+            .from(schema.library_settings)
+            .where(eq(schema.library_settings.user_id, userId));
+    } catch (err) {
+        throw createError({ statusCode: 500, message: 'Failed to load library settings.' });
+    }
     const settings = settingsRows[0] ?? {
         total_unit: 'oz',
         item_unit: 'oz',
@@ -93,12 +96,16 @@ export async function buildLibraryBlob(userId: string) {
         opt_list_description: 0,
     };
 
-    // Lists
-    const dbLists = await db
-        .select()
-        .from(schema.lists)
-        .where(eq(schema.lists.user_id, userId))
-        .orderBy(schema.lists.sort_order);
+    let dbLists;
+    try {
+        dbLists = await db
+            .select()
+            .from(schema.lists)
+            .where(eq(schema.lists.user_id, userId))
+            .orderBy(schema.lists.sort_order);
+    } catch (err) {
+        throw createError({ statusCode: 500, message: 'Failed to load lists.' });
+    }
 
     if (!dbLists.length) {
         // No data yet — return a minimal blank library
@@ -107,30 +114,42 @@ export async function buildLibraryBlob(userId: string) {
 
     const listIds = dbLists.map((l) => l.id);
 
-    // Categories for those lists
-    const dbCategories = await db
-        .select()
-        .from(schema.categories)
-        .where(inArray(schema.categories.list_id, listIds))
-        .orderBy(schema.categories.sort_order);
+    let dbCategories;
+    try {
+        dbCategories = await db
+            .select()
+            .from(schema.categories)
+            .where(inArray(schema.categories.list_id, listIds))
+            .orderBy(schema.categories.sort_order);
+    } catch (err) {
+        throw createError({ statusCode: 500, message: 'Failed to load categories.' });
+    }
 
     const categoryIds = dbCategories.map((c) => c.id);
 
-    // Category items
-    const dbItems = categoryIds.length
-        ? await db
-              .select()
-              .from(schema.category_items)
-              .where(inArray(schema.category_items.category_id, categoryIds))
-              .orderBy(schema.category_items.sort_order)
-        : [];
+    let dbItems;
+    try {
+        dbItems = categoryIds.length
+            ? await db
+                  .select()
+                  .from(schema.category_items)
+                  .where(inArray(schema.category_items.category_id, categoryIds))
+                  .orderBy(schema.category_items.sort_order)
+            : [];
+    } catch (err) {
+        throw createError({ statusCode: 500, message: 'Failed to load items.' });
+    }
 
-    // Images for all entities (items, categories, lists)
-    const dbImages = await db
-        .select()
-        .from(schema.images)
-        .where(eq(schema.images.user_id, userId))
-        .orderBy(schema.images.sort_order);
+    let dbImages;
+    try {
+        dbImages = await db
+            .select()
+            .from(schema.images)
+            .where(eq(schema.images.user_id, userId))
+            .orderBy(schema.images.sort_order);
+    } catch (err) {
+        throw createError({ statusCode: 500, message: 'Failed to load images.' });
+    }
 
     // Build lookup: "item:123" -> [{id, url, sort_order}, ...]
     const imagesByKey: Record<string, { id: number; url: string; sort_order: number }[]> = {};
