@@ -16,8 +16,7 @@ type AllowedField = (typeof ALLOWED_FIELDS)[number];
 export default defineEventHandler(async (event) => {
     const user = event.context.user;
     if (!user) {
-        setResponseStatus(event, 401);
-        return { message: 'Please log in.' };
+        throw createError({ statusCode: 401, message: 'Please log in.' });
     }
 
     const body = await readBody(event);
@@ -29,10 +28,15 @@ export default defineEventHandler(async (event) => {
     }
 
     if (!Object.keys(updates).length) {
-        setResponseStatus(event, 400);
-        return { errors: [{ message: 'No changes requested.' }] };
+        throw createError({ statusCode: 400, message: 'No changes requested.' });
     }
 
-    const result = await updateLibrarySettings(user.id, updates as any);
+    let result;
+    try {
+        result = await updateLibrarySettings(user.id, updates as any);
+    } catch (err) {
+        throw createError({ statusCode: 500, message: 'Failed to update library settings.' });
+    }
+
     return { settings: result };
 });

@@ -32,7 +32,9 @@ export default defineEventHandler(async (event) => {
 
     const now = Math.floor(Date.now() / 1000);
 
-    const newList = db.transaction((tx) => {
+    let newList;
+    try {
+    newList = db.transaction((tx) => {
         // Create new list for the authenticated user
         const newExternalId = generateUniqueExternalId(tx);
         const [created] = tx
@@ -97,6 +99,10 @@ export default defineEventHandler(async (event) => {
 
         return created;
     });
+    } catch (err) {
+        if ((err as any)?.statusCode) throw err;
+        throw createError({ statusCode: 500, message: 'Failed to copy list.' });
+    }
 
     return { listId: newList.id };
 });
