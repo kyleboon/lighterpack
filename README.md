@@ -84,39 +84,35 @@ Playwright automatically starts the app server before running tests (via `npm ru
 - [ ] Deploy to VPS
 - [ ] Replace email provider (Mailgun)
 - [ ] Add database backup strategy — automated backups for the SQLite file
+- [ ] Create `.env.example` and deployment documentation (required env vars, secrets management, database setup)
 
-### Medium — Should fix shortly after launch
+### Front End Ux Work
 
-- [ ] Fix silent frontend failures — 15+ `.catch(() => {})` blocks in Pinia store swallow errors without user feedback
 - [ ] Add Open Graph and Twitter Card meta tags to share pages (`/r/[id]`) so shared links preview correctly on social media
 - [ ] Accessibility: ARIA labels, `role="dialog"` on modals, `alt` text on images, keyboard navigation for drag-drop, focus trapping in modals, skip links
-- [ ] Add LIMIT to unbounded queries — `buildLibraryBlob()` loads all user data with no bounds
-- [ ] Add graceful shutdown handling (SIGTERM handler to close DB connections and drain in-flight requests)
-- [ ] Create `.env.example` and deployment documentation (required env vars, secrets management, database setup)
 - [ ] Update the UX to be responsive
 - [ ] Remove "popups" and improve the user experience
 - [ ] SEO improvements (sitemap, robots.txt, canonical links, structured data)
+- [ ] Get rid of SCSS and use pure CSS
+
+### Backend Work
+
+- [ ] Add LIMIT to unbounded queries — `buildLibraryBlob()` loads all user data with no bounds
+- [ ] Standardize error response shapes across all API routes
+- [ ] Add request body validation with zod (negative weights, invalid unit values, string length limits)
 
 ### Low — Nice to have for v1
 
-- [ ] Standardize error response shapes across all API routes
-- [ ] Add request body validation with zod (negative weights, invalid unit values, string length limits)
-- [ ] Add missing FK constraint on `library_settings.default_list_id`
 - [ ] Split monolithic 829-line Pinia store into modules
-- [ ] Add API documentation (OpenAPI spec)
 - [ ] Bundle size monitoring in CI (`rollup-plugin-visualizer`)
-- [ ] Add explicit CSRF token validation for sensitive endpoints (DELETE, account operations)
-- [ ] Switch to Tailwind and get rid of SCSS
-- [ ] Handle decimal display better
-- [ ] Define clear rules for "Worn" vs "Consumable" weight
 - [ ] Fix disabled WebKit Playwright tests
-- [ ] Markdown export along with CSV
-
-### Future features
-
 - [ ] Full TypeScript migration across client and server
 - [ ] Route-level code splitting with `defineAsyncComponent`
 - [ ] Virtual scrolling for large gear lists (`vue-virtual-scroller`)
+
+### Future features
+
 - [ ] Implement column sorting
 - [ ] Add additional fields (notes, condition, calories)
 - [ ] Add a "pantry" section for food
+- [ ] Markdown export along with CSV

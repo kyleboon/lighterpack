@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import weightUtils from '#shared/utils/weight.js';
 import dataTypes from '#shared/dataTypes.js';
+import { getCsrfToken } from '~/utils/csrf.js';
 
 const { Library, List, Category, Item } = dataTypes;
 
@@ -81,6 +82,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
     actions: {
         // ── session ──────────────────────────────────────────────────────────
         signout() {
+            // Better Auth handles its own CSRF — no custom token needed here.
             fetch('/api/auth/sign-out', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
             this.library = false;
             this.loggedIn = false;
@@ -125,10 +127,16 @@ export const useLighterpackStore = defineStore('lighterpack', {
 
         // ── API helpers ──────────────────────────────────────────────────────
         async _api(method, url, body) {
+            const headers = {};
+            const csrfToken = getCsrfToken();
+            if (csrfToken) {
+                headers['X-CSRF-Token'] = csrfToken;
+            }
             return $fetch(url, {
                 method,
                 body: body !== undefined ? body : undefined,
                 credentials: 'include',
+                headers,
             });
         },
         async _reloadLibrary() {
@@ -637,8 +645,8 @@ export const useLighterpackStore = defineStore('lighterpack', {
                     });
                     item.images.push({ id: result.id, url: result.url, sort_order: result.sort_order ?? 0 });
                     this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
-                    this._showError('Failed to enable images setting.');
-                });
+                        this._showError('Failed to enable images setting.');
+                    });
                 } catch {
                     this._showError('An error occurred saving the image URL.');
                 }
@@ -661,10 +669,16 @@ export const useLighterpackStore = defineStore('lighterpack', {
             formData.append('entityId', String(entityId));
             formData.append('sortOrder', String(entity?.images?.length ?? 0));
 
+            const uploadHeaders = {};
+            const uploadCsrfToken = getCsrfToken();
+            if (uploadCsrfToken) {
+                uploadHeaders['X-CSRF-Token'] = uploadCsrfToken;
+            }
             const result = await $fetch('/api/image-upload', {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',
+                headers: uploadHeaders,
             });
 
             const image = { id: result.id, url: result.url, sort_order: entity?.images?.length ?? 0 };
@@ -672,8 +686,8 @@ export const useLighterpackStore = defineStore('lighterpack', {
 
             this.library.optionalFields.images = true;
             this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
-                    this._showError('Failed to enable images setting.');
-                });
+                this._showError('Failed to enable images setting.');
+            });
             return image;
         },
         async deleteImage({ id, entityType, entityId }) {
@@ -710,8 +724,8 @@ export const useLighterpackStore = defineStore('lighterpack', {
             entity.images.push({ id: result.id, url: result.url, sort_order: result.sort_order ?? 0 });
             this.library.optionalFields.images = true;
             this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
-                    this._showError('Failed to enable images setting.');
-                });
+                this._showError('Failed to enable images setting.');
+            });
         },
 
         // ── CSV import ────────────────────────────────────────────────────────

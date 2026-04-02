@@ -1,4 +1,5 @@
 import weightUtils from '#shared/utils/weight.js';
+import { getCsrfToken } from './csrf.js';
 
 class lpError extends Error {
     constructor(response, statusCode = null) {
@@ -35,6 +36,11 @@ export const fetchJson = (url, options) => {
 
     if (options) {
         Object.assign(fetchOptions, options);
+    }
+
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+        fetchOptions.headers['X-CSRF-Token'] = csrfToken;
     }
 
     if (!fetchOptions.body && !fetchOptions.headers['Content-Type']) {
