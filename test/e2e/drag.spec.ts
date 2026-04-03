@@ -56,7 +56,19 @@ async function drag(
     await page.mouse.move(srcX, srcY);
     await page.mouse.down();
     await page.mouse.move(srcX + 2, srcY + 2, { steps: 3 }); // cross SortableJS drag-start threshold
-    await page.mouse.move(tgtX, tgtY, { steps: 30 });
+
+    // Move in small vertical increments so SortableJS can process each swap.
+    // WebKit needs time between position changes — a single long move can skip items.
+    const totalDy = tgtY - srcY;
+    const stepSize = 20;
+    const numSteps = Math.max(1, Math.ceil(Math.abs(totalDy) / stepSize));
+    for (let i = 1; i <= numSteps; i++) {
+        const progress = i / numSteps;
+        const curX = srcX + (tgtX - srcX) * progress;
+        const curY = srcY + totalDy * progress;
+        await page.mouse.move(curX, curY, { steps: 5 });
+        await page.waitForTimeout(50);
+    }
     await page.waitForTimeout(100); // let SortableJS process the final position before drop
     await page.mouse.up();
     await page.waitForTimeout(200); // wait for Vue reactivity

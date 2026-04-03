@@ -15,18 +15,21 @@ function isTestRoute(path: string): boolean {
 }
 
 export default defineEventHandler((event) => {
-    const path = getRequestURL(event).pathname;
+    const requestUrl = getRequestURL(event);
+    const path = requestUrl.pathname;
     const method = event.node.req.method ?? 'GET';
 
     // Ensure a CSRF cookie is always present so the client can read it.
+    // Note: Nitro inlines process.env.NODE_ENV at build time, so we derive
+    // the secure flag from the actual request protocol instead.
     let token = getCookie(event, CSRF_COOKIE);
     if (!token) {
         token = crypto.randomBytes(32).toString('hex');
         setCookie(event, CSRF_COOKIE, token, {
             httpOnly: false, // JS must read this cookie
-            sameSite: 'strict',
+            sameSite: 'lax',
             path: '/',
-            secure: process.env.NODE_ENV === 'production',
+            secure: requestUrl.protocol === 'https:',
         });
     }
 
