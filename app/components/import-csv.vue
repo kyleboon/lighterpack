@@ -39,7 +39,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
-import { useLighterpackStore } from '../store/store.js';
+import { useLighterpackStore } from '../store/store';
 import { parseCSV } from '../utils/csvParser.js';
 import modal from './modal.vue';
 

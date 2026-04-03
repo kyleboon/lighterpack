@@ -1,4 +1,4 @@
-import { useLighterpackStore } from '~/store/store.js';
+import { useLighterpackStore } from '~/store/store';
 
 export default defineNuxtRouteMiddleware(() => {
     const store = useLighterpackStore();

@@ -243,9 +243,9 @@
 
 <script setup>
 import { ref, computed, watch, onBeforeMount } from 'vue';
-import { useLighterpackStore } from '../store/store.js';
+import { useLighterpackStore } from '../store/store';
 import unitSelect from './unit-select.vue';
-import weightUtils from '#shared/utils/weight.js';
+import { WeightToMg, MgToWeight } from '#shared/utils/weight';
 
 defineOptions({ name: 'Item' });
 
@@ -381,7 +381,7 @@ function saveWeight() {
     const weightFloat = parseFloat(displayWeight.value, 10);
 
     if (!isNaN(weightFloat)) {
-        item.value.weight = weightUtils.WeightToMg(weightFloat, item.value.authorUnit);
+        item.value.weight = WeightToMg(weightFloat, item.value.authorUnit);
         saveItem();
         weightError.value = false;
     } else {
@@ -402,7 +402,7 @@ function setDisplayQty() {
 }
 
 function setDisplayWeight() {
-    displayWeight.value = weightUtils.MgToWeight(item.value.weight, item.value.authorUnit);
+    displayWeight.value = MgToWeight(item.value.weight, item.value.authorUnit);
 }
 
 function updateItemLink() {
@@ -514,8 +514,8 @@ function incrementWeight(evt) {
         return;
     }
 
-    const newWeight = weightUtils.MgToWeight(item.value.weight, item.value.authorUnit) + 1;
-    item.value.weight = weightUtils.WeightToMg(newWeight, item.value.authorUnit);
+    const newWeight = MgToWeight(item.value.weight, item.value.authorUnit) + 1;
+    item.value.weight = WeightToMg(newWeight, item.value.authorUnit);
 
     saveItem();
 }
@@ -527,8 +527,8 @@ function decrementWeight(evt) {
         return;
     }
 
-    const newWeight = weightUtils.MgToWeight(item.value.weight, item.value.authorUnit) - 1;
-    item.value.weight = weightUtils.WeightToMg(newWeight, item.value.authorUnit);
+    const newWeight = MgToWeight(item.value.weight, item.value.authorUnit) - 1;
+    item.value.weight = WeightToMg(newWeight, item.value.authorUnit);
 
     if (item.value.weight < 0) {
         item.value.weight = 0;

@@ -20,7 +20,7 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '~/store/store.js';
+import { useLighterpackStore } from '~/store/store';
 
 defineOptions({ name: 'Dashboard' });
 

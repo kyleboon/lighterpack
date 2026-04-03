@@ -2,8 +2,9 @@ import { eq } from 'drizzle-orm';
 import * as schema from '../../schema.js';
 import { getDb } from '../../db.js';
 import { buildLibraryBlob } from '../../utils/library.js';
-import dataTypes from '#shared/dataTypes.js';
-import weightUtils from '#shared/utils/weight.js';
+import dataTypes from '#shared/dataTypes';
+import { MgToWeight } from '#shared/utils/weight';
+import type { WeightUnit } from '#shared/types';
 
 const { Library } = dataTypes;
 
@@ -72,7 +73,7 @@ export default defineEventHandler(async (event) => {
                         category.name,
                         item.description,
                         `${categoryItem.qty}`,
-                        `${weightUtils.MgToWeight(item.weight, item.authorUnit)}`,
+                        `${MgToWeight(item.weight, item.authorUnit as WeightUnit)}`,
                         fullUnits[item.authorUnit] ?? item.authorUnit,
                         item.url,
                         `${item.price}`,

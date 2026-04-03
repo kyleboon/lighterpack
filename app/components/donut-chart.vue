@@ -51,8 +51,8 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import colorUtils from '#shared/utils/color.js';
-import weightUtils from '#shared/utils/weight.js';
+import { getColor, rgbToString } from '#shared/utils/color';
+import { MgToWeight } from '#shared/utils/weight';
 
 defineOptions({ name: 'DonutChart' });
 
@@ -114,11 +114,11 @@ const categorySlices = computed(() => {
     return props.categories
         .filter((cat) => cat.subtotalWeight > 0)
         .map((cat, i) => {
-            const catColor = cat.color || colorUtils.getColor(i);
-            const fill = colorUtils.rgbToString(catColor);
+            const catColor = cat.color || getColor(i);
+            const fill = rgbToString(catColor);
             const span = (cat.subtotalWeight / props.totalWeight) * 2 * Math.PI;
             const path = segmentPath(innerR, outerR, angle, angle + span);
-            const weight = `${weightUtils.MgToWeight(cat.subtotalWeight, props.library.totalUnit)} ${props.library.totalUnit}`;
+            const weight = `${MgToWeight(cat.subtotalWeight, props.library.totalUnit)} ${props.library.totalUnit}`;
             const slice = { id: cat.id, fill, path, name: cat.name, weight, catColor };
             angle += span;
             return slice;
@@ -130,7 +130,7 @@ const itemSlices = computed(() => {
     const catIndex = props.categories.findIndex((c) => c.id === expandedId.value);
     const category = props.library.getCategoryById(expandedId.value);
     if (!category || !category.subtotalWeight) return [];
-    const catColor = category.color || colorUtils.getColor(catIndex);
+    const catColor = category.color || getColor(catIndex);
     let angle = -Math.PI / 2;
     return category.categoryItems
         .map((ci, i) => {
@@ -138,10 +138,10 @@ const itemSlices = computed(() => {
             if (!item || !item.weight) return null;
             const weight = item.weight * ci.qty;
             const span = (weight / category.subtotalWeight) * 2 * Math.PI;
-            const fill = colorUtils.rgbToString(colorUtils.getColor(i, catColor));
+            const fill = rgbToString(getColor(i, catColor));
             const path = segmentPath(ITEM_INNER, ITEM_OUTER, angle, angle + span);
             const name = ci.qty > 1 ? `${item.name} ×${ci.qty}` : item.name;
-            const weightStr = `${weightUtils.MgToWeight(weight, props.library.totalUnit)} ${props.library.totalUnit}`;
+            const weightStr = `${MgToWeight(weight, props.library.totalUnit)} ${props.library.totalUnit}`;
             angle += span;
             return { fill, path, name, weight: weightStr };
         })

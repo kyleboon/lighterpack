@@ -116,9 +116,9 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useLighterpackStore } from '../store/store.js';
-import weightUtils from '#shared/utils/weight.js';
-import colorUtils from '#shared/utils/color.js';
+import { useLighterpackStore } from '../store/store';
+import { MgToWeight } from '#shared/utils/weight';
+import { getColor, rgbToString, hexToRgb, rgbToHex, stringToRgb } from '#shared/utils/color';
 import colorPicker from './colorpicker.vue';
 import unitSelect from './unit-select.vue';
 import donutChart from './donut-chart.vue';
@@ -142,13 +142,13 @@ const categories = computed(() =>
         return {
             ...category,
             activeHover: hoveredCategoryId.value === category.id,
-            displayColor: colorUtils.rgbToString(category.color || colorUtils.getColor(i)),
+            displayColor: rgbToString(category.color || getColor(i)),
         };
     }),
 );
 
 function displayWeight(mg, unit) {
-    return weightUtils.MgToWeight(mg, unit) || 0;
+    return MgToWeight(mg, unit) || 0;
 }
 
 function displayPrice(price, symbol) {
@@ -161,11 +161,11 @@ function setTotalUnit(unit) {
 }
 
 function updateColor(category, color) {
-    store.updateCategoryColor({ id: category.id, color: colorUtils.hexToRgb(color) });
+    store.updateCategoryColor({ id: category.id, color: hexToRgb(color) });
 }
 
 function colorToHex(color) {
-    return colorUtils.rgbToHex(colorUtils.stringToRgb(color));
+    return rgbToHex(stringToRgb(color));
 }
 </script>
 

@@ -47,7 +47,7 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useLighterpackStore } from '../store/store.js';
+import { useLighterpackStore } from '../store/store';
 import modal from './modal.vue';
 
 defineOptions({ name: 'Account' });

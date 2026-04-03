@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { useLighterpackStore } from '../store/store.js';
+import { useLighterpackStore } from '../store/store';
 
 defineOptions({ name: 'GlobalAlerts' });
 

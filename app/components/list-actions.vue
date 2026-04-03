@@ -117,8 +117,8 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useLighterpackStore } from '../store/store.js';
-import { fetchJson } from '../utils/utils.js';
+import { useLighterpackStore } from '../store/store';
+import { fetchJson } from '../utils/utils';
 import Popover from './popover.vue';
 
 defineOptions({ name: 'ListActions' });

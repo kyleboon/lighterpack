@@ -49,7 +49,7 @@
 
 <script setup>
 import { computed, onMounted, onUnmounted } from 'vue';
-import { useLighterpackStore } from '../store/store.js';
+import { useLighterpackStore } from '../store/store';
 import Sortable from 'sortablejs';
 
 defineOptions({ name: 'LibraryList' });

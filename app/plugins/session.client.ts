@@ -1,4 +1,4 @@
-import { useLighterpackStore } from '~/store/store.js';
+import { useLighterpackStore } from '~/store/store';
 
 // Restore session from the lp cookie on every page load.
 // This plugin is async so routing is blocked until we know whether the user

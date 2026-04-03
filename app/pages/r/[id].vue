@@ -46,7 +46,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useLighterpackStore } from '~/store/store.js';
+import { useLighterpackStore } from '~/store/store';
 import ListComponent from '~/components/list.vue';
 import SigninForm from '~/components/signin-form.vue';
 

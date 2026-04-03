@@ -111,7 +111,7 @@
 <script setup>
 import { computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { marked } from 'marked';
-import { useLighterpackStore } from '../store/store.js';
+import { useLighterpackStore } from '../store/store';
 import category from './category.vue';
 import listSummary from './list-summary.vue';
 import listActions from './list-actions.vue';
@@ -164,7 +164,7 @@ onMounted(async () => {
     if (props.readonly) return;
     const [{ default: Sortable }, { useItemDrag }] = await Promise.all([
         import('sortablejs'),
-        import('../composables/useItemDrag.js'),
+        import('../composables/useItemDrag'),
     ]);
     itemDrag = useItemDrag();
     categorySortable = handleCategoryReorder(Sortable);

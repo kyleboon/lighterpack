@@ -29,7 +29,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '../store/store.js';
+import { useLighterpackStore } from '../store/store';
 import PopoverHover from './popover-hover.vue';
 
 defineOptions({ name: 'AccountDropdown' });

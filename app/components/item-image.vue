@@ -61,7 +61,7 @@
 <script setup>
 import { ref, computed, watch, onUnmounted } from 'vue';
 import Sortable from 'sortablejs';
-import { useLighterpackStore } from '../store/store.js';
+import { useLighterpackStore } from '../store/store';
 import modal from './modal.vue';
 
 const MAX_IMAGES = 4;

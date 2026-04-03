@@ -32,8 +32,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '../store/store.js';
-import { fetchJson } from '../utils/utils.js';
+import { useLighterpackStore } from '../store/store';
+import { fetchJson } from '../utils/utils';
 import errors from './errors.vue';
 import modal from './modal.vue';
 

@@ -70,9 +70,9 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useLighterpackStore } from '../store/store.js';
+import { useLighterpackStore } from '../store/store';
 import Sortable from 'sortablejs';
-import weightUtils from '#shared/utils/weight.js';
+import { MgToWeight } from '#shared/utils/weight';
 
 defineOptions({ name: 'LibraryItem' });
 
@@ -143,7 +143,7 @@ onUnmounted(() => {
 });
 
 function displayWeight(mg, unit) {
-    return weightUtils.MgToWeight(mg, unit) || 0;
+    return MgToWeight(mg, unit) || 0;
 }
 
 function removeItem(item) {

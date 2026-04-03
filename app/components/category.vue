@@ -117,8 +117,8 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useLighterpackStore } from '../store/store.js';
-import weightUtils from '#shared/utils/weight.js';
+import { useLighterpackStore } from '../store/store';
+import { MgToWeight } from '#shared/utils/weight';
 import item from './item.vue';
 
 defineOptions({ name: 'Category' });
@@ -150,7 +150,7 @@ const itemContainers = computed(() => {
 });
 
 function displayWeight(mg, unit) {
-    return weightUtils.MgToWeight(mg, unit) || 0;
+    return MgToWeight(mg, unit) || 0;
 }
 
 function displayPrice(price, symbol) {
