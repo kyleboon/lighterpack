@@ -88,10 +88,8 @@ Playwright automatically starts the app server before running tests (via `npm ru
 
 ### Front End Ux Work
 
-- [ ] Add Open Graph and Twitter Card meta tags to share pages (`/r/[id]`) so shared links preview correctly on social media
 - [ ] Accessibility: ARIA labels, `role="dialog"` on modals, `alt` text on images, keyboard navigation for drag-drop, focus trapping in modals, skip links
 - [ ] Update the UX to be responsive
-- [ ] SEO improvements (sitemap, robots.txt, canonical links, structured data)
 
 ### Future features
 
