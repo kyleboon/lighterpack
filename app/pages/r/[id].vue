@@ -108,11 +108,53 @@ const shareListName = computed(() => {
     return match?.name || 'Shared List';
 });
 
+const shareItemCount = computed(() => {
+    if (!shareData.value) return 0;
+    const cats = shareData.value.library?.categories || [];
+    const items = shareData.value.library?.categoryItems || [];
+    const listObj = (shareData.value.library?.lists || []).find((l) => l.external_id === shareData.value.externalId);
+    if (!listObj) return 0;
+    const catIds = new Set(cats.filter((c) => c.list_id === listObj.id).map((c) => c.id));
+    return items.filter((i) => catIds.has(i.category_id)).length;
+});
+
+const shareCategoryCount = computed(() => {
+    if (!shareData.value) return 0;
+    const cats = shareData.value.library?.categories || [];
+    const listObj = (shareData.value.library?.lists || []).find((l) => l.external_id === shareData.value.externalId);
+    if (!listObj) return 0;
+    return cats.filter((c) => c.list_id === listObj.id).length;
+});
+
+const shareDescription = computed(() => {
+    const items = shareItemCount.value;
+    if (items === 0) return 'A gear list shared on LighterPack.';
+    return `A ${items}-item gear list shared on LighterPack.`;
+});
+
 useSeoMeta({
+    title: () => `${shareListName.value} - LighterPack`,
+    description: shareDescription,
+    ogType: 'website',
+    ogTitle: () => `${shareListName.value} - LighterPack`,
+    ogDescription: shareDescription,
+    twitterCard: 'summary_large_image',
+    twitterTitle: () => `${shareListName.value} - LighterPack`,
+    twitterDescription: shareDescription,
+});
+
+useSchemaOrg([
+    defineItemList({
+        name: shareListName,
+        numberOfItems: shareItemCount,
+    }),
+]);
+
+defineOgImage({
     title: shareListName,
-    ogTitle: shareListName,
-    description: 'A gear list shared on LighterPack',
-    ogDescription: 'A gear list shared on LighterPack',
+    description: shareDescription,
+    itemCount: shareItemCount,
+    categoryCount: shareCategoryCount,
 });
 
 // ── Copy list to authenticated user's account ───────────────────────────
