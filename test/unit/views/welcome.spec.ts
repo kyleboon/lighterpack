@@ -16,6 +16,10 @@ vi.mock('vue-router', async (importOriginal) => {
 });
 
 vi.stubGlobal('useHead', vi.fn());
+vi.stubGlobal('useSeoMeta', vi.fn());
+vi.stubGlobal('useSchemaOrg', vi.fn());
+vi.stubGlobal('defineWebApplication', vi.fn());
+vi.stubGlobal('defineOgImage', vi.fn());
 
 const stubs = {
     globalAlerts: true,
