@@ -507,3 +507,40 @@
         max-width: 200px;
     }
 }
+
+.visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+.skip-link {
+    background: #e8a220;
+    border-radius: 0 0 4px 4px;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    color: #1e1e1c;
+    font-family: 'Figtree', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    height: auto;
+    left: 50%;
+    overflow: visible;
+    padding: 8px 16px;
+    position: fixed;
+    text-decoration: none;
+    top: 0;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    width: auto;
+    z-index: 10000;
+}
+
+.skip-link:focus-visible {
+    clip: auto;
+    clip-path: none;
+}
