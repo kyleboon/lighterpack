@@ -1,7 +1,15 @@
 <template>
     <div class="lp-modal-container">
-        <transition name="lp-modal">
-            <div v-if="shown" :id="id" class="lp-modal">
+        <transition name="lp-modal" @after-enter="onAfterEnter" @after-leave="onAfterLeave">
+            <div
+                v-if="shown"
+                ref="modalRef"
+                :id="id"
+                class="lp-modal"
+                role="dialog"
+                aria-modal="true"
+                :aria-labelledby="labelId"
+            >
                 <slot />
             </div>
         </transition>
@@ -17,7 +25,8 @@
 </template>
 
 <script setup>
-import { onBeforeMount, onBeforeUnmount } from 'vue';
+import { ref, onBeforeMount, onBeforeUnmount } from 'vue';
+import { useFocusTrap } from '../composables/useFocusTrap';
 
 defineOptions({ name: 'Modal' });
 
@@ -38,12 +47,28 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    labelId: {
+        type: String,
+        default: undefined,
+    },
 });
 
 const emit = defineEmits(['hide']);
+const modalRef = ref(null);
+const focusTrap = useFocusTrap();
 
 function hide() {
     emit('hide');
+}
+
+function onAfterEnter() {
+    if (modalRef.value) {
+        focusTrap.activate(modalRef.value);
+    }
+}
+
+function onAfterLeave() {
+    focusTrap.deactivate();
 }
 
 function closeOnEscape(evt) {

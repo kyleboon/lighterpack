@@ -1,7 +1,7 @@
 <template>
     <div id="importCSV">
-        <modal id="importValidate" :shown="shown" @hide="shown = false">
-            <h2>Confirm your import</h2>
+        <modal id="importValidate" :shown="shown" label-id="import-csv-dialog-title" @hide="shown = false">
+            <h2 id="import-csv-dialog-title">Confirm your import</h2>
             <div id="importData">
                 <ul class="lpTable lpDataTable">
                     <li class="lpRow lpHeader">

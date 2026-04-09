@@ -1,10 +1,11 @@
 <template>
     <div v-if="isLoaded" id="main" class="lpHasSidebar">
+        <a href="#main-content" class="skip-link">Skip to main content</a>
         <sidebar />
 
-        <div class="lpList">
+        <main id="main-content" class="lpList">
             <list />
-        </div>
+        </main>
 
         <globalAlerts />
         <speedbump />
@@ -14,6 +15,8 @@
         <itemLink />
         <account />
         <accountDelete />
+
+        <div id="lp-announce" class="visually-hidden" aria-live="polite" role="status" />
     </div>
 </template>
 

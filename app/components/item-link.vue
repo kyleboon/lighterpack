@@ -1,6 +1,6 @@
 <template>
-    <modal id="itemLinkDialog" :shown="shown" @hide="shown = false">
-        <h2>Add a link for this item</h2>
+    <modal id="itemLinkDialog" :shown="shown" label-id="item-link-dialog-title" @hide="shown = false">
+        <h2 id="item-link-dialog-title">Add a link for this item</h2>
         <form id="itemLinkForm" @submit.prevent="addLink">
             <input v-model="url" type="text" d="itemLink" placeholder="Item Link" />
             <input type="submit" class="lpButton" value="Save" />

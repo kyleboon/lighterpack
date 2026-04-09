@@ -1,14 +1,37 @@
 <template>
     <div>
-        <modal id="itemImageDialog" :shown="shown" @hide="shown = false">
-            <h2 class="image-dialog-title">{{ dialogTitle }}</h2>
+        <modal id="itemImageDialog" :shown="shown" label-id="item-image-dialog-title" @hide="shown = false">
+            <h2 id="item-image-dialog-title" class="image-dialog-title">{{ dialogTitle }}</h2>
 
             <!-- Existing image gallery -->
             <div v-if="images.length" class="image-gallery">
                 <div ref="galleryEl" class="gallery-strip">
-                    <div v-for="img in images" :key="img.id" class="gallery-item">
-                        <img :src="img.url" class="gallery-thumb" @click="viewImage(img)" />
-                        <button class="gallery-delete" title="Remove image" @click="removeImage(img)">×</button>
+                    <div v-for="(img, index) in images" :key="img.id" class="gallery-item">
+                        <img :src="img.url" class="gallery-thumb" :alt="`Image ${index + 1}`" @click="viewImage(img)" />
+                        <button
+                            v-if="index > 0"
+                            class="gallery-move gallery-move-left lp-reorder-btn visually-hidden"
+                            :aria-label="'Move image ' + (index + 1) + ' left'"
+                            @click="moveImageUp(index)"
+                        >
+                            &larr;
+                        </button>
+                        <button
+                            v-if="index < images.length - 1"
+                            class="gallery-move gallery-move-right lp-reorder-btn visually-hidden"
+                            :aria-label="'Move image ' + (index + 1) + ' right'"
+                            @click="moveImageDown(index)"
+                        >
+                            &rarr;
+                        </button>
+                        <button
+                            class="gallery-delete"
+                            title="Remove image"
+                            aria-label="Remove image"
+                            @click="removeImage(img)"
+                        >
+                            ×
+                        </button>
                     </div>
                 </div>
                 <p class="gallery-hint">Drag thumbnails to reorder · Click to view full size</p>
@@ -62,6 +85,7 @@
 import { ref, computed, watch, onUnmounted } from 'vue';
 import Sortable from 'sortablejs';
 import { useLighterpackStore } from '../store/store';
+import { useAnnounce } from '../composables/useAnnounce';
 import modal from './modal.vue';
 
 const MAX_IMAGES = 4;
@@ -76,6 +100,8 @@ const urlInput = ref('');
 const uploading = ref(false);
 const savingUrl = ref(false);
 const isDragging = ref(false);
+
+const { announce } = useAnnounce();
 
 /** @type {import('sortablejs').Sortable | null} */
 let sortableInstance = null;
@@ -149,6 +175,24 @@ onUnmounted(() => {
 
 function viewImage(img) {
     store.openViewImageDialog(img.url);
+}
+
+function moveImageUp(index) {
+    if (!reactiveEntity.value) return;
+    const reordered = [...images.value];
+    const [moved] = reordered.splice(index, 1);
+    reordered.splice(index - 1, 0, moved);
+    store.reorderImages({ entityType: entityType.value, entityId: reactiveEntity.value.id, images: reordered });
+    announce(`Moved image to position ${index} of ${reordered.length}`);
+}
+
+function moveImageDown(index) {
+    if (!reactiveEntity.value) return;
+    const reordered = [...images.value];
+    const [moved] = reordered.splice(index, 1);
+    reordered.splice(index + 1, 0, moved);
+    store.reorderImages({ entityType: entityType.value, entityId: reactiveEntity.value.id, images: reordered });
+    announce(`Moved image to position ${index + 2} of ${reordered.length}`);
 }
 
 async function removeImage(img) {
@@ -379,5 +423,39 @@ async function saveUrl() {
     color: #8a8880;
     font-size: 13px;
     margin-top: 8px;
+}
+
+.gallery-move {
+    background: rgb(0 0 0 / 60%);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    font-size: 11px;
+    height: 20px;
+    line-height: 1;
+    padding: 0;
+    position: absolute;
+    top: 4px;
+    width: 20px;
+}
+
+.gallery-move-left {
+    left: 4px;
+}
+
+.gallery-move-right {
+    left: 28px;
+}
+
+.gallery-move:focus-visible {
+    clip-path: none;
+    height: 20px;
+    outline: 2px solid #e8a220;
+    outline-offset: 2px;
+    overflow: visible;
+    position: absolute;
+    white-space: normal;
+    width: 20px;
 }
 </style>

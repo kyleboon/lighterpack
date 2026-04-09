@@ -36,4 +36,23 @@ describe('Modal component', () => {
         const wrapper = mount(Modal, { props: { shown: true, transparentOverlay: true } });
         expect(wrapper.find('.lp-modal-overlay.is-transparent').exists()).toBe(true);
     });
+
+    it('has role="dialog" and aria-modal="true" when shown', () => {
+        const wrapper = mount(Modal, {
+            props: { shown: true },
+            slots: { default: '<h2 id="modal-title">Title</h2>' },
+        });
+        const dialog = wrapper.find('.lp-modal');
+        expect(dialog.attributes('role')).toBe('dialog');
+        expect(dialog.attributes('aria-modal')).toBe('true');
+    });
+
+    it('sets aria-labelledby to the provided labelId prop', () => {
+        const wrapper = mount(Modal, {
+            props: { shown: true, labelId: 'my-title' },
+            slots: { default: '<h2 id="my-title">Title</h2>' },
+        });
+        const dialog = wrapper.find('.lp-modal');
+        expect(dialog.attributes('aria-labelledby')).toBe('my-title');
+    });
 });

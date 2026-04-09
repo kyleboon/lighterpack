@@ -39,4 +39,16 @@ describe('Popover component', () => {
         expect(wrapper.find('.my-target').exists()).toBe(true);
         expect(wrapper.find('.my-content').exists()).toBe(true);
     });
+
+    it('has aria-modal="true" on the content div', () => {
+        const wrapper = mount(Popover, {
+            props: { shown: true },
+            slots: {
+                target: '<button>trigger</button>',
+                content: '<div>content</div>',
+            },
+        });
+        const content = wrapper.find('.lp-popover-content');
+        expect(content.attributes('aria-modal')).toBe('true');
+    });
 });

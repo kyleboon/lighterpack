@@ -1,6 +1,6 @@
 <template>
-    <modal id="accountSettings" :shown="shown" @hide="shown = false">
-        <h2>Account Settings</h2>
+    <modal id="accountSettings" :shown="shown" label-id="account-dialog-title" @hide="shown = false">
+        <h2 id="account-dialog-title">Account Settings</h2>
 
         <p>
             Signed in as <strong>{{ currentEmail }}</strong>

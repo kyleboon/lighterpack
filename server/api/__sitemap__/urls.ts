@@ -1,6 +1,5 @@
 import { getDb } from '../../db.js';
 import * as schema from '../../schema.js';
-import { defineSitemapEventHandler } from '#imports';
 
 export default defineSitemapEventHandler(async () => {
     const db = getDb();

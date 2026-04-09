@@ -10,6 +10,7 @@
                     :key="img.id ?? i"
                     class="lpItemThumb"
                     :src="img.url"
+                    :alt="`${item.name} image ${i + 1}`"
                     :title="`Image ${i + 1}`"
                     @click="viewItemImageAt(i)"
                 />
@@ -17,7 +18,13 @@
                     +{{ extraImageCount }}
                 </span>
             </span>
-            <img v-else-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()" />
+            <img
+                v-else-if="thumbnailImage"
+                class="lpItemImage"
+                :src="thumbnailImage"
+                :alt="item.name + ' thumbnail'"
+                @click="viewItemImage()"
+            />
         </span>
         <template v-if="readonly">
             <span class="lpName">
@@ -27,7 +34,9 @@
             <span class="lpDescription">{{ item.description }}</span>
         </template>
         <template v-else>
+            <label :for="'item-name-' + item.id" class="visually-hidden">Item name</label>
             <input
+                :id="'item-name-' + item.id"
                 v-model="item.name"
                 v-focus-on-create="categoryItem._isNew"
                 type="text"
@@ -35,7 +44,9 @@
                 placeholder="Name"
                 @input="saveItem"
             />
+            <label :for="'item-desc-' + item.id" class="visually-hidden">Item description</label>
             <input
+                :id="'item-desc-' + item.id"
                 v-model="item.description"
                 type="text"
                 class="lpDescription lpSilent"
@@ -56,6 +67,7 @@
             <button
                 class="lp-icon-btn lpCamera"
                 title="Upload a photo or use a photo from the web"
+                aria-label="Upload photo"
                 @click="updateItemImage"
             >
                 <svg
@@ -77,6 +89,7 @@
                 class="lp-icon-btn lpLink"
                 :class="{ lpActive: item.url }"
                 title="Add a link for this item"
+                aria-label="Add link"
                 @click="updateItemLink"
             >
                 <svg
@@ -97,6 +110,7 @@
                 class="lp-icon-btn lpWorn"
                 :class="{ lpActive: categoryItem.worn }"
                 title="Mark this item as worn"
+                :aria-label="categoryItem.worn ? 'Worn (active)' : 'Mark as worn'"
                 @click="toggleWorn"
             >
                 <svg
@@ -118,6 +132,7 @@
                 class="lp-icon-btn lpConsumable"
                 :class="{ lpActive: categoryItem.consumable }"
                 title="Mark this item as a consumable"
+                :aria-label="categoryItem.consumable ? 'Consumable (active)' : 'Mark as consumable'"
                 @click="toggleConsumable"
             >
                 <svg
@@ -138,6 +153,7 @@
                 class="lp-icon-btn lpStar"
                 :class="'lpStar' + categoryItem.star"
                 title="Star this item"
+                :aria-label="categoryItem.star ? 'Star level ' + categoryItem.star : 'Add star'"
                 @click="cycleStar"
             >
                 <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
@@ -159,6 +175,7 @@
                 v-model="displayPrice"
                 v-empty-if-zero
                 type="text"
+                aria-label="Price"
                 :class="{ lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError }"
                 @input="savePrice"
                 @keydown.up="incrementPrice($event)"
@@ -173,6 +190,7 @@
                     v-model="displayWeight"
                     v-empty-if-zero
                     type="text"
+                    aria-label="Weight"
                     :class="{ lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError }"
                     @input="saveWeight"
                     @keydown.up="incrementWeight($event)"
@@ -187,13 +205,19 @@
                 <input
                     v-model="displayQty"
                     type="text"
+                    aria-label="Quantity"
                     :class="{ lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError }"
                     @input="saveQty"
                     @keydown.up="incrementQty($event)"
                     @keydown.down="decrementQty($event)"
                 />
                 <span class="lpArrows">
-                    <span class="lp-arrow lpUp" @click="incrementQty($event)">
+                    <button
+                        type="button"
+                        class="lp-arrow lpUp"
+                        aria-label="Increase quantity"
+                        @click="incrementQty($event)"
+                    >
                         <svg
                             width="10"
                             height="6"
@@ -205,8 +229,13 @@
                         >
                             <path d="M1 5l4-4 4 4" />
                         </svg>
-                    </span>
-                    <span class="lp-arrow lpDown" @click="decrementQty($event)">
+                    </button>
+                    <button
+                        type="button"
+                        class="lp-arrow lpDown"
+                        aria-label="Decrease quantity"
+                        @click="decrementQty($event)"
+                    >
                         <svg
                             width="10"
                             height="6"
@@ -218,12 +247,12 @@
                         >
                             <path d="M1 1l4 4 4-4" />
                         </svg>
-                    </span>
+                    </button>
                 </span>
             </template>
         </span>
         <span v-if="!readonly" class="lpRemoveCell">
-            <a class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem">
+            <a class="lpRemove lpRemoveItem" title="Remove this item" aria-label="Remove item" @click="removeItem">
                 <svg
                     width="16"
                     height="16"
@@ -711,10 +740,13 @@ defineExpose({
 }
 
 .lp-arrow {
+    background: none;
+    border: none;
     color: #8a8880;
     cursor: pointer;
     display: flex;
     line-height: 1;
+    padding: 0;
     transition: color 120ms ease;
 
     &:hover {

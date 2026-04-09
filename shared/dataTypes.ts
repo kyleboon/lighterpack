@@ -20,6 +20,9 @@ class Item {
     price: number;
     url: string;
     images: ImageRecord[];
+    // Legacy fields retained for backwards compatibility with old Imgur-hosted images.
+    image?: string;
+    imageUrl?: string;
 
     constructor({ id, unit }: { id: number; unit?: string }) {
         this.id = id;

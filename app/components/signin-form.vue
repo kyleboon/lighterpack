@@ -5,7 +5,9 @@
         </div>
         <form v-else class="signin" @submit.prevent="sendMagicLink">
             <div class="lpFields">
+                <label for="signin-email" class="visually-hidden">Email address</label>
                 <input
+                    id="signin-email"
                     v-model="email"
                     v-focus-on-create
                     type="email"

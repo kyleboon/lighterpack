@@ -1,6 +1,6 @@
 <template>
-    <modal id="deleteAccount" :shown="shown" @hide="shown = false">
-        <h2>Delete account?</h2>
+    <modal id="deleteAccount" :shown="shown" label-id="account-delete-dialog-title" @hide="shown = false">
+        <h2 id="account-delete-dialog-title">Delete account?</h2>
 
         <form id="accountForm" @submit.prevent="deleteAccount()">
             <p class="lpWarning">

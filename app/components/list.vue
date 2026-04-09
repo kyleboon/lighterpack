@@ -18,6 +18,7 @@
                     v-if="library.optionalFields['images']"
                     class="lp-icon-btn lp-list-camera"
                     title="Manage list images"
+                    aria-label="Manage list images"
                     @click="manageListImages"
                 >
                     <svg
@@ -58,6 +59,7 @@
                 :key="img.id ?? i"
                 class="lpItemThumb"
                 :src="img.url"
+                :alt="`${list.name} image ${i + 1}`"
                 :title="`Image ${i + 1}`"
                 @click="viewListImageAt(i)"
             />

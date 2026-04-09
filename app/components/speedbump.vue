@@ -1,6 +1,6 @@
 <template>
-    <modal id="speedbump" :shown="shown" @hide="shown = false">
-        <h2 v-if="messages.title">
+    <modal id="speedbump" :shown="shown" label-id="speedbump-dialog-title" @hide="shown = false">
+        <h2 v-if="messages.title" id="speedbump-dialog-title">
             {{ messages.title }}
         </h2>
 

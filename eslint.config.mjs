@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
 import prettier from 'eslint-config-prettier';
+import tsParser from '@typescript-eslint/parser';
 
 const sharedRules = {
     'consistent-return': 'error',
@@ -78,9 +79,9 @@ export default [
             'no-unused-vars': ['warn', { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
         },
     },
-    // Unit test files
+    // Unit test files (JavaScript)
     {
-        files: ['test/unit/**/*.spec.{js,ts}'],
+        files: ['test/unit/**/*.spec.js'],
         ...js.configs.recommended,
         languageOptions: {
             ecmaVersion: 2022,
@@ -94,6 +95,29 @@ export default [
         rules: {
             ...sharedRules,
             ...prettier.rules,
+        },
+    },
+    // Unit test files (TypeScript) — uses TS parser to handle type annotations
+    {
+        files: ['test/unit/**/*.spec.ts', 'test/server/**/*.spec.ts'],
+        ...js.configs.recommended,
+        languageOptions: {
+            parser: tsParser,
+            ecmaVersion: 2022,
+            globals: {
+                require: 'readonly',
+                module: 'writable',
+                exports: 'writable',
+                console: 'readonly',
+            },
+        },
+        rules: {
+            ...sharedRules,
+            ...prettier.rules,
+            // TS parser doesn't understand some JS-specific rules; disable rules
+            // that conflict with TypeScript's own checks.
+            'no-unused-vars': 'off',
+            'no-undef': 'off',
         },
     },
     // Vue files — apply vue plugin rules on top of js recommended

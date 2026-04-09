@@ -7,14 +7,21 @@
         <div class="lp-popover-target lpTarget">
             <slot name="target" />
         </div>
-        <div class="lp-popover-content lpContent" role="dialog">
+        <div
+            ref="contentRef"
+            class="lp-popover-content lpContent"
+            role="dialog"
+            aria-modal="true"
+            :aria-labelledby="labelId"
+        >
             <slot name="content" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { onBeforeMount, onBeforeUnmount } from 'vue';
+import { ref, watch, onBeforeMount, onBeforeUnmount } from 'vue';
+import { useFocusTrap } from '../composables/useFocusTrap';
 
 defineOptions({ name: 'Popover' });
 
@@ -27,13 +34,30 @@ const props = defineProps({
         type: Boolean,
         required: true,
     },
+    labelId: {
+        type: String,
+        default: undefined,
+    },
 });
 
 const emit = defineEmits(['hide']);
+const contentRef = ref(null);
+const focusTrap = useFocusTrap();
 
 function hide() {
     emit('hide');
 }
+
+watch(
+    () => props.shown,
+    (val) => {
+        if (val && contentRef.value) {
+            focusTrap.activate(contentRef.value);
+        } else if (!val) {
+            focusTrap.deactivate();
+        }
+    },
+);
 
 function closeOnEscape(evt) {
     if (props.shown && evt.keyCode === 27) {

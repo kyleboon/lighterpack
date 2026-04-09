@@ -1,15 +1,23 @@
 <template>
-    <modal id="lpImageDialog" :shown="shown" @hide="shown = false">
+    <modal id="lpImageDialog" :shown="shown" label-id="view-image-dialog-title" @hide="shown = false">
+        <h2 id="view-image-dialog-title" class="visually-hidden">Image viewer</h2>
         <!-- Main image display -->
         <div class="view-image-main">
-            <button v-if="images.length > 1" class="nav-btn nav-prev" :disabled="activeIndex === 0" @click="prev">
+            <button
+                v-if="images.length > 1"
+                class="nav-btn nav-prev"
+                :disabled="activeIndex === 0"
+                aria-label="Previous image"
+                @click="prev"
+            >
                 ‹
             </button>
-            <img :src="activeUrl" class="view-image-img" />
+            <img :src="activeUrl" class="view-image-img" alt="Full size image" />
             <button
                 v-if="images.length > 1"
                 class="nav-btn nav-next"
                 :disabled="activeIndex === images.length - 1"
+                aria-label="Next image"
                 @click="next"
             >
                 ›
@@ -24,6 +32,7 @@
                 :src="img.url ?? img"
                 class="view-thumb"
                 :class="{ 'is-active': i === activeIndex }"
+                :alt="`Thumbnail ${i + 1}`"
                 @click="activeIndex = i"
             />
         </div>
