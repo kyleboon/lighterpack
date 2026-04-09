@@ -6,12 +6,12 @@
 
         <ul id="lists" class="lp-nav-list">
             <li
-                v-for="libList in library.lists"
+                v-for="(libList, index) in library.lists"
                 :key="libList.id"
                 class="lp-nav-list-item"
                 :class="{ 'is-active': library.defaultListId == libList.id }"
             >
-                <span class="lpHandle lp-drag-handle" title="Reorder">
+                <span class="lpHandle lp-drag-handle" title="Reorder" aria-label="Drag to reorder list">
                     <svg width="10" height="14" viewBox="0 0 10 14" fill="none" aria-hidden="true">
                         <circle cx="3" cy="2.5" r="1.2" fill="currentColor" />
                         <circle cx="7" cy="2.5" r="1.2" fill="currentColor" />
@@ -21,6 +21,22 @@
                         <circle cx="7" cy="11.5" r="1.2" fill="currentColor" />
                     </svg>
                 </span>
+                <button
+                    v-if="index > 0"
+                    class="lp-reorder-btn visually-hidden"
+                    :aria-label="'Move ' + listName(libList) + ' up'"
+                    @click="moveListUp(index)"
+                >
+                    &uarr;
+                </button>
+                <button
+                    v-if="index < library.lists.length - 1"
+                    class="lp-reorder-btn visually-hidden"
+                    :aria-label="'Move ' + listName(libList) + ' down'"
+                    @click="moveListDown(index)"
+                >
+                    &darr;
+                </button>
                 <button
                     class="lp-nav-link"
                     :class="{ active: library.defaultListId == libList.id }"
@@ -51,6 +67,7 @@
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useLighterpackStore } from '../store/store';
 import Sortable from 'sortablejs';
+import { useAnnounce } from '../composables/useAnnounce';
 
 defineOptions({ name: 'LibraryList' });
 
@@ -64,6 +81,20 @@ defineProps({
 const store = useLighterpackStore();
 
 const library = computed(() => store.library);
+
+const { announce } = useAnnounce();
+
+function moveListUp(index) {
+    store.reorderList({ before: index, after: index - 1 });
+    const name = listName(library.value.lists[index - 1]);
+    announce(`Moved ${name} to position ${index} of ${library.value.lists.length}`);
+}
+
+function moveListDown(index) {
+    store.reorderList({ before: index, after: index + 1 });
+    const name = listName(library.value.lists[index + 1]);
+    announce(`Moved ${name} to position ${index + 2} of ${library.value.lists.length}`);
+}
 
 /** @type {Sortable | null} */
 let listSortable = null;
@@ -293,5 +324,30 @@ function removeList(list) {
     background: #2f2f2c;
     border-radius: 6px;
     opacity: 0.9;
+}
+
+.lp-reorder-btn {
+    background: none;
+    border: 1px solid #3b3b37;
+    border-radius: 4px;
+    color: #c8c6bc;
+    cursor: pointer;
+    font-size: 12px;
+    height: 22px;
+    line-height: 1;
+    padding: 0;
+    width: 22px;
+}
+
+.lp-reorder-btn:focus-visible {
+    clip: auto;
+    clip-path: none;
+    height: auto;
+    outline: 2px solid #e8a220;
+    outline-offset: 2px;
+    overflow: visible;
+    position: static;
+    white-space: normal;
+    width: auto;
 }
 </style>
