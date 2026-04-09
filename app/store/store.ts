@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { WeightToMg } from '#shared/utils/weight';
 import dataTypes from '#shared/dataTypes';
+import type { RGB, ImageRecord } from '#shared/types';
 import { getCsrfToken } from '~/utils/csrf';
 
 const { Library, List, Category, Item } = dataTypes;
@@ -94,9 +95,15 @@ function addListToLibrary(library: LibraryType, serverList: ServerList): ListTyp
 
 // ─── store ────────────────────────────────────────────────────────────────────
 
+// Pragmatic type assertion: library is typed as always-loaded for action access,
+// even though at runtime it's `false` before load / after signout. All actions
+// assume library is loaded (they're only called from loaded-library UI paths).
+// TODO: replace with proper nullable type + null guards — see README roadmap.
+const UNLOADED_LIBRARY = false as unknown as LibraryType;
+
 export const useLighterpackStore = defineStore('lighterpack', {
     state: () => ({
-        library: false as LibraryType | false,
+        library: UNLOADED_LIBRARY,
         loggedIn: false as string | false,
         directiveInstances: {} as Record<string, EventListener>,
         globalAlerts: [] as Array<{ message: string }>,
@@ -117,7 +124,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
         signout() {
             // Better Auth handles its own CSRF — no custom token needed here.
             fetch('/api/auth/sign-out', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
-            this.library = false;
+            this.library = UNLOADED_LIBRARY;
             this.loggedIn = false;
         },
         setLoggedIn(loggedIn: string | false) {
@@ -155,11 +162,11 @@ export const useLighterpackStore = defineStore('lighterpack', {
             }
         },
         clearLibraryData() {
-            this.library = false;
+            this.library = UNLOADED_LIBRARY;
         },
 
         // ── API helpers ──────────────────────────────────────────────────────
-        async _api(method: string, url: string, body?: unknown) {
+        async _api(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', url: string, body?: unknown) {
             const headers: Record<string, string> = {};
             const csrfToken = getCsrfToken();
             if (csrfToken) {
@@ -217,7 +224,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 });
             }
         },
-        toggleOptionalField(optionalField: string) {
+        toggleOptionalField(optionalField: keyof LibraryType['optionalFields']) {
             const old = this.library.optionalFields[optionalField];
             this.library.optionalFields[optionalField] = !this.library.optionalFields[optionalField];
             this.library.getListById(this.library.defaultListId).calculateTotals();
@@ -343,6 +350,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
             if (!oldList) return;
             if (!this.loggedIn) {
                 const copiedList = this.library.copyList(listId);
+                if (!copiedList) return;
                 this.library.defaultListId = copiedList.id;
                 return;
             }
@@ -423,7 +431,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 );
             }
         },
-        updateCategoryColor(updatedCategory: { id: number; color: unknown }) {
+        updateCategoryColor(updatedCategory: { id: number; color: RGB }) {
             const category = this.library.getCategoryById(updatedCategory.id);
             category.color = updatedCategory.color;
         },
@@ -441,7 +449,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
             list.categoryIds = window.arrayMove(list.categoryIds, args.before, args.after);
             this.library.getListById(this.library.defaultListId).calculateTotals();
             if (this.loggedIn) {
-                const patches = list.categoryIds.map((catId: number, index: number) =>
+                const patches = list.categoryIds.map((catId, index) =>
                     this._api('PATCH', `/api/categories/${catId}`, { sort_order: index }),
                 );
                 Promise.all(patches).catch(async () => {
@@ -501,12 +509,14 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 });
             }
         },
-        reorderItem(args: { list: ListType; itemId: number; categoryId: number; dropIndex: number }) {
+        reorderItem(args: { list: { id: number }; itemId: number; categoryId: number; dropIndex: number }) {
             const item = this.library.getItemById(args.itemId);
             const dropCategory = this.library.getCategoryById(args.categoryId);
             const list = this.library.getListById(args.list.id);
             const originalCategory = this.library.findCategoryWithItemById(item.id, list.id);
+            if (!originalCategory) return;
             const oldCategoryItem = originalCategory.getCategoryItemById(item.id);
+            if (!oldCategoryItem) return;
             const oldIndex = originalCategory.categoryItems.indexOf(oldCategoryItem);
             const isCrossCategory = originalCategory !== dropCategory;
 
@@ -572,13 +582,15 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 if (item && dropCategory) {
                     dropCategory.addItem({ itemId: item.id });
                     const categoryItem = dropCategory.getCategoryItemById(item.id);
-                    const categoryItemIndex = dropCategory.categoryItems.indexOf(categoryItem);
-                    if (categoryItem && categoryItemIndex !== -1) {
-                        dropCategory.categoryItems = window.arrayMove(
-                            dropCategory.categoryItems,
-                            categoryItemIndex,
-                            args.dropIndex,
-                        );
+                    if (categoryItem) {
+                        const categoryItemIndex = dropCategory.categoryItems.indexOf(categoryItem);
+                        if (categoryItemIndex !== -1) {
+                            dropCategory.categoryItems = window.arrayMove(
+                                dropCategory.categoryItems,
+                                categoryItemIndex,
+                                args.dropIndex,
+                            );
+                        }
                     }
                     this.library.getListById(this.library.defaultListId).calculateTotals();
                 }
@@ -610,13 +622,15 @@ export const useLighterpackStore = defineStore('lighterpack', {
                     addItemToLibrary(this.library as LibraryType, si, null);
                     dropCategory.addItem({ itemId: si.id });
                     const categoryItem = dropCategory.getCategoryItemById(si.id);
-                    const categoryItemIndex = dropCategory.categoryItems.indexOf(categoryItem);
-                    if (categoryItem && categoryItemIndex !== -1) {
-                        dropCategory.categoryItems = window.arrayMove(
-                            dropCategory.categoryItems,
-                            categoryItemIndex,
-                            args.dropIndex,
-                        );
+                    if (categoryItem) {
+                        const categoryItemIndex = dropCategory.categoryItems.indexOf(categoryItem);
+                        if (categoryItemIndex !== -1) {
+                            dropCategory.categoryItems = window.arrayMove(
+                                dropCategory.categoryItems,
+                                categoryItemIndex,
+                                args.dropIndex,
+                            );
+                        }
                     }
                     this.library.getListById(this.library.defaultListId).calculateTotals();
                 })
@@ -735,7 +749,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 if (idx !== -1) entity.images.splice(idx, 1);
             }
         },
-        async reorderImages({ entityType, entityId, images }: { entityType: string; entityId: number; images: Array<{ id: number; [key: string]: unknown }> }) {
+        async reorderImages({ entityType, entityId, images }: { entityType: string; entityId: number; images: ImageRecord[] }) {
             const payload = images.map((img, index) => ({ id: img.id, sort_order: index }));
             await this._api('POST', '/api/images/reorder', payload);
             let entity;
@@ -765,7 +779,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
         // ── CSV import ────────────────────────────────────────────────────────
         async importCSV(importData: { name: string; data: Array<Record<string, any>> }) {
             if (!this.loggedIn) {
-                const list = this.library.newList({});
+                const list = this.library.newList();
                 let category: CategoryType;
                 const newCategories: Record<string, CategoryType> = {};
                 list.name = importData.name;
@@ -779,6 +793,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
                     }
                     const item = this.library.newItem({ category, _isNew: false });
                     const categoryItem = category.getCategoryItemById(item.id);
+                    if (!categoryItem) continue;
                     item.name = row.name;
                     item.description = row.description;
                     categoryItem.qty = parseFloat(row.qty);
