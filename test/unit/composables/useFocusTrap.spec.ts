@@ -25,9 +25,7 @@ function createContainer(): HTMLDivElement {
 }
 
 function pressTab(shiftKey = false) {
-    document.activeElement?.dispatchEvent(
-        new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, shiftKey }),
-    );
+    document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, shiftKey }));
 }
 
 describe('useFocusTrap', () => {
