@@ -56,6 +56,7 @@
             <button
                 class="lp-icon-btn lpCamera"
                 title="Upload a photo or use a photo from the web"
+                aria-label="Upload photo"
                 @click="updateItemImage"
             >
                 <svg
@@ -77,6 +78,7 @@
                 class="lp-icon-btn lpLink"
                 :class="{ lpActive: item.url }"
                 title="Add a link for this item"
+                aria-label="Add link"
                 @click="updateItemLink"
             >
                 <svg
@@ -97,6 +99,7 @@
                 class="lp-icon-btn lpWorn"
                 :class="{ lpActive: categoryItem.worn }"
                 title="Mark this item as worn"
+                :aria-label="categoryItem.worn ? 'Worn (active)' : 'Mark as worn'"
                 @click="toggleWorn"
             >
                 <svg
@@ -118,6 +121,7 @@
                 class="lp-icon-btn lpConsumable"
                 :class="{ lpActive: categoryItem.consumable }"
                 title="Mark this item as a consumable"
+                :aria-label="categoryItem.consumable ? 'Consumable (active)' : 'Mark as consumable'"
                 @click="toggleConsumable"
             >
                 <svg
@@ -138,6 +142,7 @@
                 class="lp-icon-btn lpStar"
                 :class="'lpStar' + categoryItem.star"
                 title="Star this item"
+                :aria-label="categoryItem.star ? 'Star level ' + categoryItem.star : 'Add star'"
                 @click="cycleStar"
             >
                 <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
@@ -223,7 +228,7 @@
             </template>
         </span>
         <span v-if="!readonly" class="lpRemoveCell">
-            <a class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem">
+            <a class="lpRemove lpRemoveItem" title="Remove this item" aria-label="Remove item" @click="removeItem">
                 <svg
                     width="16"
                     height="16"

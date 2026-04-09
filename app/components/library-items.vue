@@ -25,6 +25,7 @@
                     v-if="!libItem.inCurrentList"
                     class="lpHandle lpLibraryItemHandle lp-gear-drag-handle"
                     title="Drag to add to list"
+                    aria-label="Drag to add to list"
                 >
                     <svg width="8" height="12" viewBox="0 0 8 12" fill="none" aria-hidden="true">
                         <circle cx="2" cy="2" r="1.1" fill="currentColor" />

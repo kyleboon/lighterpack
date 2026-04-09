@@ -19,6 +19,7 @@
                     v-if="!readonly && library.optionalFields['images']"
                     class="lp-icon-btn lpCategoryCamera"
                     title="Manage category images"
+                    aria-label="Manage category images"
                     @click="manageCategoryImages"
                 >
                     <svg
@@ -40,7 +41,11 @@
                 <span class="lpWeightCell">Weight</span>
                 <span class="lpQtyCell">qty</span>
                 <span v-if="!readonly" class="lpRemoveCell"
-                    ><a class="lpRemove lpRemoveCategory" title="Remove this category" @click="removeCategory(category)"
+                    ><a
+                        class="lpRemove lpRemoveCategory"
+                        title="Remove this category"
+                        aria-label="Remove category"
+                        @click="removeCategory(category)"
                         ><svg
                             width="16"
                             height="16"

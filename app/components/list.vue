@@ -18,6 +18,7 @@
                     v-if="library.optionalFields['images']"
                     class="lp-icon-btn lp-list-camera"
                     title="Manage list images"
+                    aria-label="Manage list images"
                     @click="manageListImages"
                 >
                     <svg
