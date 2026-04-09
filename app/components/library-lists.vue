@@ -340,7 +340,6 @@ function removeList(list) {
 }
 
 .lp-reorder-btn:focus-visible {
-    clip: auto;
     clip-path: none;
     height: auto;
     outline: 2px solid #e8a220;

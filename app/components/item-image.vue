@@ -449,7 +449,6 @@ async function saveUrl() {
 }
 
 .gallery-move:focus-visible {
-    clip: auto;
     clip-path: none;
     height: 20px;
     outline: 2px solid #e8a220;
