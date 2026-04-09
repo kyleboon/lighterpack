@@ -7,8 +7,20 @@
             <div v-if="images.length" class="image-gallery">
                 <div ref="galleryEl" class="gallery-strip">
                     <div v-for="img in images" :key="img.id" class="gallery-item">
-                        <img :src="img.url" class="gallery-thumb" @click="viewImage(img)" />
-                        <button class="gallery-delete" title="Remove image" @click="removeImage(img)">×</button>
+                        <img
+                            :src="img.url"
+                            class="gallery-thumb"
+                            :alt="`Image ${images.indexOf(img) + 1}`"
+                            @click="viewImage(img)"
+                        />
+                        <button
+                            class="gallery-delete"
+                            title="Remove image"
+                            aria-label="Remove image"
+                            @click="removeImage(img)"
+                        >
+                            ×
+                        </button>
                     </div>
                 </div>
                 <p class="gallery-hint">Drag thumbnails to reorder · Click to view full size</p>

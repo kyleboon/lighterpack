@@ -10,6 +10,7 @@
                     :key="img.id ?? i"
                     class="lpItemThumb"
                     :src="img.url"
+                    :alt="`${item.name} image ${i + 1}`"
                     :title="`Image ${i + 1}`"
                     @click="viewItemImageAt(i)"
                 />
@@ -17,7 +18,13 @@
                     +{{ extraImageCount }}
                 </span>
             </span>
-            <img v-else-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()" />
+            <img
+                v-else-if="thumbnailImage"
+                class="lpItemImage"
+                :src="thumbnailImage"
+                :alt="item.name + ' thumbnail'"
+                @click="viewItemImage()"
+            />
         </span>
         <template v-if="readonly">
             <span class="lpName">

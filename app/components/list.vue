@@ -59,6 +59,7 @@
                 :key="img.id ?? i"
                 class="lpItemThumb"
                 :src="img.url"
+                :alt="`${list.name} image ${i + 1}`"
                 :title="`Image ${i + 1}`"
                 @click="viewListImageAt(i)"
             />
