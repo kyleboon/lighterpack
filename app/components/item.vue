@@ -34,7 +34,9 @@
             <span class="lpDescription">{{ item.description }}</span>
         </template>
         <template v-else>
+            <label :for="'item-name-' + item.id" class="visually-hidden">Item name</label>
             <input
+                :id="'item-name-' + item.id"
                 v-model="item.name"
                 v-focus-on-create="categoryItem._isNew"
                 type="text"
@@ -42,7 +44,9 @@
                 placeholder="Name"
                 @input="saveItem"
             />
+            <label :for="'item-desc-' + item.id" class="visually-hidden">Item description</label>
             <input
+                :id="'item-desc-' + item.id"
                 v-model="item.description"
                 type="text"
                 class="lpDescription lpSilent"
@@ -171,6 +175,7 @@
                 v-model="displayPrice"
                 v-empty-if-zero
                 type="text"
+                aria-label="Price"
                 :class="{ lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError }"
                 @input="savePrice"
                 @keydown.up="incrementPrice($event)"
@@ -185,6 +190,7 @@
                     v-model="displayWeight"
                     v-empty-if-zero
                     type="text"
+                    aria-label="Weight"
                     :class="{ lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError }"
                     @input="saveWeight"
                     @keydown.up="incrementWeight($event)"
@@ -199,6 +205,7 @@
                 <input
                     v-model="displayQty"
                     type="text"
+                    aria-label="Quantity"
                     :class="{ lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError }"
                     @input="saveQty"
                     @keydown.up="incrementQty($event)"
