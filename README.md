@@ -88,8 +88,13 @@ Playwright automatically starts the app server before running tests (via `npm ru
 
 ### Front End Ux Work
 
-- [ ] Accessibility: ARIA labels, `role="dialog"` on modals, `alt` text on images, keyboard navigation for drag-drop, focus trapping in modals, skip links
+- [x] Accessibility: ARIA labels, `role="dialog"` on modals, `alt` text on images, keyboard navigation for drag-drop, focus trapping in modals, skip links
 - [ ] Update the UX to be responsive
+
+### Code quality / type safety
+
+- [ ] Replace the pragmatic `UNLOADED_LIBRARY` cast in `app/store/store.ts` with a proper nullable type (`library: LibraryType | null`) and add real `if (!this.library) return;` guards at the top of each action. The current pattern is a type-assertion workaround: all actions assume `library` is loaded because the UI only renders them in that state, but there is no static guarantee. A proper refactor would surface missing guards as compile errors.
+- [ ] Set up `@typescript-eslint` fully (rules, plugin, project-aware parsing) so `.ts` files in `app/`, `server/`, and `shared/` are linted with type information, not just test files.
 
 ### Future features
 
