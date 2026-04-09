@@ -198,7 +198,12 @@
                     @keydown.down="decrementQty($event)"
                 />
                 <span class="lpArrows">
-                    <span class="lp-arrow lpUp" @click="incrementQty($event)">
+                    <button
+                        type="button"
+                        class="lp-arrow lpUp"
+                        aria-label="Increase quantity"
+                        @click="incrementQty($event)"
+                    >
                         <svg
                             width="10"
                             height="6"
@@ -210,8 +215,13 @@
                         >
                             <path d="M1 5l4-4 4 4" />
                         </svg>
-                    </span>
-                    <span class="lp-arrow lpDown" @click="decrementQty($event)">
+                    </button>
+                    <button
+                        type="button"
+                        class="lp-arrow lpDown"
+                        aria-label="Decrease quantity"
+                        @click="decrementQty($event)"
+                    >
                         <svg
                             width="10"
                             height="6"
@@ -223,7 +233,7 @@
                         >
                             <path d="M1 1l4 4 4-4" />
                         </svg>
-                    </span>
+                    </button>
                 </span>
             </template>
         </span>
@@ -716,10 +726,13 @@ defineExpose({
 }
 
 .lp-arrow {
+    background: none;
+    border: none;
     color: #8a8880;
     cursor: pointer;
     display: flex;
     line-height: 1;
+    padding: 0;
     transition: color 120ms ease;
 
     &:hover {
