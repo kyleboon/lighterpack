@@ -299,10 +299,13 @@ Three places silently enable the images toggle after a successful image save. Ad
 - [ ] **Step 1: Update `updateItemImageUrl` (line 601)**
 
 Replace:
+
 ```javascript
 this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {});
 ```
+
 With:
+
 ```javascript
 this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
     this._showError('Failed to enable images setting.');
@@ -312,10 +315,13 @@ this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
 - [ ] **Step 2: Update `uploadImage` (line 634)**
 
 Replace:
+
 ```javascript
 this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {});
 ```
+
 With:
+
 ```javascript
 this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
     this._showError('Failed to enable images setting.');
@@ -325,10 +331,13 @@ this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
 - [ ] **Step 3: Update `addImageUrl` (line 670)**
 
 Replace:
+
 ```javascript
 this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {});
 ```
+
 With:
+
 ```javascript
 this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
     this._showError('Failed to enable images setting.');
@@ -369,10 +378,13 @@ Expected: No errors
 - [ ] **Step 4: Update README roadmap**
 
 In `README.md`, change:
+
 ```markdown
 - [ ] Fix silent frontend failures — 15+ `.catch(() => {})` blocks in Pinia store swallow errors without user feedback
 ```
+
 to:
+
 ```markdown
 - [x] Fix silent frontend failures — 15+ `.catch(() => {})` blocks in Pinia store swallow errors without user feedback
 ```
@@ -395,5 +407,6 @@ grep -n '\.catch(() => {})' app/store/store.js
 ```
 
 Expected output — exactly 2 matches:
+
 - Line 84: `signout()` — intentionally silent
 - Line 805: `init()` / `_reloadLibrary` — intentionally silent

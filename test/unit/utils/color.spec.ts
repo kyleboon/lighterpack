@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { getColor, rgbToString, stringToRgb, hexToRgb, rgbToHex, rgbToHsv, hsvToRgb } from '../../../shared/utils/color';
+import {
+    getColor,
+    rgbToString,
+    stringToRgb,
+    hexToRgb,
+    rgbToHex,
+    rgbToHsv,
+    hsvToRgb,
+} from '../../../shared/utils/color';
 
 describe('getColor', () => {
     it('returns first color for index 0', () => {

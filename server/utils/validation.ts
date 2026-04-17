@@ -64,8 +64,14 @@ export const createItemSchema = z.object({
     price: nonNegativeNumber.default(0),
     url: longText(2048).default(''),
     qty: positiveInt.default(1),
-    worn: z.union([z.boolean(), z.number()]).transform((v) => (v ? 1 : 0)).default(0),
-    consumable: z.union([z.boolean(), z.number()]).transform((v) => (v ? 1 : 0)).default(0),
+    worn: z
+        .union([z.boolean(), z.number()])
+        .transform((v) => (v ? 1 : 0))
+        .default(0),
+    consumable: z
+        .union([z.boolean(), z.number()])
+        .transform((v) => (v ? 1 : 0))
+        .default(0),
     star: nonNegativeInt.max(3).default(0),
 });
 
@@ -79,8 +85,14 @@ export const updateItemSchema = z
         price: nonNegativeNumber.optional(),
         url: longText(2048).optional(),
         qty: positiveInt.optional(),
-        worn: z.union([z.boolean(), z.number()]).transform((v) => (v ? 1 : 0)).optional(),
-        consumable: z.union([z.boolean(), z.number()]).transform((v) => (v ? 1 : 0)).optional(),
+        worn: z
+            .union([z.boolean(), z.number()])
+            .transform((v) => (v ? 1 : 0))
+            .optional(),
+        consumable: z
+            .union([z.boolean(), z.number()])
+            .transform((v) => (v ? 1 : 0))
+            .optional(),
         star: nonNegativeInt.max(3).optional(),
         sort_order: nonNegativeInt.optional(),
     })

@@ -41,7 +41,12 @@ interface ServerList {
     external_id?: string;
 }
 
-function addItemToLibrary(library: LibraryType, serverItem: ServerItem, category: CategoryType | null, _isNew?: boolean): ItemType {
+function addItemToLibrary(
+    library: LibraryType,
+    serverItem: ServerItem,
+    category: CategoryType | null,
+    _isNew?: boolean,
+): ItemType {
     const item = new Item({ id: serverItem.id, unit: serverItem.author_unit || library.itemUnit });
     item.name = serverItem.name ?? '';
     item.description = serverItem.description ?? '';
@@ -68,7 +73,11 @@ function addItemToLibrary(library: LibraryType, serverItem: ServerItem, category
     return item;
 }
 
-function addCategoryToLibrary(library: LibraryType, serverCategory: ServerCategory, list: ListType | null): CategoryType {
+function addCategoryToLibrary(
+    library: LibraryType,
+    serverCategory: ServerCategory,
+    list: ListType | null,
+): CategoryType {
     const category = new Category({ id: serverCategory.id, library });
     category.name = serverCategory.name ?? '';
     library.categories.push(category);
@@ -181,7 +190,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
         },
         async _reloadLibrary() {
             try {
-                const data = await this._api('GET', '/api/library') as { library: unknown };
+                const data = (await this._api('GET', '/api/library')) as { library: unknown };
                 this.loadLibraryData(data.library);
             } catch {
                 this.globalAlerts.push({ message: 'An error occurred reloading your data.' });
@@ -280,13 +289,16 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 return;
             }
             try {
-                const serverList = await this._api('POST', '/api/lists', { name: '', description: '' }) as ServerList;
+                const serverList = (await this._api('POST', '/api/lists', { name: '', description: '' })) as ServerList;
                 const list = addListToLibrary(this.library as LibraryType, serverList);
 
-                const serverCategory = await this._api('POST', '/api/categories', { list_id: list.id, name: '' }) as ServerCategory;
+                const serverCategory = (await this._api('POST', '/api/categories', {
+                    list_id: list.id,
+                    name: '',
+                })) as ServerCategory;
                 const category = addCategoryToLibrary(this.library as LibraryType, serverCategory, list);
 
-                const serverItem = await this._api('POST', `/api/categories/${category.id}/items`, {}) as ServerItem;
+                const serverItem = (await this._api('POST', `/api/categories/${category.id}/items`, {})) as ServerItem;
                 addItemToLibrary(this.library as LibraryType, serverItem, category);
 
                 list.calculateTotals();
@@ -355,23 +367,23 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 return;
             }
             try {
-                const serverList = await this._api('POST', '/api/lists', {
+                const serverList = (await this._api('POST', '/api/lists', {
                     name: `Copy of ${oldList.name}`,
                     description: oldList.description,
-                }) as ServerList;
+                })) as ServerList;
                 const list = addListToLibrary(this.library as LibraryType, serverList);
 
                 for (const categoryId of oldList.categoryIds) {
                     const oldCategory = this.library.getCategoryById(categoryId);
-                    const serverCategory = await this._api('POST', '/api/categories', {
+                    const serverCategory = (await this._api('POST', '/api/categories', {
                         list_id: list.id,
                         name: oldCategory.name,
-                    }) as ServerCategory;
+                    })) as ServerCategory;
                     const category = addCategoryToLibrary(this.library as LibraryType, serverCategory, list);
 
                     for (const ci of oldCategory.categoryItems) {
                         const oldItem = this.library.getItemById(ci.itemId);
-                        const serverItem = await this._api('POST', `/api/categories/${category.id}/items`, {
+                        const serverItem = (await this._api('POST', `/api/categories/${category.id}/items`, {
                             name: oldItem.name,
                             description: oldItem.description,
                             weight: oldItem.weight,
@@ -384,7 +396,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
                             worn: ci.worn,
                             consumable: ci.consumable,
                             star: ci.star,
-                        }) as ServerItem;
+                        })) as ServerItem;
                         addItemToLibrary(this.library as LibraryType, serverItem, category);
                     }
                 }
@@ -405,11 +417,14 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 return;
             }
             try {
-                const serverCategory = await this._api('POST', '/api/categories', { list_id: list.id, name: '' }) as ServerCategory;
+                const serverCategory = (await this._api('POST', '/api/categories', {
+                    list_id: list.id,
+                    name: '',
+                })) as ServerCategory;
                 const category = addCategoryToLibrary(this.library as LibraryType, serverCategory, list);
                 category._isNew = true;
 
-                const serverItem = await this._api('POST', `/api/categories/${category.id}/items`, {}) as ServerItem;
+                const serverItem = (await this._api('POST', `/api/categories/${category.id}/items`, {})) as ServerItem;
                 addItemToLibrary(this.library as LibraryType, serverItem, category, true);
 
                 this.library.getListById(this.library.defaultListId).calculateTotals();
@@ -467,14 +482,24 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 return;
             }
             try {
-                const serverItem = await this._api('POST', `/api/categories/${category.id}/items`, {}) as ServerItem;
+                const serverItem = (await this._api('POST', `/api/categories/${category.id}/items`, {})) as ServerItem;
                 addItemToLibrary(this.library as LibraryType, serverItem, category, _isNew);
                 this.library.getListById(this.library.defaultListId).calculateTotals();
             } catch {
                 this._showError('An error occurred creating the item.');
             }
         },
-        updateItem(item: { id: number; name?: string; description?: string; weight?: number; authorUnit?: string; price?: number; image?: string; imageUrl?: string; url?: string }) {
+        updateItem(item: {
+            id: number;
+            name?: string;
+            description?: string;
+            weight?: number;
+            authorUnit?: string;
+            price?: number;
+            image?: string;
+            imageUrl?: string;
+            url?: string;
+        }) {
             const oldItem = this.library.getItemById(item.id);
             const snapshot = { ...oldItem };
             this.library.updateItem(item);
@@ -638,7 +663,10 @@ export const useLighterpackStore = defineStore('lighterpack', {
                     this._showError('An error occurred adding the item.');
                 });
         },
-        updateCategoryItem(args: { category: CategoryType; categoryItem: { itemId: number; qty: number; worn: number; consumable: boolean; star: number } }) {
+        updateCategoryItem(args: {
+            category: CategoryType;
+            categoryItem: { itemId: number; qty: number; worn: number; consumable: boolean; star: number };
+        }) {
             const old = { ...args.category.getCategoryItemById(args.categoryItem.itemId) };
             args.category.updateCategoryItem(args.categoryItem);
             this.library.getListById(this.library.defaultListId).calculateTotals();
@@ -686,11 +714,11 @@ export const useLighterpackStore = defineStore('lighterpack', {
             this.library.optionalFields.images = true;
             if (this.loggedIn) {
                 try {
-                    const result = await this._api('POST', '/api/images/url', {
+                    const result = (await this._api('POST', '/api/images/url', {
                         entityType: 'item',
                         entityId: item.id,
                         url: args.imageUrl,
-                    }) as { id: number; url: string; sort_order?: number };
+                    })) as { id: number; url: string; sort_order?: number };
                     item.images.push({ id: result.id, url: result.url, sort_order: result.sort_order ?? 0 });
                     this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
                         this._showError('Failed to enable images setting.');
@@ -722,12 +750,12 @@ export const useLighterpackStore = defineStore('lighterpack', {
             if (uploadCsrfToken) {
                 uploadHeaders['X-CSRF-Token'] = uploadCsrfToken;
             }
-            const result = await $fetch('/api/image-upload', {
+            const result = (await $fetch('/api/image-upload', {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',
                 headers: uploadHeaders,
-            }) as { id: number; url: string };
+            })) as { id: number; url: string };
 
             const image = { id: result.id, url: result.url, sort_order: entity?.images?.length ?? 0 };
             if (entity) entity.images.push(image);
@@ -749,7 +777,15 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 if (idx !== -1) entity.images.splice(idx, 1);
             }
         },
-        async reorderImages({ entityType, entityId, images }: { entityType: string; entityId: number; images: ImageRecord[] }) {
+        async reorderImages({
+            entityType,
+            entityId,
+            images,
+        }: {
+            entityType: string;
+            entityId: number;
+            images: ImageRecord[];
+        }) {
             const payload = images.map((img, index) => ({ id: img.id, sort_order: index }));
             await this._api('POST', '/api/images/reorder', payload);
             let entity;
@@ -768,7 +804,11 @@ export const useLighterpackStore = defineStore('lighterpack', {
                       ? this.library.getCategoryById(entityId)
                       : this.library.getListById(entityId);
             if (!entity) return;
-            const result = await this._api('POST', '/api/images/url', { entityType, entityId, url }) as { id: number; url: string; sort_order?: number };
+            const result = (await this._api('POST', '/api/images/url', { entityType, entityId, url })) as {
+                id: number;
+                url: string;
+                sort_order?: number;
+            };
             entity.images.push({ id: result.id, url: result.url, sort_order: result.sort_order ?? 0 });
             this.library.optionalFields.images = true;
             this._api('PATCH', '/api/library', { opt_images: 1 }).catch(() => {
@@ -810,23 +850,23 @@ export const useLighterpackStore = defineStore('lighterpack', {
                 return;
             }
             try {
-                const serverList = await this._api('POST', '/api/lists', { name: importData.name }) as ServerList;
+                const serverList = (await this._api('POST', '/api/lists', { name: importData.name })) as ServerList;
                 const list = addListToLibrary(this.library as LibraryType, serverList);
                 const newCategories: Record<string, CategoryType> = {};
 
                 for (const row of importData.data) {
                     let category = newCategories[row.category];
                     if (!category) {
-                        const serverCategory = await this._api('POST', '/api/categories', {
+                        const serverCategory = (await this._api('POST', '/api/categories', {
                             list_id: list.id,
                             name: row.category,
-                        }) as ServerCategory;
+                        })) as ServerCategory;
                         category = addCategoryToLibrary(this.library as LibraryType, serverCategory, list);
                         newCategories[row.category] = category;
                     }
 
                     const weight = WeightToMg(parseFloat(row.weight), row.unit);
-                    const serverItem = await this._api('POST', `/api/categories/${category.id}/items`, {
+                    const serverItem = (await this._api('POST', `/api/categories/${category.id}/items`, {
                         name: row.name,
                         description: row.description,
                         weight,
@@ -836,7 +876,7 @@ export const useLighterpackStore = defineStore('lighterpack', {
                         price: row.price || 0,
                         worn: row.worn || 0,
                         consumable: row.consumable || false,
-                    }) as ServerItem;
+                    })) as ServerItem;
                     addItemToLibrary(this.library as LibraryType, serverItem, category);
                 }
 

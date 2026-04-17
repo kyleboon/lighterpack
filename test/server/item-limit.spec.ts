@@ -51,13 +51,9 @@ beforeEach(() => {
         .values({ id: 1, user_id: 'user-1', name: 'List A', external_id: 'aaa111', sort_order: 0, created_at: 0 })
         .run();
 
-    db.insert(schema.categories)
-        .values({ id: 1, user_id: 'user-1', list_id: 1, name: 'Cat A', sort_order: 0 })
-        .run();
+    db.insert(schema.categories).values({ id: 1, user_id: 'user-1', list_id: 1, name: 'Cat A', sort_order: 0 }).run();
 
-    db.insert(schema.library_settings)
-        .values({ user_id: 'user-1', default_list_id: 1 })
-        .run();
+    db.insert(schema.library_settings).values({ user_id: 'user-1', default_list_id: 1 }).run();
 });
 
 // ---------------------------------------------------------------------------
@@ -84,7 +80,9 @@ describe('POST /api/categories/[id]/items per-user item limit', () => {
         }
         // Insert in batches (SQLite has a variable limit)
         for (let i = 0; i < values.length; i += 100) {
-            db.insert(schema.category_items).values(values.slice(i, i + 100)).run();
+            db.insert(schema.category_items)
+                .values(values.slice(i, i + 100))
+                .run();
         }
 
         await expect(callCreateItem({ name: 'One too many' })).rejects.toMatchObject({
@@ -112,7 +110,9 @@ describe('POST /api/library/copy-list per-user item limit', () => {
             values.push({ category_id: 1, user_id: 'user-1', name: `Item ${i}`, sort_order: i });
         }
         for (let i = 0; i < values.length; i += 100) {
-            db.insert(schema.category_items).values(values.slice(i, i + 100)).run();
+            db.insert(schema.category_items)
+                .values(values.slice(i, i + 100))
+                .run();
         }
 
         // The source list (id=1) has category with those 990 items plus we'll add 20 more to a second category
@@ -142,7 +142,11 @@ describe('POST /api/library/copy-list per-user item limit', () => {
         expect(result.listId).toBeDefined();
 
         // Verify items were copied
-        const allItems = db.select().from(schema.category_items).where(eq(schema.category_items.user_id, 'user-1')).all();
+        const allItems = db
+            .select()
+            .from(schema.category_items)
+            .where(eq(schema.category_items.user_id, 'user-1'))
+            .all();
         expect(allItems.length).toBe(2); // original + copy
     });
 });

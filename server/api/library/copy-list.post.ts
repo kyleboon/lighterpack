@@ -55,71 +55,71 @@ export default defineEventHandler(async (event) => {
 
     let newList;
     try {
-    newList = db.transaction((tx) => {
-        // Create new list for the authenticated user
-        const newExternalId = generateUniqueExternalId(tx);
-        const [created] = tx
-            .insert(schema.lists)
-            .values({
-                user_id: user.id,
-                name: sourceList.name || '',
-                description: sourceList.description || '',
-                external_id: newExternalId,
-                sort_order: 0,
-                created_at: now,
-            })
-            .returning()
-            .all();
-
-        // Copy categories and their items
-        const sourceCategories = tx
-            .select()
-            .from(schema.categories)
-            .where(eq(schema.categories.list_id, sourceList.id))
-            .all();
-
-        for (const sourceCat of sourceCategories) {
-            const [newCat] = tx
-                .insert(schema.categories)
+        newList = db.transaction((tx) => {
+            // Create new list for the authenticated user
+            const newExternalId = generateUniqueExternalId(tx);
+            const [created] = tx
+                .insert(schema.lists)
                 .values({
                     user_id: user.id,
-                    list_id: created.id,
-                    name: sourceCat.name || '',
-                    sort_order: sourceCat.sort_order ?? 0,
+                    name: sourceList.name || '',
+                    description: sourceList.description || '',
+                    external_id: newExternalId,
+                    sort_order: 0,
+                    created_at: now,
                 })
                 .returning()
                 .all();
 
-            // Copy items in this category
-            const sourceItems = tx
+            // Copy categories and their items
+            const sourceCategories = tx
                 .select()
-                .from(schema.category_items)
-                .where(eq(schema.category_items.category_id, sourceCat.id))
+                .from(schema.categories)
+                .where(eq(schema.categories.list_id, sourceList.id))
                 .all();
 
-            for (const sourceItem of sourceItems) {
-                tx.insert(schema.category_items)
+            for (const sourceCat of sourceCategories) {
+                const [newCat] = tx
+                    .insert(schema.categories)
                     .values({
-                        category_id: newCat.id,
                         user_id: user.id,
-                        name: sourceItem.name || '',
-                        description: sourceItem.description || '',
-                        weight: sourceItem.weight ?? 0,
-                        author_unit: sourceItem.author_unit || 'oz',
-                        price: sourceItem.price ?? 0,
-                        url: sourceItem.url || '',
-                        qty: sourceItem.qty ?? 1,
-                        worn: sourceItem.worn ?? 0,
-                        consumable: sourceItem.consumable ?? 0,
-                        star: sourceItem.star ?? 0,
-                        sort_order: sourceItem.sort_order ?? 0,
+                        list_id: created.id,
+                        name: sourceCat.name || '',
+                        sort_order: sourceCat.sort_order ?? 0,
                     })
-                    .run();
-            }
-        }
+                    .returning()
+                    .all();
 
-        return created;
-    });
+                // Copy items in this category
+                const sourceItems = tx
+                    .select()
+                    .from(schema.category_items)
+                    .where(eq(schema.category_items.category_id, sourceCat.id))
+                    .all();
+
+                for (const sourceItem of sourceItems) {
+                    tx.insert(schema.category_items)
+                        .values({
+                            category_id: newCat.id,
+                            user_id: user.id,
+                            name: sourceItem.name || '',
+                            description: sourceItem.description || '',
+                            weight: sourceItem.weight ?? 0,
+                            author_unit: sourceItem.author_unit || 'oz',
+                            price: sourceItem.price ?? 0,
+                            url: sourceItem.url || '',
+                            qty: sourceItem.qty ?? 1,
+                            worn: sourceItem.worn ?? 0,
+                            consumable: sourceItem.consumable ?? 0,
+                            star: sourceItem.star ?? 0,
+                            sort_order: sourceItem.sort_order ?? 0,
+                        })
+                        .run();
+                }
+            }
+
+            return created;
+        });
     } catch (err) {
         if ((err as any)?.statusCode) throw err;
         throw createError({ statusCode: 500, message: 'Failed to copy list.' });

@@ -4,9 +4,7 @@ import * as schema from '../../schema.js';
 export default defineSitemapEventHandler(async () => {
     const db = getDb();
 
-    const allLists = await db
-        .select({ externalId: schema.lists.external_id })
-        .from(schema.lists);
+    const allLists = await db.select({ externalId: schema.lists.external_id }).from(schema.lists);
 
     const shareUrls = allLists.map((row) => ({
         loc: `/r/${row.externalId}`,

@@ -58,9 +58,7 @@ beforeEach(() => {
         .values({ id: 1, user_id: 'user-1', name: 'List A', external_id: 'aaa111', sort_order: 0, created_at: 0 })
         .run();
 
-    db.insert(schema.categories)
-        .values({ id: 1, user_id: 'user-1', list_id: 1, name: 'Cat A', sort_order: 0 })
-        .run();
+    db.insert(schema.categories).values({ id: 1, user_id: 'user-1', list_id: 1, name: 'Cat A', sort_order: 0 }).run();
 
     db.insert(schema.category_items)
         .values({
@@ -75,9 +73,7 @@ beforeEach(() => {
         })
         .run();
 
-    db.insert(schema.library_settings)
-        .values({ user_id: 'user-1', default_list_id: 1 })
-        .run();
+    db.insert(schema.library_settings).values({ user_id: 'user-1', default_list_id: 1 }).run();
 });
 
 // ---------------------------------------------------------------------------
@@ -330,10 +326,14 @@ describe('PATCH /api/library validation', () => {
         // Stub the updateLibrarySettings auto-import used by the handler
         (globalThis as any).updateLibrarySettings = (userId: string, updates: Record<string, unknown>) => {
             const dbLocal = getDb();
-            dbLocal.update(schema.library_settings).set(updates as any)
+            dbLocal
+                .update(schema.library_settings)
+                .set(updates as any)
                 .where(require('drizzle-orm').eq(schema.library_settings.user_id, userId))
                 .run();
-            return dbLocal.select().from(schema.library_settings)
+            return dbLocal
+                .select()
+                .from(schema.library_settings)
                 .where(require('drizzle-orm').eq(schema.library_settings.user_id, userId))
                 .all()[0];
         };
@@ -454,13 +454,17 @@ describe('POST /api/images/url validation', () => {
     });
 
     it('rejects invalid entityType', async () => {
-        await expect(callImageUrl({ entityType: 'invalid', entityId: 1, url: 'https://example.com/img.jpg' })).rejects.toMatchObject({
+        await expect(
+            callImageUrl({ entityType: 'invalid', entityId: 1, url: 'https://example.com/img.jpg' }),
+        ).rejects.toMatchObject({
             statusCode: 400,
         });
     });
 
     it('rejects non-integer entityId', async () => {
-        await expect(callImageUrl({ entityType: 'item', entityId: 1.5, url: 'https://example.com/img.jpg' })).rejects.toMatchObject({
+        await expect(
+            callImageUrl({ entityType: 'item', entityId: 1.5, url: 'https://example.com/img.jpg' }),
+        ).rejects.toMatchObject({
             statusCode: 400,
         });
     });

@@ -743,7 +743,9 @@ class Library {
     idsShouldBeInts(serializedLibrary: Record<string, any>): void {
         // Some lists of Ids were strings previously. They should be numbers.
         for (const list of serializedLibrary.lists) {
-            list.categoryIds = list.categoryIds.map((categoryId: string | number) => parseInt(categoryId as string, 10));
+            list.categoryIds = list.categoryIds.map((categoryId: string | number) =>
+                parseInt(categoryId as string, 10),
+            );
         }
     }
 
