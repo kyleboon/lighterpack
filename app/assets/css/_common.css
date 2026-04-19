@@ -465,11 +465,6 @@
         justify-content: flex-end;
         padding: 3px 0;
 
-        /* Hide handle cell entirely — not just the handle inside it */
-        .lpHandleCell {
-            display: none;
-        }
-
         .lpShowImages &.lpItemHasImage {
             min-height: 90px;
             padding-left: 100px;
@@ -484,13 +479,8 @@
             }
         }
 
-        .lpImageCell {
-            display: none;
-        }
-
         /* First line: qty (if > 1) + name + price */
         .lpQtyCell {
-            flex: 0 0 auto;
             order: 1;
 
             &[qty1] {
@@ -510,27 +500,20 @@
         }
 
         .lpPriceCell {
-            flex: 0 0 auto;
             order: 3;
         }
 
         /* Second line: weight + description + actions */
         .lpWeightCell {
-            flex: 0 0 auto;
             order: 4;
         }
 
         .lpDescription {
-            flex: 1 1 100%;
             min-width: 0;
             order: 98;
-            overflow: visible;
-            text-overflow: clip;
-            white-space: normal;
         }
 
         .lpActionsCell {
-            flex: 0 0 auto;
             order: 99;
             padding: 0 4px;
             text-align: right;
@@ -539,21 +522,6 @@
             i:not(.lpActive) {
                 display: none;
             }
-        }
-
-        .lpRemoveCell {
-            display: none;
-        }
-    }
-
-    /* Footer: align totals with item rows */
-    .lpItemsFooter {
-        .lpPriceCell {
-            flex: 0 0 auto;
-        }
-
-        .lpWeightCell {
-            flex: 0 0 auto;
         }
     }
 
