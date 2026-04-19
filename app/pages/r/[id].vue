@@ -365,4 +365,22 @@ async function copyList() {
         font-size: 16px;
     }
 }
+
+@media only screen and (width < 600px) {
+    .lp-share-topbar {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+
+    .lp-share-page > .lpList {
+        padding: 16px 12px;
+    }
+
+    .lp-copy-modal {
+        max-height: 80vh;
+        overflow-y: auto;
+        width: calc(100vw - 24px);
+    }
+}
 </style>
