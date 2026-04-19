@@ -349,4 +349,16 @@ function removeList(list) {
     white-space: normal;
     width: auto;
 }
+
+@media only screen and (width < 900px) {
+    /* Hide drag handles on mobile */
+    .lp-drag-handle {
+        display: none;
+    }
+
+    /* Hide Import CSV — desktop only */
+    .lp-lists-actions .lp-action-link:last-child {
+        display: none;
+    }
+}
 </style>
