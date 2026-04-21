@@ -20,11 +20,11 @@ async function sendMagicLinkEmail(email: string, url: string) {
     const Mailgun = _require('mailgun.js');
     const mg = new Mailgun(FormData).client({ username: 'api', key: mailgunKey });
     await mg.messages.create(config.get('mailgunDomain'), {
-        from: 'LighterPack <info@mg.lighterpack.com>',
+        from: 'BaseWeight <noreply@mg.baseweight.pro>',
         to: email,
-        'h:Reply-To': 'LighterPack <info@lighterpack.com>',
-        subject: 'Sign in to LighterPack',
-        text: `Click the link below to sign in to LighterPack. This link expires in 5 minutes.\n\n${url}`,
+        'h:Reply-To': 'BaseWeight <info@baseweight.pro>',
+        subject: 'Sign in to BaseWeight',
+        text: `Click the link below to sign in to BaseWeight. This link expires in 5 minutes.\n\n${url}`,
     });
 }
 

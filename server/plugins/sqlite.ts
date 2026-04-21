@@ -23,7 +23,7 @@ function validateConfig() {
 // The close hook runs on SIGTERM/SIGINT to cleanly shut down the database.
 export default defineNitroPlugin((nitroApp) => {
     validateConfig();
-    const dbPath = process.env.DATABASE_PATH ?? config.get<string>('databasePath') ?? './data/lighterpack.db';
+    const dbPath = process.env.DATABASE_PATH ?? config.get<string>('databasePath') ?? './data/baseweight.db';
     initDb(dbPath);
 
     nitroApp.hooks.hook('close', () => {
