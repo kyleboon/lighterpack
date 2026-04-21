@@ -1,6 +1,6 @@
-import { useLighterpackStore } from '~/store/store';
+import { useBaseweightStore } from '~/store/store';
 
 export default defineNuxtPlugin((nuxtApp) => {
-    const store = useLighterpackStore();
+    const store = useBaseweightStore();
     nuxtApp.vueApp.config.globalProperties.$store = store;
 });

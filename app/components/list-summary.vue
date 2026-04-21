@@ -116,7 +116,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import { MgToWeight } from '#shared/utils/weight';
 import { getColor, rgbToString, hexToRgb, rgbToHex, stringToRgb } from '#shared/utils/color';
 import colorPicker from './colorpicker.vue';
@@ -130,7 +130,7 @@ const props = defineProps({
     readonly: { type: Boolean, default: false },
 });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const hoveredCategoryId = ref(null);
 

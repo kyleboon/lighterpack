@@ -65,7 +65,7 @@
 
 <script setup>
 import { computed, onMounted, onUnmounted } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import Sortable from 'sortablejs';
 import { useAnnounce } from '../composables/useAnnounce';
 
@@ -78,7 +78,7 @@ defineProps({
     },
 });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const library = computed(() => store.library);
 

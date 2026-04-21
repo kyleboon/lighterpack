@@ -39,13 +39,13 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import { parseCSV } from '../utils/csvParser.js';
 import modal from './modal.vue';
 
 defineOptions({ name: 'ImportCsv' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const csvInput = ref(null);
 const shown = ref(false);

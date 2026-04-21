@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import ItemViewImage from '../../../app/components/item-view-image.vue';
 
 describe('ItemViewImage component', () => {
@@ -10,28 +10,28 @@ describe('ItemViewImage component', () => {
     const stubs = { modal: true };
 
     it('is not shown when activeItemDialog is null', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeItemDialog = null;
         const wrapper = mount(ItemViewImage, { global: { stubs } });
         expect(wrapper.vm.shown).toBe(false);
     });
 
     it('is not shown when activeItemDialog type is not viewImage', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeItemDialog = { type: 'other' };
         const wrapper = mount(ItemViewImage, { global: { stubs } });
         expect(wrapper.vm.shown).toBe(false);
     });
 
     it('is shown when activeItemDialog type is viewImage', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeItemDialog = { type: 'viewImage', imageUrl: '/img/test.jpg' };
         const wrapper = mount(ItemViewImage, { global: { stubs } });
         expect(wrapper.vm.shown).toBe(true);
     });
 
     it('setting shown to false calls store.closeItemDialog', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeItemDialog = { type: 'viewImage', imageUrl: '/img/test.jpg' };
         store.closeItemDialog = vi.fn();
         const wrapper = mount(ItemViewImage, { global: { stubs } });
@@ -40,21 +40,21 @@ describe('ItemViewImage component', () => {
     });
 
     it('activeUrl returns the url from a single-url dialog', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeItemDialog = { type: 'viewImage', imageUrl: '/img/photo.jpg', images: null };
         const wrapper = mount(ItemViewImage, { global: { stubs } });
         expect(wrapper.vm.activeUrl).toBe('/img/photo.jpg');
     });
 
     it('activeUrl returns empty string when no active dialog', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeItemDialog = null;
         const wrapper = mount(ItemViewImage, { global: { stubs } });
         expect(wrapper.vm.activeUrl).toBe('');
     });
 
     it('activeUrl returns first image url from images array', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeItemDialog = {
             type: 'viewImage',
             imageUrl: null,
@@ -68,7 +68,7 @@ describe('ItemViewImage component', () => {
     });
 
     it('images array has two entries when dialog has two images', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeItemDialog = {
             type: 'viewImage',
             imageUrl: null,

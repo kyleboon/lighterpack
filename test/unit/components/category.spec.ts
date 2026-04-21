@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import Category from '../../../app/components/category.vue';
 
 describe('Category component', () => {
@@ -32,7 +32,7 @@ describe('Category component', () => {
     }
 
     it('renders the category name input', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(Category, {
             props: { category: makeCategory() },
@@ -42,7 +42,7 @@ describe('Category component', () => {
     });
 
     it('itemContainers maps categoryItems to item/categoryItem pairs', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const item = { id: 'item1', name: 'Tent' };
         store.library = makeLibrary([item]);
         const category = makeCategory({ categoryItems: [{ itemId: 'item1' }] });
@@ -55,7 +55,7 @@ describe('Category component', () => {
     });
 
     it('newItem() calls store.newItem', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         store.newItem = vi.fn();
         const category = makeCategory();
@@ -65,7 +65,7 @@ describe('Category component', () => {
     });
 
     it('updateCategoryName() calls store.updateCategoryName', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         store.updateCategoryName = vi.fn();
         const category = makeCategory();
@@ -75,7 +75,7 @@ describe('Category component', () => {
     });
 
     it('removeCategory() calls store.initSpeedbump', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         store.initSpeedbump = vi.fn();
         const category = makeCategory();
@@ -85,7 +85,7 @@ describe('Category component', () => {
     });
 
     it('displayWeight formats weight correctly', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(Category, {
             props: { category: makeCategory() },
@@ -96,7 +96,7 @@ describe('Category component', () => {
     });
 
     it('displayPrice formats price with symbol', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(Category, {
             props: { category: makeCategory() },
@@ -107,7 +107,7 @@ describe('Category component', () => {
 
     describe('readonly mode', () => {
         function mountReadonly(overrides = {}) {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             store.library = makeLibrary();
             return mount(Category, {
                 props: { category: makeCategory(), readonly: true, ...overrides },
@@ -139,7 +139,7 @@ describe('Category component', () => {
         });
 
         it('passes readonly prop to child item components', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             const itemObj = { id: 'item1', name: 'Tent' };
             store.library = makeLibrary([itemObj]);
             const category = makeCategory({ categoryItems: [{ itemId: 'item1' }] });

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import ListSettings from '../../../app/components/list-settings.vue';
 
 describe('ListSettings component', () => {
@@ -18,7 +18,7 @@ describe('ListSettings component', () => {
     }
 
     it('is hidden when not signed in', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = null;
         store.library = makeLibrary();
         const wrapper = mount(ListSettings, { global: { stubs } });
@@ -26,7 +26,7 @@ describe('ListSettings component', () => {
     });
 
     it('is visible when signed in', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'alice';
         store.library = makeLibrary();
         const wrapper = mount(ListSettings, { global: { stubs } });
@@ -34,7 +34,7 @@ describe('ListSettings component', () => {
     });
 
     it('optionalFieldsLookup returns 5 fields', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'alice';
         store.library = makeLibrary();
         const wrapper = mount(ListSettings, { global: { stubs } });
@@ -42,7 +42,7 @@ describe('ListSettings component', () => {
     });
 
     it('optionalFieldsLookup reflects store values', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'alice';
         store.library = makeLibrary({
             optionalFields: { images: true, price: false, worn: false, consumable: false, listDescription: false },
@@ -53,7 +53,7 @@ describe('ListSettings component', () => {
     });
 
     it('toggleOptionalField calls store.toggleOptionalField', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'alice';
         store.library = makeLibrary();
         store.toggleOptionalField = vi.fn();
@@ -63,7 +63,7 @@ describe('ListSettings component', () => {
     });
 
     it('updateCurrencySymbol calls store.updateCurrencySymbol with input value', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'alice';
         store.library = makeLibrary();
         store.updateCurrencySymbol = vi.fn();

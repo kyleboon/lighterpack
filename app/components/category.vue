@@ -123,7 +123,7 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import { MgToWeight } from '#shared/utils/weight';
 import item from './item.vue';
 
@@ -134,7 +134,7 @@ const props = defineProps({
     readonly: { type: Boolean, default: false },
 });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const library = computed(() => store.library);
 

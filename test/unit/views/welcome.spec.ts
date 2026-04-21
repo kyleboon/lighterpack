@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import Welcome from '../../../app/pages/welcome.vue';
 
 const mockPush = vi.fn();
@@ -34,14 +34,14 @@ describe('Welcome view', () => {
     });
 
     it('redirects to / if library is already loaded', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = { items: [], categories: [], lists: [] };
         mount(Welcome, { global: { stubs } });
         expect(mockPush).toHaveBeenCalledWith('/');
     });
 
     it('does not redirect if no library is loaded', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = false;
         mount(Welcome, { global: { stubs } });
         expect(mockPush).not.toHaveBeenCalled();

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import Speedbump from '../../../app/components/speedbump.vue';
 
 describe('Speedbump component', () => {
@@ -10,21 +10,21 @@ describe('Speedbump component', () => {
     const stubs = { modal: true };
 
     it('is not shown when speedbump is null', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.speedbump = null;
         const wrapper = mount(Speedbump, { global: { stubs } });
         expect(wrapper.vm.shown).toBe(false);
     });
 
     it('is shown when speedbump is set', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.speedbump = { options: 'Are you sure?' };
         const wrapper = mount(Speedbump, { global: { stubs } });
         expect(wrapper.vm.shown).toBe(true);
     });
 
     it('setting shown to false calls store.closeSpeedbump', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.speedbump = { options: 'Are you sure?' };
         store.closeSpeedbump = vi.fn();
         const wrapper = mount(Speedbump, { global: { stubs } });
@@ -33,7 +33,7 @@ describe('Speedbump component', () => {
     });
 
     it('messages uses defaults when speedbump is null', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.speedbump = null;
         const wrapper = mount(Speedbump, { global: { stubs } });
         expect(wrapper.vm.messages.confirm).toBe('Yes');
@@ -41,14 +41,14 @@ describe('Speedbump component', () => {
     });
 
     it('messages uses string option as body', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.speedbump = { options: 'Delete this item?' };
         const wrapper = mount(Speedbump, { global: { stubs } });
         expect(wrapper.vm.messages.body).toBe('Delete this item?');
     });
 
     it('messages merges object options', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.speedbump = { options: { title: 'Confirm', body: 'Really?', confirm: 'Yep' } };
         const wrapper = mount(Speedbump, { global: { stubs } });
         expect(wrapper.vm.messages.title).toBe('Confirm');
@@ -58,7 +58,7 @@ describe('Speedbump component', () => {
     });
 
     it('confirmSpeedbump() calls store.confirmSpeedbump', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.speedbump = { options: 'Sure?' };
         store.confirmSpeedbump = vi.fn();
         const wrapper = mount(Speedbump, { global: { stubs } });

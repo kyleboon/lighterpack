@@ -41,12 +41,12 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import modal from './modal.vue';
 
 defineOptions({ name: 'ItemViewImage' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 const activeIndex = ref(0);
 
 const shown = computed({

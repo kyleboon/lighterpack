@@ -29,12 +29,12 @@
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import PopoverHover from './popover-hover.vue';
 
 defineOptions({ name: 'AccountDropdown' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 const router = useRouter();
 
 const username = computed(() => store.loggedIn);

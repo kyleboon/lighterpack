@@ -1,5 +1,5 @@
 import type { App, DirectiveBinding } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 
 let _uniqueIdCounter = 0;
 const uniqueId = () => String(++_uniqueIdCounter);
@@ -41,7 +41,7 @@ export function registerDirectives(app: App): void {
 
     app.directive('click-outside', {
         mounted(el: HTMLElement, binding: DirectiveBinding) {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             const handler = (evt: Event) => {
                 if (el.contains(evt.target as Node)) {
                     return;
@@ -57,7 +57,7 @@ export function registerDirectives(app: App): void {
             store.addDirectiveInstance({ key: el.dataset.clickoutside, value: handler });
         },
         unmounted(el: HTMLElement) {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             const key = el.dataset.clickoutside!;
             const handler = (store.directiveInstances as Record<string, (evt: Event) => void>)[key];
             store.removeDirectiveInstance(key);

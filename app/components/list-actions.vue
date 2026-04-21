@@ -117,13 +117,13 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import { fetchJson } from '../utils/utils';
 import Popover from './popover.vue';
 
 defineOptions({ name: 'ListActions' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const menuOpen = ref(false);
 const copied = ref(false);

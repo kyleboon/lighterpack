@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import ImportCsv from '../../../app/components/import-csv.vue';
 
 describe('ImportCsv component', () => {
@@ -42,7 +42,7 @@ describe('ImportCsv component', () => {
     });
 
     it('importList calls store.importCSV and hides modal', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.importCSV = vi.fn();
         const wrapper = mount(ImportCsv, { global: { stubs } });
         wrapper.vm.shown = true;

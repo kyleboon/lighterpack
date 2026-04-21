@@ -9,7 +9,7 @@ vi.mock('isomorphic-dompurify', () => ({
 }));
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import List from '../../../app/components/list.vue';
 
 describe('List component', () => {
@@ -42,7 +42,7 @@ describe('List component', () => {
     }
 
     it('list computed returns store.activeList', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const list = makeList();
         const lib = makeLibrary(list);
         store.library = lib;
@@ -51,7 +51,7 @@ describe('List component', () => {
     });
 
     it('categories maps categoryIds to library categories', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const cat1 = makeCategory('cat1');
         const cat2 = makeCategory('cat2');
         const list = makeList({ categoryIds: ['cat1', 'cat2'] });
@@ -64,7 +64,7 @@ describe('List component', () => {
     });
 
     it('isListNew is true when totalWeight is 0', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const list = makeList({ totalWeight: 0 });
         store.library = makeLibrary(list);
         const wrapper = mount(List, { global: { stubs } });
@@ -72,7 +72,7 @@ describe('List component', () => {
     });
 
     it('isListNew is false when totalWeight is non-zero', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const list = makeList({ totalWeight: 1000 });
         store.library = makeLibrary(list);
         const wrapper = mount(List, { global: { stubs } });
@@ -80,7 +80,7 @@ describe('List component', () => {
     });
 
     it('isLocalSaving reflects store.saveType', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const list = makeList();
         store.library = makeLibrary(list);
         store.saveType = 'local';
@@ -89,7 +89,7 @@ describe('List component', () => {
     });
 
     it('isLocalSaving is false when saveType is not local', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const list = makeList();
         store.library = makeLibrary(list);
         store.saveType = 'server';
@@ -98,7 +98,7 @@ describe('List component', () => {
     });
 
     it('newCategory calls store.newCategory with the list', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const list = makeList();
         store.library = makeLibrary(list);
         store.newCategory = vi.fn();
@@ -109,7 +109,7 @@ describe('List component', () => {
 
     describe('readonly mode', () => {
         it('renders list name as h1 instead of input', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             const list = makeList({ name: 'Test List', totalWeight: 100 });
             store.library = makeLibrary(list);
             const wrapper = mount(List, {
@@ -122,7 +122,7 @@ describe('List component', () => {
         });
 
         it('hides header actions in readonly mode', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             const list = makeList({ totalWeight: 100 });
             store.library = makeLibrary(list);
             const wrapper = mount(List, {
@@ -133,7 +133,7 @@ describe('List component', () => {
         });
 
         it('hides add category link in readonly mode', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             const list = makeList({ totalWeight: 100 });
             store.library = makeLibrary(list);
             const wrapper = mount(List, {
@@ -144,7 +144,7 @@ describe('List component', () => {
         });
 
         it('renders markdown description in readonly mode when description exists', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             const list = makeList({ totalWeight: 100, description: '**bold text**' });
             store.library = makeLibrary(list);
             const wrapper = mount(List, {
@@ -157,7 +157,7 @@ describe('List component', () => {
         });
 
         it('passes readonly to list-summary and category components', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             const cat1 = makeCategory('cat1');
             const list = makeList({ totalWeight: 100, categoryIds: ['cat1'] });
             store.library = makeLibrary(list, [cat1]);

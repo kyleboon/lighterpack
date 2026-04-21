@@ -84,7 +84,7 @@
 <script setup>
 import { ref, computed, watch, onUnmounted } from 'vue';
 import Sortable from 'sortablejs';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import { useAnnounce } from '../composables/useAnnounce';
 import modal from './modal.vue';
 
@@ -92,7 +92,7 @@ const MAX_IMAGES = 4;
 
 defineOptions({ name: 'ItemImage' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const fileInput = ref(null);
 const galleryEl = ref(null);

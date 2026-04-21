@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('sortablejs', () => ({ default: { create: vi.fn(() => ({ destroy: vi.fn() })) } }));
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import LibraryItems from '../../../app/components/library-items.vue';
 
 describe('LibraryItems component', () => {
@@ -32,14 +32,14 @@ describe('LibraryItems component', () => {
     }
 
     it('renders the section element', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(LibraryItems);
         expect(wrapper.find('section#libraryContainer').exists()).toBe(true);
     });
 
     it('filteredItems returns all items when searchText is empty', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const items = [makeItem({ id: 1, name: 'Tent' }), makeItem({ id: 2, name: 'Sleeping bag' })];
         store.library = makeLibrary(items);
         const wrapper = mount(LibraryItems);
@@ -47,7 +47,7 @@ describe('LibraryItems component', () => {
     });
 
     it('filteredItems filters by name', async () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const items = [makeItem({ id: 1, name: 'Tent' }), makeItem({ id: 2, name: 'Sleeping bag', description: '' })];
         store.library = makeLibrary(items);
         const wrapper = mount(LibraryItems);
@@ -57,7 +57,7 @@ describe('LibraryItems component', () => {
     });
 
     it('filteredItems filters by description', async () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const items = [
             makeItem({ id: 1, name: 'Tent', description: 'ultralight shelter' }),
             makeItem({ id: 2, name: 'Bag', description: 'warm sleeping bag' }),
@@ -70,7 +70,7 @@ describe('LibraryItems component', () => {
     });
 
     it('removeItem calls store.initSpeedbump', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         store.initSpeedbump = vi.fn();
         const wrapper = mount(LibraryItems);

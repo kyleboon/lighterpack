@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import ListSummary from '../../../app/components/list-summary.vue';
 
 describe('ListSummary component', () => {
@@ -38,7 +38,7 @@ describe('ListSummary component', () => {
     }
 
     it('renders the list summary container', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(ListSummary, {
             props: { list: makeList() },
@@ -48,7 +48,7 @@ describe('ListSummary component', () => {
     });
 
     it('displayWeight returns formatted weight', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(ListSummary, {
             props: { list: makeList() },
@@ -59,7 +59,7 @@ describe('ListSummary component', () => {
     });
 
     it('displayPrice formats price with symbol', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(ListSummary, {
             props: { list: makeList() },
@@ -69,7 +69,7 @@ describe('ListSummary component', () => {
     });
 
     it('displayPrice shows 0.00 for non-numeric price', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(ListSummary, {
             props: { list: makeList() },
@@ -79,7 +79,7 @@ describe('ListSummary component', () => {
     });
 
     it('setTotalUnit calls store.setTotalUnit', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         store.setTotalUnit = vi.fn();
         const wrapper = mount(ListSummary, {
@@ -91,7 +91,7 @@ describe('ListSummary component', () => {
     });
 
     it('categories computed maps categoryIds to library categories', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const category = { id: 1, name: 'Shelter', color: null };
         store.library = makeLibrary([category]);
         const list = makeList({ categoryIds: [1] });
@@ -104,7 +104,7 @@ describe('ListSummary component', () => {
     });
 
     it('renders a static color swatch instead of colorPicker when readonly', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         const category = { id: 1, name: 'Shelter', color: null };
         store.library = makeLibrary([category]);
         const list = makeList({ categoryIds: [1] });
@@ -117,7 +117,7 @@ describe('ListSummary component', () => {
     });
 
     it('renders static unit text instead of unitSelect when readonly', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(ListSummary, {
             props: { list: makeList(), readonly: true },

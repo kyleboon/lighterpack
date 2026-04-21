@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import AccountDelete from '../../../app/components/account-delete.vue';
 
 vi.mock('vue-router', async (importOriginal) => {
@@ -20,21 +20,21 @@ describe('AccountDelete component', () => {
     const stubs = { modal: true, errors: true };
 
     it('is not shown when activeModal is not deleteAccount', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeModal = null;
         const wrapper = mount(AccountDelete, { global: { stubs } });
         expect(wrapper.vm.shown).toBe(false);
     });
 
     it('is shown when activeModal is deleteAccount', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeModal = 'deleteAccount';
         const wrapper = mount(AccountDelete, { global: { stubs } });
         expect(wrapper.vm.shown).toBe(true);
     });
 
     it('setting shown to false calls store.closeModal', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.activeModal = 'deleteAccount';
         store.closeModal = vi.fn();
         const wrapper = mount(AccountDelete, { global: { stubs } });
@@ -43,7 +43,7 @@ describe('AccountDelete component', () => {
     });
 
     it('isConfirmationComplete is false when email does not match', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'user@example.com';
         const wrapper = mount(AccountDelete, { global: { stubs } });
         wrapper.vm.confirmEmail = 'wrong@example.com';
@@ -51,7 +51,7 @@ describe('AccountDelete component', () => {
     });
 
     it('isConfirmationComplete is true when email matches', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'user@example.com';
         const wrapper = mount(AccountDelete, { global: { stubs } });
         wrapper.vm.confirmEmail = 'user@example.com';
@@ -59,7 +59,7 @@ describe('AccountDelete component', () => {
     });
 
     it('isConfirmationComplete is case-insensitive', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'user@example.com';
         const wrapper = mount(AccountDelete, { global: { stubs } });
         wrapper.vm.confirmEmail = 'USER@EXAMPLE.COM';
@@ -67,7 +67,7 @@ describe('AccountDelete component', () => {
     });
 
     it('deleteAccount() adds error when email does not match', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'user@example.com';
         const wrapper = mount(AccountDelete, { global: { stubs } });
         wrapper.vm.confirmEmail = 'wrong@example.com';

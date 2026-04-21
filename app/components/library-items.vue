@@ -71,7 +71,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import Sortable from 'sortablejs';
 import { MgToWeight } from '#shared/utils/weight';
 
@@ -84,7 +84,7 @@ defineProps({
     },
 });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const searchText = ref('');
 

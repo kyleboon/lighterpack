@@ -213,7 +213,7 @@
 <script setup>
 import { onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '~/store/store';
+import { useBaseweightStore } from '~/store/store';
 
 defineOptions({ name: 'Welcome' });
 
@@ -256,7 +256,7 @@ defineOgImage('OgImageDefault', {
     description: 'Every ounce accounted for.',
 });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 const router = useRouter();
 
 onBeforeMount(() => {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import Item from '../../../app/components/item.vue';
 
 describe('Item component', () => {
@@ -54,7 +54,7 @@ describe('Item component', () => {
     }
 
     it('thumbnailImage returns imgur URL when item.image is set', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(Item, {
             props: makeProps({ image: 'abc123' }),
@@ -64,7 +64,7 @@ describe('Item component', () => {
     });
 
     it('thumbnailImage returns imageUrl when item.imageUrl is set', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(Item, {
             props: makeProps({ image: '', imageUrl: 'https://example.com/img.jpg' }),
@@ -74,7 +74,7 @@ describe('Item component', () => {
     });
 
     it('thumbnailImage returns empty string when no image', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(Item, {
             props: makeProps({ image: '', imageUrl: '' }),
@@ -84,7 +84,7 @@ describe('Item component', () => {
     });
 
     it('saveWeight sets weightError when input is NaN', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(Item, {
             props: makeProps(),
@@ -96,7 +96,7 @@ describe('Item component', () => {
     });
 
     it('saveQty sets qtyError when input is NaN', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(Item, {
             props: makeProps(),
@@ -108,7 +108,7 @@ describe('Item component', () => {
     });
 
     it('cycleStar increments star value mod numStars', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         store.updateCategoryItem = vi.fn();
         const wrapper = mount(Item, {
@@ -123,7 +123,7 @@ describe('Item component', () => {
     });
 
     it('toggleWorn does nothing when consumable is true', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         store.updateCategoryItem = vi.fn();
         const wrapper = mount(Item, {
@@ -135,7 +135,7 @@ describe('Item component', () => {
     });
 
     it('removeItem calls store.removeItemFromCategory', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         store.removeItemFromCategory = vi.fn();
         const wrapper = mount(Item, {
@@ -148,7 +148,7 @@ describe('Item component', () => {
 
     describe('readonly mode', () => {
         it('renders item name as static text instead of input', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             store.library = makeLibrary();
             const wrapper = mount(Item, {
                 props: { ...makeProps({ name: 'Tent' }), readonly: true },
@@ -160,7 +160,7 @@ describe('Item component', () => {
         });
 
         it('renders item name as a link when url is set', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             store.library = makeLibrary();
             const wrapper = mount(Item, {
                 props: { ...makeProps({ name: 'Tent', url: 'https://example.com' }), readonly: true },
@@ -172,7 +172,7 @@ describe('Item component', () => {
         });
 
         it('renders description as static text instead of input', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             store.library = makeLibrary();
             const wrapper = mount(Item, {
                 props: { ...makeProps({ description: 'A tent' }), readonly: true },
@@ -184,7 +184,7 @@ describe('Item component', () => {
         });
 
         it('hides drag handle', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             store.library = makeLibrary();
             const wrapper = mount(Item, {
                 props: { ...makeProps(), readonly: true },
@@ -194,7 +194,7 @@ describe('Item component', () => {
         });
 
         it('hides action buttons (camera, link, remove)', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             store.library = makeLibrary();
             const wrapper = mount(Item, {
                 props: { ...makeProps(), readonly: true },
@@ -205,7 +205,7 @@ describe('Item component', () => {
         });
 
         it('hides remove button', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             store.library = makeLibrary();
             const wrapper = mount(Item, {
                 props: { ...makeProps(), readonly: true },
@@ -215,7 +215,7 @@ describe('Item component', () => {
         });
 
         it('shows static weight and unit instead of input', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             store.library = makeLibrary();
             const wrapper = mount(Item, {
                 props: { ...makeProps({ weight: 28349, authorUnit: 'oz' }), readonly: true },
@@ -228,7 +228,7 @@ describe('Item component', () => {
         });
 
         it('shows static qty instead of input', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             store.library = makeLibrary();
             const wrapper = mount(Item, {
                 props: { ...makeProps({}, { qty: 3 }), readonly: true },
@@ -241,7 +241,7 @@ describe('Item component', () => {
         });
 
         it('shows static worn icon when worn is active', () => {
-            const store = useLighterpackStore();
+            const store = useBaseweightStore();
             store.library = makeLibrary({ worn: true });
             const wrapper = mount(Item, {
                 props: { ...makeProps({}, { worn: true }), readonly: true },

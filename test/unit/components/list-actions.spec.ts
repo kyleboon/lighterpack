@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import ListActions from '../../../app/components/list-actions.vue';
 
 vi.mock('../../../app/utils/utils.js', async (importOriginal) => {
@@ -19,7 +19,7 @@ describe('ListActions component', () => {
     const stubs = { Popover: PopoverStub };
 
     function makeStore(overrides = {}) {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'alice';
         store.library = {
             defaultListId: 'list1',
@@ -30,7 +30,7 @@ describe('ListActions component', () => {
     }
 
     it('renders nothing when not signed in', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = null;
         store.library = {
             defaultListId: 'list1',
@@ -125,7 +125,7 @@ describe('ListActions component', () => {
     it('copyShareLink calls fetchJson when no externalId', async () => {
         const { fetchJson } = await import('../../../app/utils/utils.js');
         fetchJson.mockResolvedValueOnce({ externalId: 'newid' });
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'alice';
         store.library = {
             defaultListId: 'list1',
@@ -155,7 +155,7 @@ describe('ListActions component', () => {
         fetchJson.mockClear();
         // fetchJson never resolves — simulates an in-flight request
         fetchJson.mockImplementation(() => new Promise(() => {}));
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'alice';
         store.library = {
             defaultListId: 'list1',

@@ -47,12 +47,12 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import modal from './modal.vue';
 
 defineOptions({ name: 'Account' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const currentEmail = computed(() => store.loggedIn);
 const library = computed(() => store.library);

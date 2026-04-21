@@ -51,12 +51,12 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import PopoverHover from './popover-hover.vue';
 
 defineOptions({ name: 'ListSettings' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const library = computed(() => store.library);
 const isSignedIn = computed(() => store.loggedIn);

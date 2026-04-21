@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import AccountDropdown from '../../../app/components/account-dropdown.vue';
 
 const mockPush = vi.fn();
@@ -19,14 +19,14 @@ describe('AccountDropdown component', () => {
     const stubs = { PopoverHover: { template: '<div><slot name="target" /><slot name="content" /></div>' } };
 
     it('renders the username from the store', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.loggedIn = 'testuser';
         const wrapper = mount(AccountDropdown, { global: { stubs } });
         expect(wrapper.text()).toContain('testuser');
     });
 
     it('showAccount() calls store.showModal with account', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.showModal = vi.fn();
         const wrapper = mount(AccountDropdown, { global: { stubs } });
         wrapper.vm.showAccount();
@@ -34,7 +34,7 @@ describe('AccountDropdown component', () => {
     });
 
     it('showHelp() calls store.showModal with help', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.showModal = vi.fn();
         const wrapper = mount(AccountDropdown, { global: { stubs } });
         wrapper.vm.showHelp();
@@ -42,7 +42,7 @@ describe('AccountDropdown component', () => {
     });
 
     it('signout() calls store.signout and navigates to /signin', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.signout = vi.fn();
         const wrapper = mount(AccountDropdown, { global: { stubs } });
         wrapper.vm.signout();

@@ -15,13 +15,13 @@
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import libraryItems from './library-items.vue';
 import libraryLists from './library-lists.vue';
 
 defineOptions({ name: 'Sidebar' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 const router = useRouter();
 
 const isSignedIn = computed(() => store.loggedIn);

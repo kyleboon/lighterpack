@@ -32,14 +32,14 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import { fetchJson } from '../utils/utils';
 import errors from './errors.vue';
 import modal from './modal.vue';
 
 defineOptions({ name: 'AccountDelete' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 const router = useRouter();
 
 const errors_ = ref([]);

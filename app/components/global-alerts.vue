@@ -28,11 +28,11 @@
 </template>
 
 <script setup>
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 
 defineOptions({ name: 'GlobalAlerts' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 </script>
 
 <style>

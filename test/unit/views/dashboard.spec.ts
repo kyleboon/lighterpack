@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useLighterpackStore } from '../../../app/store/store';
+import { useBaseweightStore } from '../../../app/store/store';
 import Dashboard from '../../../app/pages/index.vue';
 
 const mockPush = vi.fn();
@@ -48,14 +48,14 @@ describe('Dashboard view', () => {
     });
 
     it('redirects to /welcome if no library is loaded', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = false;
         mount(Dashboard, { global: { stubs } });
         expect(mockPush).toHaveBeenCalledWith('/welcome');
     });
 
     it('isLoaded is true when library exists', () => {
-        const store = useLighterpackStore();
+        const store = useBaseweightStore();
         store.library = makeLibrary();
         const wrapper = mount(Dashboard, { global: { stubs } });
         expect(wrapper.find('#main').exists()).toBe(true);

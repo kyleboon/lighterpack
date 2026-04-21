@@ -272,7 +272,7 @@
 
 <script setup>
 import { ref, computed, watch, onBeforeMount } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import unitSelect from './unit-select.vue';
 import { WeightToMg, MgToWeight } from '#shared/utils/weight';
 
@@ -293,7 +293,7 @@ const props = defineProps({
     },
 });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const displayWeight = ref(0);
 const displayPrice = ref(0);

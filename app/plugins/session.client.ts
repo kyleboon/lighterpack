@@ -1,10 +1,10 @@
-import { useLighterpackStore } from '~/store/store';
+import { useBaseweightStore } from '~/store/store';
 
 // Restore session from the lp cookie on every page load.
 // This plugin is async so routing is blocked until we know whether the user
 // is authenticated (prevents flash-redirect to /signin on refresh).
 export default defineNuxtPlugin(async () => {
-    const store = useLighterpackStore();
+    const store = useBaseweightStore();
 
     // Already hydrated (e.g. after login/register within the same session)
     if (store.loggedIn) return;

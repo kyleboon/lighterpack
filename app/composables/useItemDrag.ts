@@ -1,7 +1,7 @@
 import Sortable from 'sortablejs';
 import type { Ref } from 'vue';
 import type { IList } from '#shared/types';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 
 /**
  * Revert the DOM change SortableJS made before dispatching the store action.
@@ -24,7 +24,7 @@ function revertDOM(item: HTMLElement, container: HTMLElement, oldIndex: number, 
  * library-items.vue via the group name 'items'.
  */
 export function useItemDrag(): { setup: (list: Ref<IList>) => void; destroy: () => void } {
-    const store = useLighterpackStore();
+    const store = useBaseweightStore();
     let sortables: Sortable[] = [];
 
     function setup(list: Ref<IList>) {

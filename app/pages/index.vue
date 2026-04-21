@@ -36,7 +36,7 @@
 <script setup>
 import { ref, watch, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLighterpackStore } from '~/store/store';
+import { useBaseweightStore } from '~/store/store';
 
 defineOptions({ name: 'Dashboard' });
 
@@ -51,7 +51,7 @@ useHead({
     ],
 });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 const router = useRouter();
 
 const isLoaded = ref(false);

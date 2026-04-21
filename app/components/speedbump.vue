@@ -19,12 +19,12 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import modal from './modal.vue';
 
 defineOptions({ name: 'Speedbump' });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const defaultMessages = { title: '', body: '', confirm: 'Yes', cancel: 'No' };
 

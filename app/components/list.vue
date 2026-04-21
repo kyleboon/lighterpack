@@ -113,7 +113,7 @@
 <script setup>
 import { computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { marked } from 'marked';
-import { useLighterpackStore } from '../store/store';
+import { useBaseweightStore } from '../store/store';
 import category from './category.vue';
 import listSummary from './list-summary.vue';
 import listActions from './list-actions.vue';
@@ -124,7 +124,7 @@ const props = defineProps({
     readonly: { type: Boolean, default: false },
 });
 
-const store = useLighterpackStore();
+const store = useBaseweightStore();
 
 const MAX_VISIBLE_THUMBS = 4;
 

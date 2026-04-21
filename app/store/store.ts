@@ -110,7 +110,7 @@ function addListToLibrary(library: LibraryType, serverList: ServerList): ListTyp
 // TODO: replace with proper nullable type + null guards — see README roadmap.
 const UNLOADED_LIBRARY = false as unknown as LibraryType;
 
-export const useLighterpackStore = defineStore('lighterpack', {
+export const useBaseweightStore = defineStore('baseweight', {
     state: () => ({
         library: UNLOADED_LIBRARY,
         loggedIn: false as string | false,
