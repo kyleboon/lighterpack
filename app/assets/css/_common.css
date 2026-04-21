@@ -382,11 +382,54 @@
     visibility: visible;
 }
 
-@media only screen and (width <= 720px) {
-    .lpChart {
-        max-width: 100%;
+/* ── Mobile top bar ────────────────────────────────────────── */
+.lp-mobile-topbar {
+    align-items: center;
+    background: #252523;
+    color: #c8c6bc;
+    display: none;
+    gap: 10px;
+    padding: 8px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.lp-hamburger {
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    padding: 4px;
+}
+
+.lp-mobile-wordmark {
+    font-family: 'DM Serif Display', georgia, serif;
+    font-size: 18px;
+}
+
+/* ── Sidebar backdrop ──────────────────────────────────────── */
+.lp-sidebar-backdrop {
+    display: none;
+}
+
+@media only screen and (width < 900px) {
+    .lp-mobile-topbar {
+        display: flex;
     }
 
+    /* Sidebar backdrop — visible when sidebar is open */
+    .lpSidebarOpen .lp-sidebar-backdrop {
+        background: rgb(0 0 0 / 40%);
+        display: block;
+        inset: 0;
+        position: fixed;
+        z-index: 35;
+    }
+
+    /* Gear table: hide column headers for weight/price/qty */
     .lpItems {
         position: relative;
 
@@ -415,6 +458,7 @@
         }
     }
 
+    /* Gear table: item row reflow */
     .lpItem {
         align-items: baseline;
         flex-flow: row wrap;
@@ -435,18 +479,8 @@
             }
         }
 
-        .lpImageCell {
-            flex-basis: 0;
-        }
-
-        .lpName {
-            flex-basis: 90px;
-            font-weight: bold;
-            order: 2;
-        }
-
+        /* First line: qty (if > 1) + name + price */
         .lpQtyCell {
-            flex-basis: auto;
             order: 1;
 
             &[qty1] {
@@ -454,29 +488,34 @@
             }
 
             &::after {
-                content: ' x ';
-                display: inline;
-                margin-right: 5px;
+                display: none;
             }
         }
 
+        .lpName {
+            flex: 1 1 0;
+            font-weight: bold;
+            min-width: 80px;
+            order: 2;
+        }
+
         .lpPriceCell {
+            order: 3;
+        }
+
+        /* Second line: weight + description + actions */
+        .lpWeightCell {
             order: 4;
         }
 
-        .lpWeightCell {
-            order: 5;
-        }
-
         .lpDescription {
-            flex-basis: calc(100% - 50px); /* Always wrap */
+            min-width: 0;
             order: 98;
         }
 
         .lpActionsCell {
-            flex: 0 0 auto;
             order: 99;
-            padding: 0 10px;
+            padding: 0 4px;
             text-align: right;
 
             .lpHidden,
@@ -486,6 +525,29 @@
         }
     }
 
+    /* Touch targets */
+    .lpWeight,
+    .lpPrice,
+    .lpQty {
+        min-height: 44px;
+    }
+
+    /* Hide drag handles */
+    .lpHandle {
+        display: none;
+    }
+
+    /* Hide remove button unless row focused/hovered */
+    .lpRemove {
+        visibility: hidden;
+    }
+
+    .lpItem:hover .lpRemove,
+    .lpItem:focus-within .lpRemove {
+        visibility: visible;
+    }
+
+    /* Image dialog mobile sizing */
     #lpImageDialog {
         padding: 5px;
         width: 90%;
@@ -495,9 +557,13 @@
             max-width: 100%;
         }
     }
+
+    .lpChart {
+        max-width: 100%;
+    }
 }
 
-@media only screen and (width <= 480px) {
+@media only screen and (width < 600px) {
     .lpListSummary {
         flex-direction: column;
         margin-bottom: 30px;
@@ -505,6 +571,27 @@
 
     .lpChartContainer {
         max-width: 200px;
+    }
+
+    /* Tighter content padding */
+    .lpList {
+        padding: 0 12px;
+    }
+
+    .lpCategory {
+        margin-bottom: 12px;
+    }
+
+    /* Remove max-width constraint — full viewport width */
+    #main {
+        max-width: none;
+    }
+
+    /* Modal mobile sizing */
+    .lp-copy-modal {
+        max-height: 80vh;
+        overflow-y: auto;
+        width: calc(100vw - 24px);
     }
 }
 

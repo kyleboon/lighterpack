@@ -1,5 +1,5 @@
 <template>
-    <section class="lp-gear-section" id="libraryContainer">
+    <section class="lp-gear-section lp-library-section" id="libraryContainer">
         <div class="lp-sidebar-section-header">
             <span class="lp-label-xs">Gear</span>
         </div>

@@ -12,6 +12,12 @@
     .lpHasSidebar & {
         margin-left: 280px;
     }
+
+    @media only screen and (width < 900px) {
+        .lpHasSidebar & {
+            margin-left: 0;
+        }
+    }
 }
 
 #totals {
@@ -185,6 +191,44 @@ input.lpCategoryName {
 .lpItemsFooter {
     border-top-style: solid;
     justify-content: flex-end;
+}
+
+@media only screen and (width < 900px) {
+    .lpItem,
+    .lpItemsHeader,
+    .lpItemsFooter {
+        .lpHandleCell {
+            display: none;
+        }
+
+        .lpImageCell {
+            display: none;
+        }
+
+        .lpWeightCell {
+            flex: 0 0 auto;
+        }
+
+        .lpPriceCell {
+            flex: 0 0 auto;
+        }
+
+        .lpQtyCell {
+            flex: 0 0 auto;
+        }
+
+        .lpRemoveCell {
+            display: none;
+        }
+
+        .lpActionsCell {
+            flex: 0 0 auto;
+        }
+
+        .lpDescription {
+            flex-basis: 100%;
+        }
+    }
 }
 
 .lpActionsCell {

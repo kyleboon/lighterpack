@@ -134,4 +134,24 @@ function signout() {
         color: #c87171;
     }
 }
+
+/* ── Responsive: sidebar drawer ────────────────────────────────── */
+@media only screen and (width < 900px) {
+    #sidebar {
+        z-index: 40;
+
+        .lpHasSidebar & {
+            transform: translateX(-280px);
+        }
+
+        .lpSidebarOpen & {
+            transform: translateX(0);
+        }
+    }
+
+    /* Hide gear library on mobile — desktop only feature */
+    .lp-library-section {
+        display: none;
+    }
+}
 </style>
