@@ -11,13 +11,13 @@ export default defineNuxtConfig({
     modules: ['@pinia/nuxt', '@nuxtjs/seo'],
     site: {
         url: process.env.PUBLIC_URL || 'http://localhost:3000',
-        name: 'LighterPack',
+        name: 'BaseWeight',
     },
     app: {
-        rootId: 'lp',
+        rootId: 'bw',
         head: {
             htmlAttrs: { lang: 'en' },
-            title: 'LighterPack',
+            title: 'BaseWeight',
             meta: [
                 { charset: 'utf-8' },
                 { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -59,7 +59,7 @@ export default defineNuxtConfig({
         '/r/**': { ssr: true },
         '/**': { ssr: false },
     },
-    css: ['~/assets/css/lighterpack.css'],
+    css: ['~/assets/css/baseweight.css'],
     typescript: {
         tsConfig: {
             compilerOptions: {

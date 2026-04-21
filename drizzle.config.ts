@@ -5,6 +5,6 @@ export default defineConfig({
     out: './drizzle/migrations',
     dialect: 'sqlite',
     dbCredentials: {
-        url: process.env.DATABASE_PATH ?? './data/lighterpack.db',
+        url: process.env.DATABASE_PATH ?? './data/baseweight.db',
     },
 });

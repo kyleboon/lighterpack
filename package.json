@@ -1,7 +1,7 @@
 {
-    "name": "lighterpack",
+    "name": "baseweight",
     "version": "2.0.0",
-    "description": "LighterPack =========== LighterPack is a website to track the gear you take on adventures. It is still in Beta.",
+    "description": "BaseWeight is a web application for tracking gear weight for hiking, backpacking, and adventures.",
     "scripts": {
         "dev": "nuxt dev",
         "start": "nuxt build && node .output/server/index.mjs",
