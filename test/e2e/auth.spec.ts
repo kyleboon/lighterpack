@@ -5,7 +5,7 @@ import { getSharedUser, loginUser, logoutUser } from './auth-utils';
 test('has title', async ({ page }) => {
     await page.goto(testRoot);
 
-    await expect(page).toHaveTitle(/LighterPack/);
+    await expect(page).toHaveTitle(/BaseWeight/);
 });
 
 test.describe('User Authentication Tests', () => {
@@ -25,7 +25,7 @@ test.describe('User Authentication Tests', () => {
 
         await loginUser(page, email);
         await expect(page.locator('.bw-sidebar-footer')).toBeVisible();
-        await expect(page.getByText('Welcome to LighterPack!')).toBeVisible();
+        await expect(page.getByText('Welcome to BaseWeight!')).toBeVisible();
     });
 
     test('should successfully log out', async ({ page }) => {
@@ -38,7 +38,7 @@ test.describe('User Authentication Tests', () => {
 
     test('should successfully delete a user', async ({ page }) => {
         const now = Date.now();
-        const email = `del${now}@lighterpack.com`;
+        const email = `del${now}@baseweight.pro`;
 
         await loginUser(page, email);
         await page.getByText('Account settings').click();

@@ -37,7 +37,7 @@ describe('fullUnitToUnit', () => {
 });
 
 describe('parseCSV', () => {
-    it('parses a standard 10-column lighterpack CSV', () => {
+    it('parses a standard 10-column baseweight CSV', () => {
         const csv = [
             'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable',
             'Tent,Shelter,3-season,1,32,ounce,https://example.com,350,Worn,',

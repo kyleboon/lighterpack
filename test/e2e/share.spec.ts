@@ -10,7 +10,7 @@ import { registerUser } from './auth-utils';
  */
 async function setupSharedList(page: any): Promise<string> {
     const now = Date.now();
-    await registerUser(page, `share${now}`, 'testtest', `share+${now}@lighterpack.com`);
+    await registerUser(page, `share${now}`, 'testtest', `share+${now}@baseweight.pro`);
 
     // Name the list and add one item with a weight so the donut chart renders
     await page.getByPlaceholder('List name').fill('Summer Pack');

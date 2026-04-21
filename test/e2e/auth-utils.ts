@@ -6,7 +6,7 @@ let sharedUserEmail: string | null = null;
 
 export async function getSharedUser(): Promise<{ email: string }> {
     if (!sharedUserEmail) {
-        sharedUserEmail = `shared${Date.now()}@test.lighterpack.com`;
+        sharedUserEmail = `shared${Date.now()}@test.baseweight.pro`;
     }
     return { email: sharedUserEmail };
 }

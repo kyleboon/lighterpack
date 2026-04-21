@@ -4,7 +4,7 @@ import { registerUser } from './auth-utils';
 
 async function freshUser(page: any) {
     const now = Date.now();
-    await registerUser(page, `csv${now}`, 'testtest', `csv+${now}@lighterpack.com`);
+    await registerUser(page, `csv${now}`, 'testtest', `csv+${now}@baseweight.pro`);
 }
 
 /** A minimal valid CSV matching the LighterPack import format. */

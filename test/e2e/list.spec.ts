@@ -8,7 +8,7 @@ test.describe('List tests', () => {
     test('should successfully get an external ID', async ({ page }) => {
         const now = Date.now();
         const username = `id${now}`;
-        const email = `id+${now}@lighterpack.com`;
+        const email = `id+${now}@baseweight.pro`;
         const password = 'testtest';
 
         await registerUser(page, username, password, email);
@@ -24,7 +24,7 @@ test.describe('List tests', () => {
     test('should save list name', async ({ page }) => {
         const now = Date.now();
         const username = `name${now}`;
-        const email = `name+${now}@lighterpack.com`;
+        const email = `name+${now}@baseweight.pro`;
         const password = 'testtest';
         const listName = 'Test List Name';
 

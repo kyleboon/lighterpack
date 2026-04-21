@@ -6,7 +6,7 @@ import { registerUser } from './auth-utils';
 
 async function freshUser(page: any) {
     const now = Date.now();
-    await registerUser(page, `exp${now}`, 'testtest', `exp+${now}@lighterpack.com`);
+    await registerUser(page, `exp${now}`, 'testtest', `exp+${now}@baseweight.pro`);
 }
 
 /**

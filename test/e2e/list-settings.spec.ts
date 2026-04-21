@@ -6,7 +6,7 @@ import { registerUser } from './auth-utils';
 
 async function freshUser(page: any) {
     const now = Date.now();
-    await registerUser(page, `settings${now}`, 'testtest', `settings+${now}@lighterpack.com`);
+    await registerUser(page, `settings${now}`, 'testtest', `settings+${now}@baseweight.pro`);
 }
 
 /** Opens the Account Settings modal (settings moved from header popover in redesign). */

@@ -6,7 +6,7 @@ import { registerUser, loginUser, logoutUser } from './auth-utils';
 
 async function freshUser(page: any) {
     const now = Date.now();
-    await registerUser(page, `item${now}`, 'testtest', `item+${now}@lighterpack.com`);
+    await registerUser(page, `item${now}`, 'testtest', `item+${now}@baseweight.pro`);
 }
 
 /**
@@ -196,7 +196,7 @@ test.describe('Item and category management', () => {
         const ts = Date.now();
         const username = `rt${ts}`;
         const password = 'testtest';
-        const email = `rt+${ts}@lighterpack.com`;
+        const email = `rt+${ts}@baseweight.pro`;
         await registerUser(page, username, password, email);
 
         // Add a category and two items via the UX

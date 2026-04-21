@@ -4,7 +4,7 @@ import { registerUser } from './auth-utils';
 
 async function freshUser(page: Page) {
     const now = Date.now();
-    await registerUser(page, `drag${now}`, 'testtest', `drag+${now}@lighterpack.com`);
+    await registerUser(page, `drag${now}`, 'testtest', `drag+${now}@baseweight.pro`);
 }
 
 async function openSidebar(page: Page) {

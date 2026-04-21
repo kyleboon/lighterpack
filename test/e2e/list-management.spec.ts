@@ -6,7 +6,7 @@ import { registerUser } from './auth-utils';
 
 async function freshUser(page: any) {
     const now = Date.now();
-    await registerUser(page, `list${now}`, 'testtest', `list+${now}@lighterpack.com`);
+    await registerUser(page, `list${now}`, 'testtest', `list+${now}@baseweight.pro`);
 }
 
 /** Creates a new list via the store (sidebar button is behind .bwList z-index). */
