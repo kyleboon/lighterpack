@@ -7,7 +7,7 @@ async function freshUser(page: any) {
     await registerUser(page, `csv${now}`, 'testtest', `csv+${now}@baseweight.pro`);
 }
 
-/** A minimal valid CSV matching the LighterPack import format. */
+/** A minimal valid CSV matching the Baseweight import format. */
 const VALID_CSV = [
     'Item Name,Category,Description,Qty,Weight,Unit',
     'Tent,Shelter,3-season tent,1,16,oz',
@@ -18,7 +18,7 @@ const VALID_CSV = [
 /** A CSV whose only data row has an unrecognised unit — no valid rows after filtering. */
 const INVALID_UNIT_CSV = ['Item Name,Category,Description,Qty,Weight,Unit', 'Tent,Shelter,desc,1,16,stone'].join('\n');
 
-/** A full 10-column CSV matching the LighterPack export format. */
+/** A full 10-column CSV matching the Baseweight export format. */
 const FULL_CSV = [
     'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable',
     'Tent,Shelter,3-season tent,1,32,ounce,https://example.com/tent,350,Worn,',
