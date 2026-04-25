@@ -4,6 +4,7 @@ extIds.txt
 node_modules
 .DS_Store
 /config/local.json
+/config/local-production.json
 /public/dist/*
 /.output/
 /.nuxt/

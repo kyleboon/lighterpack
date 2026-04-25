@@ -1,0 +1,8 @@
+{
+    "environment": "production",
+    "logLevel": "warn",
+    "maxImageSizeMb": 10,
+    "imageMaxWidthPx": 1200,
+    "magicLinkExpiresIn": 300,
+    "maxItemsPerUser": 1000
+}
