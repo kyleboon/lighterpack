@@ -1,6 +1,6 @@
 # BaseWeight Deployment Guide
 
-This guide covers one-time server provisioning for deploying BaseWeight to a DigitalOcean droplet. Once set up, deployments happen automatically via GitHub Actions on every push to `master`.
+This guide covers one-time server provisioning for deploying BaseWeight to a DigitalOcean droplet. Once set up, deployments happen automatically via GitHub Actions when you publish a GitHub Release.
 
 ## Prerequisites
 
@@ -196,7 +196,7 @@ sudo journalctl -u baseweight -f  # tail logs
 
 ## 8. GitHub Actions Setup
 
-The deploy workflow (`.github/workflows/deploy.yml`) runs automatically on push to `master`. It needs three repository secrets.
+The deploy workflow (`.github/workflows/deploy.yml`) runs automatically when a GitHub Release is published. It needs three repository secrets.
 
 Go to your GitHub repo -> Settings -> Secrets and variables -> Actions, and add:
 
@@ -216,7 +216,15 @@ ssh-keygen -t ed25519 -C "github-actions-deploy" -f ~/.ssh/deploy_key -N ""
 
 ## Updating the App
 
-Deployments happen automatically when you push to `master`. The workflow:
+Deployments happen automatically when you publish a GitHub Release. To deploy:
+
+```bash
+gh release create v1.0.0 --title "v1.0.0" --notes "Description of changes"
+```
+
+Or create a release in the GitHub UI: Releases -> Draft a new release -> Publish.
+
+The workflow:
 
 1. Checks out the code
 2. Runs `npm ci` and `npm run build`
