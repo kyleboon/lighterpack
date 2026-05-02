@@ -139,9 +139,7 @@ nano ~/baseweight/config/local-production.json
     "betterAuthSecret": "<generate-with-openssl-rand-hex-32>",
     "betterAuthBaseURL": "https://baseweight.pro",
     "betterAuthTrustedOrigins": ["https://baseweight.pro"],
-    "mailgunAPIKey": "<your-mailgun-api-key>",
-    "mailgunDomain": "mg.baseweight.pro",
-    "mailgunBaseURL": "https://api.mailgun.net"
+    "resendAPIKey": "<your-resend-api-key>"
 }
 ```
 
@@ -151,7 +149,7 @@ Generate `betterAuthSecret`:
 openssl rand -hex 32
 ```
 
-If you don't have Mailgun configured yet, omit the `mailgunAPIKey`, `mailgunDomain`, and `mailgunBaseURL` fields. Magic link URLs will be logged to the server console instead of emailed.
+If you don't have Resend configured yet, omit the `resendAPIKey` field. Magic link URLs will be logged to the server console instead of emailed.
 
 ## 7. systemd Service
 
