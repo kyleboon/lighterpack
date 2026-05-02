@@ -14,8 +14,8 @@ function validateConfig() {
         throw new Error(`Missing required config values: ${missing.join(', ')}`);
     }
 
-    if (!config.get<string>('mailgunAPIKey')) {
-        logger.warn('mailgunAPIKey not set — magic link emails will be logged to console');
+    if (!config.get<string>('resendAPIKey')) {
+        logger.warn('resendAPIKey not set — magic link emails will be logged to console');
     }
 }
 
