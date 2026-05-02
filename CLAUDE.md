@@ -64,7 +64,7 @@ When Mailgun is not configured (dev), the magic link URL is logged to the consol
 ### Configuration
 
 - Uses the `config` npm package. Defaults in `config/default.json`, local overrides in `config/local.json` (gitignored)
-- Key config values: `betterAuthSecret`, `betterAuthBaseURL`, `betterAuthTrustedOrigins`, `databasePath`, `mailgunAPIKey`, `mailgunDomain`
+- Key config values: `betterAuthSecret`, `betterAuthBaseURL`, `betterAuthTrustedOrigins`, `databasePath`, `resendAPIKey`
 
 ### Build System
 
@@ -103,6 +103,11 @@ When Mailgun is not configured (dev), the magic link URL is logged to the consol
 ## Security Rules
 
 - **Test endpoints must be gated behind a runtime config check.** Any endpoint under `server/api/test/` must reject requests unless `useRuntimeConfig().enableTestEndpoints === true`, by throwing `createError({ statusCode: 404, statusMessage: 'Not Found' })` as the first line of the handler. Do not use `process.env.NODE_ENV` — Nitro inlines it at build time, making it unreliable at runtime. The `ENABLE_TEST_ENDPOINTS` env var is only set in the Playwright config; it is never set in production.
+
+## Issue Management
+
+- All issue and roadmap tracking is done via **GitHub Issues** on this repository. Current roadmap items have already been added there.
+- When planning work or referencing tasks, check GitHub Issues first rather than maintaining a separate backlog.
 
 ## Key Technical Notes
 
