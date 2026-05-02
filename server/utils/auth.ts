@@ -1,30 +1,28 @@
-import { createRequire } from 'module';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { magicLink } from 'better-auth/plugins';
 import config from 'config';
+import { Resend } from 'resend';
 import { getDb } from '../db.js';
 import * as schema from '../schema.js';
 import { initNewUserLibrary } from './library.js';
 import { logger } from './logger.js';
-
-const _require = createRequire(import.meta.url);
+import { magicLinkHtml, magicLinkText } from './magicLinkEmail.js';
 
 async function sendMagicLinkEmail(email: string, url: string) {
-    const mailgunKey = config.get<string>('mailgunAPIKey');
-    if (!mailgunKey) {
-        logger.info({ url }, 'Mailgun not configured — magic link URL');
+    const resendKey = config.get<string>('resendAPIKey');
+    if (!resendKey) {
+        logger.info({ url }, 'Resend not configured — magic link URL');
         return;
     }
-    const FormData = _require('form-data');
-    const Mailgun = _require('mailgun.js');
-    const mg = new Mailgun(FormData).client({ username: 'api', key: mailgunKey });
-    await mg.messages.create(config.get('mailgunDomain'), {
-        from: 'BaseWeight <noreply@mg.baseweight.pro>',
+    const resend = new Resend(resendKey);
+    await resend.emails.send({
+        from: 'BaseWeight <noreply@baseweight.pro>',
+        replyTo: 'BaseWeight <info@baseweight.pro>',
         to: email,
-        'h:Reply-To': 'BaseWeight <info@baseweight.pro>',
         subject: 'Sign in to BaseWeight',
-        text: `Click the link below to sign in to BaseWeight. This link expires in 5 minutes.\n\n${url}`,
+        html: magicLinkHtml(url),
+        text: magicLinkText(url),
     });
 }
 
