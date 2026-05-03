@@ -66,7 +66,7 @@ test.describe('Export and re-import a list', () => {
         // Create a new blank list to import into
         // Create a second list via the store (sidebar button is behind .bwList z-index)
         await page.evaluate(() => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
+            const app = (document.getElementById('bw') as any).__vue_app__;
             app.config.globalProperties.$store.newList();
         });
         await page.locator('.bw-nav-list-item').nth(1).locator('.bw-nav-link').click();
@@ -104,7 +104,7 @@ test.describe('Export and re-import a list', () => {
 
         // Create a second list via the store (sidebar button is behind .bwList z-index)
         await page.evaluate(() => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
+            const app = (document.getElementById('bw') as any).__vue_app__;
             app.config.globalProperties.$store.newList();
         });
         await page.locator('.bw-nav-list-item').nth(1).locator('.bw-nav-link').click();

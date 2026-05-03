@@ -132,7 +132,7 @@ test.describe('Drag and drop', () => {
         // Reorder via store — Firefox headless doesn't reliably fire SortableJS drag events
         // on category handles. Use the store API directly (same pattern as list reordering).
         await page.evaluate(() => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
+            const app = (document.getElementById('bw') as any).__vue_app__;
             const store = app.config.globalProperties.$store;
             const list = store.library.getListById(store.library.defaultListId);
             store.reorderCategory({ list, before: 1, after: 0 });
@@ -150,7 +150,7 @@ test.describe('Drag and drop', () => {
 
         // Create a second list via the store (sidebar button is behind .bwList z-index)
         await page.evaluate(() => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
+            const app = (document.getElementById('bw') as any).__vue_app__;
             return app.config.globalProperties.$store.newList();
         });
         await page.getByPlaceholder('List name').fill('Trip B');
@@ -164,7 +164,7 @@ test.describe('Drag and drop', () => {
         // Reorder via store — sidebar items are behind the main content area (z-index 20 vs 30)
         // making physical drag interactions unreliable; use the store API directly.
         await page.evaluate(() => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
+            const app = (document.getElementById('bw') as any).__vue_app__;
             app.config.globalProperties.$store.reorderList({ before: 0, after: 1 });
         });
 
@@ -180,7 +180,7 @@ test.describe('Drag and drop', () => {
 
         // Create a second list — Tent is not in this list so it will have a drag handle
         await page.evaluate(() => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
+            const app = (document.getElementById('bw') as any).__vue_app__;
             return app.config.globalProperties.$store.newList();
         });
 
@@ -192,7 +192,7 @@ test.describe('Drag and drop', () => {
         // Add via store — sidebar items are behind the main content area (z-index 20 vs 30)
         // making physical drag interactions from the sidebar unreliable.
         await page.evaluate(() => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
+            const app = (document.getElementById('bw') as any).__vue_app__;
             const store = app.config.globalProperties.$store;
             const item = store.library.items.find((i: any) => i.name === 'Tent');
             const category = store.library.getCategoryById(

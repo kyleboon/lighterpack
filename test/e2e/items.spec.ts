@@ -25,7 +25,7 @@ async function freshUser(page: any) {
 async function seedListData(page: any) {
     // Enable optional fields via the store — settings moved to Account Settings modal in redesign
     await page.evaluate(() => {
-        const store = (document.getElementById('lp') as any).__vue_app__.config.globalProperties.$store;
+        const store = (document.getElementById('bw') as any).__vue_app__.config.globalProperties.$store;
         ['price', 'listDescription', 'consumable', 'worn'].forEach((f) => {
             if (!store.library.optionalFields[f]) store.toggleOptionalField(f);
         });

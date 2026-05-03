@@ -12,7 +12,7 @@ async function freshUser(page: any) {
 /** Creates a new list via the store (sidebar button is behind .bwList z-index). */
 async function addNewList(page: any) {
     await page.evaluate(() => {
-        const app = (document.getElementById('lp') as any).__vue_app__;
+        const app = (document.getElementById('bw') as any).__vue_app__;
         app.config.globalProperties.$store.newList();
     });
     // Ensure the sidebar is open (newList changes defaultListId which may hide the sidebar

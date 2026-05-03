@@ -12,7 +12,7 @@ async function freshUser(page: any) {
 /** Opens the Account Settings modal (settings moved from header popover in redesign). */
 async function openSettings(page: any) {
     await page.evaluate(() => {
-        const store = (document.getElementById('lp') as any).__vue_app__.config.globalProperties.$store;
+        const store = (document.getElementById('bw') as any).__vue_app__.config.globalProperties.$store;
         store.showModal('account');
     });
     await expect(page.locator('#accountSettings')).toBeVisible();

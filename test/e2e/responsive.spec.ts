@@ -54,7 +54,7 @@ test.describe('Responsive: Mobile viewport (375x667)', () => {
     test('gear table items are readable and editable', async ({ page }) => {
         // Add a category via store — newCategory creates a default item automatically
         await page.evaluate(async () => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
+            const app = (document.getElementById('bw') as any).__vue_app__;
             const store = app.config.globalProperties.$store;
             await store.newCategory();
         });
@@ -119,7 +119,7 @@ test.describe('Responsive: Share page mobile (375x667)', () => {
 
         // Add content so the share page has something to show
         await page.evaluate(async () => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
+            const app = (document.getElementById('bw') as any).__vue_app__;
             const store = app.config.globalProperties.$store;
             await store.newCategory();
         });

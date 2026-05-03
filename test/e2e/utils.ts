@@ -8,7 +8,7 @@ export const testRoot = 'http://localhost:3000/';
  */
 export async function getShareUrl(page: Page): Promise<string> {
     return page.evaluate(() => {
-        const app = (document.getElementById('lp') as any).__vue_app__;
+        const app = (document.getElementById('bw') as any).__vue_app__;
         const store = app.config.globalProperties.$store;
         const lib = store.library;
         const list = lib.getListById(lib.defaultListId);

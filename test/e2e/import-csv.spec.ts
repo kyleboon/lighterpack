@@ -142,7 +142,7 @@ test.describe('CSV import', () => {
 
         // Verify the imported data via the store
         const storeData = await page.evaluate(() => {
-            const app = (document.getElementById('lp') as any).__vue_app__;
+            const app = (document.getElementById('bw') as any).__vue_app__;
             const store = app.config.globalProperties.$store;
             const lib = store.library;
             const list = lib.getListById(lib.defaultListId);
